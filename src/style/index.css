@@ -1,0 +1,40 @@
+/* Fonts */
+/* Quicksand */
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap");
+
+/* Body */
+body {
+  margin: 0;
+  padding: 0;
+  outline: none;
+  font-family: -apple-system, BlinkMacSystemFont, "Quicksand", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: auto;
+}
+
+/* All */
+* {
+  /* Border box */
+  -webkit-box-sizing: border-box; /* Safari/Chrome */
+  -moz-box-sizing: border-box; /* Firefox */
+  box-sizing: border-box; /* Opera/IE 8+ */
+}
+
+/* Selection */
+::selection {
+  background-color: rgb(184, 184, 184);
+  color: rgb(255, 255, 255);
+}
+::-moz-selection {
+  background-color: rgb(184, 184, 184);
+  color: rgb(58, 58, 58);
+}
+
+/* Code */
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
