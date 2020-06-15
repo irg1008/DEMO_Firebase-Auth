@@ -96,6 +96,11 @@ class Firebase {
     return this.auth.currentUser;
   };
 
+  /**
+   * Send email to user to sign up passwordless.
+   *
+   * @memberof Firebase
+   */
   doSendSignInLinkToEmail = (email: string) => {
     return this.auth.sendSignInLinkToEmail(email);
   };

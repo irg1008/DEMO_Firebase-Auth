@@ -8,19 +8,41 @@ import {
 } from "../../../../style/style";
 import styled from "styled-components";
 
-// TODO: Poner bonito esto, documentar todo y repasar todo este bien.
+/**
+ * Options of component.
+ *
+ * @interface IFormOptionsProps
+ */
+interface IFormOptionsProps {
+  /**
+   * First option of form. i.e Google sign up/in.
+   *
+   * @type {*}
+   * @memberof IFormOptionsProps
+   */
+  firstOption: any;
+
+  /**
+   * Second option of form. i.e Sign Up passwordless.
+   *
+   * @type {*}
+   * @memberof IFormOptionsProps
+   */
+  secondOption: any;
+}
 
 /**
  * FormOption component. Gives you two personalized button to put wherever you pass as prop.
  *
- * @param {*} props
+ * @param {IFormOptionsProps} props
  * @returns
  */
-const FormOptions = (props: any) => {
+const FormOptions = (props: IFormOptionsProps) => {
+  const { firstOption, secondOption } = props;
   return (
     <FormOtherOptionsContainerStyled>
-      <FormOtherOptionStyled>Google</FormOtherOptionStyled>
-      <FormOtherOptionStyled>{props.secondOptionText}</FormOtherOptionStyled>
+      <FormOtherOptionStyled>{firstOption}</FormOtherOptionStyled>
+      <FormOtherOptionStyled>{secondOption}</FormOtherOptionStyled>
     </FormOtherOptionsContainerStyled>
   );
 };

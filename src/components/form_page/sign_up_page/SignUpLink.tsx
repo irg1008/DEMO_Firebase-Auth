@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 // Routes
-import * as ROUTES from "../../../constants/routes";
+import { SIGN_UP } from "../../../constants/routes";
 
 // Link to SignUpPage text
 const linkText = {
@@ -18,7 +18,7 @@ const linkText = {
 const SignUpLink = () => {
   return (
     <p>
-      {linkText.noAccount} <Link to={ROUTES.SIGN_UP}>{linkText.register}</Link>
+      {linkText.noAccount} <Link to={SIGN_UP.path}>{linkText.register}</Link>
     </p>
   );
 };

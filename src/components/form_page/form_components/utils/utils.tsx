@@ -1,14 +1,27 @@
 /**
+ * Interface for input checking.
+ *
+ * @interface InputCheck
+ */
+interface InputCheck {
+  isValid: boolean;
+  errorMsg: string;
+}
+
+// Initial state of input checks.
+const INITIAL_INPUT_CHECK: InputCheck = {
+  isValid: true,
+  errorMsg: "",
+};
+
+/**
  * Check username validation.
  *
  * @param {string} username
  * @returns Username is valid.
  */
 const checkUsername = (username: string) => {
-  let usernameCheck = {
-    isValid: true,
-    errorMsg: "",
-  };
+  let usernameCheck = { ...INITIAL_INPUT_CHECK };
 
   // Checking username lenght > 3
   if (username.length < 3) {
@@ -27,10 +40,7 @@ const checkUsername = (username: string) => {
  * @returns Email is valid.
  */
 const checkEmail = (email: string) => {
-  let emailCheck = {
-    isValid: true,
-    errorMsg: "",
-  };
+  let emailCheck = { ...INITIAL_INPUT_CHECK };
 
   // Checking email format
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -49,10 +59,7 @@ const checkEmail = (email: string) => {
  * @returns Password One is valid
  */
 const checkFirstPassword = (passwordOne: string) => {
-  let passwordCheck = {
-    isValid: true,
-    errorMsg: "",
-  };
+  let passwordCheck = { ...INITIAL_INPUT_CHECK };
 
   // Min 6 chars
   // Min 1 Number
@@ -78,10 +85,7 @@ const checkFirstPassword = (passwordOne: string) => {
  * @returns Password Two is valid
  */
 const checkConfirmPassword = (passwordOne: string, passwordTwo: string) => {
-  let passwordTwoCheck = {
-    isValid: true,
-    errorMsg: "",
-  };
+  let passwordTwoCheck = { ...INITIAL_INPUT_CHECK };
 
   // Check password confirmation
   if (passwordOne !== passwordTwo) {

@@ -8,11 +8,13 @@ import FormInput from "./elements/FormInput";
 import * as checkValidation from "./utils/utils";
 
 // Form Wrapper
-import FormWrapper from "./formWrapper";
+import FormWrapper from "./FormWrapper";
 
-
-export { FormButton, ShowPassword, FormOptions, FormInput };
-
-export { checkValidation };
-
-export { FormWrapper };
+export {
+  FormButton,
+  ShowPassword,
+  FormOptions,
+  FormInput,
+  checkValidation,
+  FormWrapper,
+};

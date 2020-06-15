@@ -4,27 +4,48 @@ import React from "react";
 import { radius, colors, mainTransition } from "../../../../style/style";
 import styled from "styled-components";
 
-// Props of functional component
-interface IPRops {
+/**
+ * Props of form button.
+ *
+ * @interface IButtonProps
+ */
+interface IButtonProps {
+  /**
+   * Button is disabled.
+   *
+   * @type {boolean}
+   * @memberof IButtonProps
+   */
   disabled?: boolean;
+
+  /**
+   * Button is loading form.
+   *
+   * @type {boolean}
+   * @memberof IButtonProps
+   */
   loading?: boolean;
+
+  /**
+   * Text inside the button.
+   *
+   * @type {string}
+   * @memberof IButtonProps
+   */
   text: string;
 }
 
 /**
  * Form button.
  *
- * @param {*} props Disabled + text.
+ * @param {IButtonProps} props Disabled + text.
  * @returns Form Button.
  */
-const FormButton: React.SFC<IPRops> = (props: any) => {
+const FormButton = (props: IButtonProps) => {
+  const { disabled, loading, text } = props;
   return (
-    <FormButtonStyled
-      isDisabled={props.disabled}
-      isLoading={props.loading}
-      type="submit"
-    >
-      {props.text}
+    <FormButtonStyled isDisabled={disabled} isLoading={loading} type="submit">
+      {text}
     </FormButtonStyled>
   );
 };
@@ -34,8 +55,8 @@ export default FormButton;
 /* Styled-Components */
 // Form button
 export const FormButtonStyled = styled.button<{
-  isDisabled: boolean;
-  isLoading: boolean;
+  isDisabled?: boolean;
+  isLoading?: boolean;
 }>`
   width: 100%;
   height: 3em;

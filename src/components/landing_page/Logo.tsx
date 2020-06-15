@@ -7,7 +7,18 @@ import styled from "styled-components";
 import logo from "../../assets/svg/logo.svg";
 
 // Props of functional component
-interface IPRops {
+/**
+ * Interface of logo props.
+ *
+ * @interface ILogoProps
+ */
+interface ILogoProps {
+  /**
+   * Width of logo.
+   *
+   * @type {string}
+   * @memberof ILogoProps
+   */
   width: string;
 }
 
@@ -17,10 +28,9 @@ interface IPRops {
  * @param {*} props Recieved props, with.
  * @returns Logo component.
  */
-const Logo: React.SFC<IPRops> = (props) => {
-  return (
-    <LogoImgStyled imgWidth={props.width} src={logo} alt="silkandrock_logo" />
-  );
+const Logo = (props: ILogoProps) => {
+  const { width } = props;
+  return <LogoImgStyled imgWidth={width} src={logo} alt="silkandrock_logo" />;
 };
 
 export default Logo;

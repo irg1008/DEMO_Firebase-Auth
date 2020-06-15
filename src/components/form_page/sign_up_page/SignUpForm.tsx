@@ -168,6 +168,11 @@ class SignUpFormBase extends PureComponent<IProps, IState> {
     this.state = { ...INITIAL_STATE };
   }
 
+  /**
+   * Toggles password visibility.
+   *
+   * @memberof SignUpFormBase
+   */
   togglePasswordVisibility = () => {
     const { hiddenPass } = this.state;
     this.setState({
@@ -196,7 +201,7 @@ class SignUpFormBase extends PureComponent<IProps, IState> {
       .doCreateUserWithEmailAndPassword(email, passwordOne)
       .then((authUser: any) => {
         // Push to landing page
-        this.props.history.push(ROUTES.LANDING);
+        this.props.history.push(ROUTES.LANDING.path);
       })
       .catch((error: any) => {
         // If error happens stop loading form submit
@@ -204,7 +209,7 @@ class SignUpFormBase extends PureComponent<IProps, IState> {
         // If email exists, validation of this given error
         // Note: This error code returns a 400 error to de console, exposing the app id or api key. This is not convinient but does not expose any data of the users. This happens because we manage the white domains that can access this data. Any other domain won't be able to acces users data even if they have de api key.
         if (error.code === "auth/email-already-in-use") {
-          this.validateIndividual(this.emailAlreadyInUse);
+          this.individualValidation(this.emailAlreadyInUse);
         }
       });
   };
@@ -231,7 +236,7 @@ class SignUpFormBase extends PureComponent<IProps, IState> {
         [name]: value,
       } as ComponentState,
       () => {
-        return this.validateIndividual(callbackValidation);
+        return this.individualValidation(callbackValidation);
       }
     );
   };
@@ -259,7 +264,7 @@ class SignUpFormBase extends PureComponent<IProps, IState> {
    *
    * @memberof SignUpFormBase
    */
-  validateIndividual = (callbackValidation: any) => {
+  individualValidation = (callbackValidation: any) => {
     // Temp variables of username valid and message to display if is not.
     let validations = { ...this.state.validations };
     let errorMsg = { ...this.state.errorMsg };
@@ -420,11 +425,18 @@ class SignUpFormBase extends PureComponent<IProps, IState> {
       </>
     );
 
+    const formBottomComponent = (
+      <FormOptions
+        firstOption="Google"
+        secondOption="Registrarse por link mediante email"
+      />
+    );
+
     return (
       <FormWrapper
         onSubmit={this.onSubmit}
         content={formContent}
-        bottomComponent={<FormOptions secondOptionText="Registrarse por link mediante email" />}
+        bottomComponent={formBottomComponent}
       />
     );
   }

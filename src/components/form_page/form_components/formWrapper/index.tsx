@@ -8,12 +8,50 @@ import {
   media,
 } from "../../../../style/style";
 
-const FormWrapper = (props: any) => {
+/**
+ * Interface for props on form wrapper.
+ *
+ * @interface IFormWrapperProps
+ */
+interface IFormWrapperProps {
+  /**
+   * On submit event.
+   *
+   * @type {*}
+   * @memberof IFormWrapperProps
+   */
+  onSubmit: any;
+
+  /**
+   * Content of form. i.e. Two inputs + two buttons.
+   *
+   * @type {*}
+   * @memberof IFormWrapperProps
+   */
+  content: any;
+
+  /**
+   * Optional bottom component of form. i.e Aditional info or alternative forms.
+   *
+   * @type {*}
+   * @memberof IFormWrapperProps
+   */
+  bottomComponent?: any;
+}
+
+/**
+ * Form wrapper, can strore multiple components, given a submit button is provided. Content inside wrapper cannot be empty.
+ *
+ * @param {IFormWrapperProps} props
+ * @returns
+ */
+const FormWrapper = (props: IFormWrapperProps) => {
+  const { onSubmit, content, bottomComponent } = props;
   return (
-    <FormStyled onSubmit={props.onSubmit}>
+    <FormStyled onSubmit={onSubmit}>
       <FormContainerStyled>
-        <FormInputContainerStyled>{props.content}</FormInputContainerStyled>
-        {props.bottomComponent}
+        <FormInputContainerStyled>{content}</FormInputContainerStyled>
+        {bottomComponent}
       </FormContainerStyled>
     </FormStyled>
   );

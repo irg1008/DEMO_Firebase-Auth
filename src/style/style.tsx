@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import { keyframes } from "styled-components";
+
+// Main BG image
 import mainBG from "../assets/img/mainBG_2.png";
 
 /* GENERAL */

@@ -12,19 +12,92 @@ import {
 import styled, { css } from "styled-components";
 
 // Props of functional component
-interface IProps {
+/**
+ * Interface of input component.
+ *
+ * @interface IFormInputProps
+ */
+interface IFormInputProps {
+  /**
+   * Label of input.
+   *
+   * @type {string}
+   * @memberof IFormInputProps
+   */
   label: string;
+
+  /**
+   * Name of input.
+   *
+   * @type {string}
+   * @memberof IFormInputProps
+   */
   name: string;
+
+  /**
+   * Value inside input.
+   *
+   * @type {string}
+   * @memberof IFormInputProps
+   */
   value: string;
+
+  /**
+   * On change event.
+   *
+   * @type {*}
+   * @memberof IFormInputProps
+   */
   onChange: any;
+  
+  /**
+   * Type of input.
+   *
+   * @type {string}
+   * @memberof IFormInputProps
+   */
   type: string;
+
+  /**
+   * Placeholder of input.
+   *
+   * @type {string}
+   * @memberof IFormInputProps
+   */
   placeholder?: string;
+
+  /**
+   * Value is valid.
+   *
+   * @type {boolean}
+   * @memberof IFormInputProps
+   */
   isValid?: boolean;
+
+  /**
+   * Error on value not valid.
+   *
+   * @type {string}
+   * @memberof IFormInputProps
+   */
   errorMessage?: string;
+
+  /**
+   * If type is password, temporal state of hidden/shown.
+   *
+   * @type {boolean}
+   * @memberof IFormInputProps
+   */
   hiddenPass?: boolean;
 }
 
-const FormInput: React.SFC<IProps> = (props: any) => {
+/**
+ * Form input component.
+ *
+ * @param {IFormInputProps} props
+ * @returns
+ */
+const FormInput = (props: IFormInputProps) => {
   const {
     label,
     name,

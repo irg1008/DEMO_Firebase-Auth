@@ -2,7 +2,37 @@ import React from "react";
 
 // Styled-Components
 import styled from "styled-components";
-import { ContainerStyled, colors } from "../../style/style";
+import { ContainerStyled, colors, media } from "../../style/style";
+
+/**
+ * Interface of titles props.
+ *
+ * @interface ITitleProps
+ */
+interface ITitleProps {
+  /**
+   * Title needs a string.
+   *
+   * @type {string}
+   * @memberof ITitleProps
+   */
+  title: string;
+}
+
+/**
+ * Interface of separator props.
+ *
+ * @interface ISeparatorProps
+ */
+interface ISeparatorProps {
+  /**
+   * Separator needs a width.
+   *
+   * @type {string}
+   * @memberof ISeparatorProps
+   */
+  width: string;
+}
 
 /**
  * Title 1 <h1>
@@ -10,10 +40,11 @@ import { ContainerStyled, colors } from "../../style/style";
  * @param {string} title
  * @returns
  */
-const Title1 = (props: any) => {
+const Title1 = (props: ITitleProps) => {
+  const { title } = props;
   return (
     <Title1Styled>
-      {props.title}
+      {title}
       <Separator width="70%" />
     </Title1Styled>
   );
@@ -25,8 +56,9 @@ const Title1 = (props: any) => {
  * @param {string} title
  * @returns
  */
-const Title2 = (props: any) => {
-  return <Title2Styled>{props.title}</Title2Styled>;
+const Title2 = (props: ITitleProps) => {
+  const { title } = props;
+  return <Title2Styled>{title}</Title2Styled>;
 };
 
 /**
@@ -35,8 +67,9 @@ const Title2 = (props: any) => {
  * @param {string} title
  * @returns
  */
-const Title3 = (props: any) => {
-  return <Title3Styled>{props.title}</Title3Styled>;
+const Title3 = (props: ITitleProps) => {
+  const { title } = props;
+  return <Title3Styled>{title}</Title3Styled>;
 };
 
 /**
@@ -45,8 +78,9 @@ const Title3 = (props: any) => {
  * @param {string} title
  * @returns
  */
-const Title4 = (props: any) => {
-  return <Title4Styled>{props.title}</Title4Styled>;
+const Title4 = (props: ITitleProps) => {
+  const { title } = props;
+  return <Title4Styled>{title}</Title4Styled>;
 };
 
 /**
@@ -55,8 +89,9 @@ const Title4 = (props: any) => {
  * @param {string} title
  * @returns
  */
-const Title5 = (props: any) => {
-  return <Title5Styled>{props.title}</Title5Styled>;
+const Title5 = (props: ITitleProps) => {
+  const { title } = props;
+  return <Title5Styled>{title}</Title5Styled>;
 };
 
 /**
@@ -64,10 +99,11 @@ const Title5 = (props: any) => {
  *
  * @returns
  */
-const Separator = (props: any) => {
+const Separator = (props: ISeparatorProps) => {
+  const { width } = props;
   return (
     <SeparatorContainerStyled>
-      <SeparatorStyled width={props.width} />
+      <SeparatorStyled width={width} />
     </SeparatorContainerStyled>
   );
 };
@@ -79,6 +115,10 @@ export { Title1, Title2, Title3, Title4, Title5, Separator };
 const Title1Styled = styled.h1`
   font-size: 4em;
   text-transform: uppercase;
+  /* Media medium size */
+  @media (max-width: ${media.mediumSize}) {
+    font-size: 2.5em;
+  }
 `;
 
 // Title 2
@@ -112,6 +152,7 @@ const SeparatorContainerStyled = styled(ContainerStyled)`
   width: 100%;
   height: auto;
 `;
+
 const SeparatorStyled = styled.div<{ width: string }>`
   width: ${(props) => props.width};
   height: 0.3em;

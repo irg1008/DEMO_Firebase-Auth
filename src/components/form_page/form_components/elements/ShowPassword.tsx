@@ -10,23 +10,42 @@ import { Visibility, VisibilityOff } from "@material-ui/icons";
 // Titles
 import { Title5 } from "../../../others/Titles";
 
-// Props of functional component
-interface IProps {
+/**
+ * Interface of props of password toggle.
+ *
+ * @interface IShowPasswordProps
+ */
+interface IShowPasswordProps {
+  /**
+   * Password is hidden.
+   *
+   * @type {boolean}
+   * @memberof IShowPasswordProps
+   */
   hiddenPass: boolean;
+
+  /**
+   * On click event.
+   *
+   * @type {*}
+   * @memberof IShowPasswordProps
+   */
   onClick: any;
 }
 
+// Password message on toggle
 const passwordVisibilityMsg = {
   hidePassword: "Ocultar Contraseña",
   showPassword: "Mostrar Contraseña",
 };
 
 /**
- * Show password component.
+ * Toggle for passwords inside form.
  *
+ * @param {IShowPasswordProps} props
  * @returns
  */
-const ShowPassword: React.SFC<IProps> = (props: any) => {
+const ShowPassword = (props: IShowPasswordProps) => {
   const { hiddenPass, onClick } = props;
   return (
     <VisibilityWrapperStyled>

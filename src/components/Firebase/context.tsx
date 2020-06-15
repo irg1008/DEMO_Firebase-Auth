@@ -4,10 +4,12 @@ import React from "react";
 const FirebaseContext = React.createContext<any | null>(null);
 
 /**
- *   Capsulate passed component with firebase. Creates context for consumer.
+ * Capsulate passed component with firebase. Creates context for consumer.
  *
  * @param {*} Component
+ * @param {*} Props
  */
+
 export const withFirebase = (Component: any) => (props: any) => (
   <FirebaseContext.Consumer>
     {(firebase) => <Component {...props} firebase={firebase} />}
@@ -15,4 +17,3 @@ export const withFirebase = (Component: any) => (props: any) => (
 );
 
 export default FirebaseContext;
-
