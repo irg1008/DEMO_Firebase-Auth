@@ -50,27 +50,22 @@ const checkEmail = (email: string) => {
  */
 const checkFirstPassword = (passwordOne: string) => {
   let passwordCheck = {
-    isValid: false,
+    isValid: true,
     errorMsg: "",
   };
 
-  // Min 6 chars, un upper and lower case and number
-  if (passwordOne.length < 6) {
+  // Min 6 chars
+  // Min 1 Number
+  // Min 1 upper letter
+  // Min 1 lower letter
+  // Min 1 special char
+  if (
+    passwordOne.length < 6 ||
+    !/(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])/.test(passwordOne)
+  ) {
+    passwordCheck.isValid = false;
     passwordCheck.errorMsg =
-      "La contraseña tiene que tener mínimo 6 caracteres";
-  } else if (!/(?=.*[0-9])/.test(passwordOne)) {
-    passwordCheck.errorMsg = "La contraseña tiene que tener al menos un número";
-  } else if (!/(?=.*[a-z])/.test(passwordOne)) {
-    passwordCheck.errorMsg =
-      "La contraseña tiene que tener al menos una letra minúsucla";
-  } else if (!/(?=.*[A-Z])/.test(passwordOne)) {
-    passwordCheck.errorMsg =
-      "La contraseña tiene que tener al menos una letra mayúscula";
-  } else if (!/(?=.*[!@#$%^&*])/.test(passwordOne)) {
-    passwordCheck.errorMsg =
-      "La contraseña tiene que tener al menos un caracter especial: !@#$%^&*";
-  } else {
-    passwordCheck.isValid = true;
+      "La contraseña debe tener mínimo 6 caracteres y contener un número, letra mínúcula, mayúscula y un caracter especial: !@#$%^&*";
   }
 
   return passwordCheck;

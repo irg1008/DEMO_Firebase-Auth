@@ -8,11 +8,11 @@ import {
   inset,
   border,
   animations,
-} from "../../style/style";
+} from "../../../../style/style";
 import styled, { css } from "styled-components";
 
 // Props of functional component
-interface IPRops {
+interface IProps {
   label: string;
   name: string;
   value: string;
@@ -21,29 +21,38 @@ interface IPRops {
   placeholder?: string;
   isValid?: boolean;
   errorMessage?: string;
+  hiddenPass?: boolean;
 }
 
-/**
- * Form Input.
- *
- * @param {*} props IProps.
- * @returns Form Input.
- */
-const FormInput: React.SFC<IPRops> = (props: any) => {
+const FormInput: React.SFC<IProps> = (props: any) => {
+  const {
+    label,
+    name,
+    value,
+    onChange,
+    type,
+    placeholder,
+    isValid,
+    errorMessage,
+    hiddenPass,
+  } = props;
+
   return (
     <FormInputStyled>
-      <FormLabelStyled>{props.label}</FormLabelStyled>
-      <FormBoxStyled
-        name={props.name}
-        value={props.value}
-        onChange={props.onChange}
-        type={props.type}
-        placeholder={props.placeholder}
-        hasError={props.isValid === false}
-      />
-      <FormErrorMessageStyled>
-        {!props.isValid && props.errorMessage}
-      </FormErrorMessageStyled>
+      <FormLabelStyled>{label}</FormLabelStyled>
+      <FormBoxContainerStyled>
+        <FormBoxStyled
+          name={name}
+          value={value}
+          onChange={onChange}
+          type={type === "password" ? (hiddenPass ? "password" : "text") : type}
+          placeholder={placeholder}
+          hasError={isValid === false}
+        />
+      </FormBoxContainerStyled>
+      {!isValid && (
+        <FormErrorMessageStyled>{errorMessage}</FormErrorMessageStyled>
+      )}
     </FormInputStyled>
   );
 };
@@ -70,9 +79,15 @@ const FormLabelStyled = styled.label`
   margin: 0 0 0.5em 0;
 `;
 
+// Form box container
+const FormBoxContainerStyled = styled.div`
+  width: 100%;
+  height: auto;
+`;
+
 // Form box
 const FormBoxStyled = styled.input<{ hasError: boolean }>`
-  width: 100%;
+  width: inherit;
   height: 3em;
   /* Margin, Padding, Border */
   padding: 0 0.6em;

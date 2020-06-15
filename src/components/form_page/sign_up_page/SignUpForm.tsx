@@ -9,25 +9,20 @@ import { withRouter } from "react-router-dom";
 // Routes
 import * as ROUTES from "../../../constants/routes";
 
-// Styled-Components
+// Form elements, utils, validations and wrapper
+// Forme elements
 import {
-  FormContainerStyled,
-  FormStyled,
-  FormInputContainerStyled,
-} from "../../../style/style";
-
-// Form Input
-import FormInput from "../FormInput";
-
-// Form Button
-import FormButton from "../FormButton";
+  FormInput,
+  FormButton,
+  checkValidation,
+  ShowPassword,
+  FormWrapper,
+  FormOptions,
+} from "../form_components";
 
 // Firebase
 import Firebase from "../../Firebase";
 import { withFirebase } from "../../Firebase";
-
-// Validations
-import * as checkValidation from "../utils";
 
 /**
  * Interface of passes props.
@@ -91,6 +86,14 @@ interface IState {
   passwordTwo: string;
 
   /**
+   * State of password visibility
+   *
+   * @type {boolean}
+   * @memberof IState
+   */
+  hiddenPass: boolean;
+
+  /**
    * Validations of inputs.
    *
    * @type {{
@@ -149,6 +152,7 @@ const INITIAL_STATE: IState = {
   email: "",
   passwordOne: "",
   passwordTwo: "",
+  hiddenPass: true,
 };
 
 /**
@@ -163,6 +167,13 @@ class SignUpFormBase extends PureComponent<IProps, IState> {
     // Initialices the state.
     this.state = { ...INITIAL_STATE };
   }
+
+  togglePasswordVisibility = () => {
+    const { hiddenPass } = this.state;
+    this.setState({
+      hiddenPass: !hiddenPass,
+    });
+  };
 
   /**
    * On submit form.
@@ -340,6 +351,7 @@ class SignUpFormBase extends PureComponent<IProps, IState> {
       email,
       passwordOne,
       passwordTwo,
+      hiddenPass,
       isValid,
       loading,
     } = this.state;
@@ -347,7 +359,7 @@ class SignUpFormBase extends PureComponent<IProps, IState> {
     const errorMsg = { ...this.state.errorMsg };
 
     const formContent = (
-      <FormInputContainerStyled>
+      <>
         <FormInput
           label="Nombre"
           name="username"
@@ -380,6 +392,7 @@ class SignUpFormBase extends PureComponent<IProps, IState> {
           type="password"
           isValid={validations.passwordOneValid}
           errorMessage={errorMsg.passwordOneErrorMsg}
+          hiddenPass={hiddenPass}
         />
         <FormInput
           label="Repite la contraseña"
@@ -391,6 +404,11 @@ class SignUpFormBase extends PureComponent<IProps, IState> {
           type="password"
           isValid={validations.passwordTwoValid}
           errorMessage={errorMsg.passwordTwoErrorMsg}
+          hiddenPass={hiddenPass}
+        />
+        <ShowPassword
+          hiddenPass={hiddenPass}
+          onClick={this.togglePasswordVisibility}
         />
         <FormButton
           disabled={!isValid}
@@ -399,13 +417,15 @@ class SignUpFormBase extends PureComponent<IProps, IState> {
             loading ? "Comprobando que todo esté correcto..." : "Crear Cuenta"
           }
         />
-      </FormInputContainerStyled>
+      </>
     );
 
     return (
-      <FormStyled onSubmit={this.onSubmit}>
-        <FormContainerStyled>{formContent}</FormContainerStyled>
-      </FormStyled>
+      <FormWrapper
+        onSubmit={this.onSubmit}
+        content={formContent}
+        bottomComponent={<FormOptions secondOptionText="Registrarse por link mediante email" />}
+      />
     );
   }
 }

@@ -50,6 +50,16 @@ const Title4 = (props: any) => {
 };
 
 /**
+ * Title 5 <h5>
+ *
+ * @param {string} title
+ * @returns
+ */
+const Title5 = (props: any) => {
+  return <Title5Styled>{props.title}</Title5Styled>;
+};
+
+/**
  * Separator horizontal
  *
  * @returns
@@ -62,7 +72,7 @@ const Separator = (props: any) => {
   );
 };
 
-export { Title1, Title2, Title3, Title4, Separator };
+export { Title1, Title2, Title3, Title4, Title5, Separator };
 
 // Styled-Components
 // Title 1
@@ -87,6 +97,14 @@ const Title3Styled = styled.h3`
 const Title4Styled = styled.h4`
   font-size: 1em;
   text-transform: uppercase;
+  margin: 0 0.5em;
+`;
+
+// Title 5
+const Title5Styled = styled.h5`
+  font-size: 0.9em;
+  text-transform: uppercase;
+  margin: 0 0.5em;
 `;
 
 // Separator

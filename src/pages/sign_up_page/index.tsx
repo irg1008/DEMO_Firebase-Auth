@@ -34,5 +34,6 @@ const SignUpContainerStyled = styled(MainBGContainerStyled)`
   width: auto;
   min-height: 100vh;
   height: auto;
-  overflow: auto;
+  /* Flexbox */
+  justify-content: flex-start;
 `;

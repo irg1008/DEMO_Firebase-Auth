@@ -87,8 +87,17 @@ class Firebase {
   doPasswordUpdate = (password: string) =>
     this.auth.currentUser.updatePassword(password);
 
+  /**
+   * Get the current user.
+   *
+   * @memberof Firebase
+   */
   doGetCurrentUser = () => {
     return this.auth.currentUser;
+  };
+
+  doSendSignInLinkToEmail = (email: string) => {
+    return this.auth.sendSignInLinkToEmail(email);
   };
 }
 

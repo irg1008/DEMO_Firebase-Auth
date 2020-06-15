@@ -30,7 +30,6 @@ const ErrorContainerStyled = styled(MainBGContainerStyled)`
   width: auto;
   min-height: 100vh;
   height: auto;
-  overflow: auto;
   color: ${colors.mainBlack};
   & a {
     text-decoration: none;

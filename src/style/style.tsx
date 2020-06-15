@@ -49,15 +49,17 @@ export const animations = {
 `,
 
   moveInFromLeftAnimation: keyframes`
-  from {transform: translateX(-100%);}
-  to   {transform: translateX(0);}
+  from {transform: translateX(-100%);
+        opacity: 0;}
+  to   {transform: translateX(0);
+        opacity: 1}
   `,
 
   shakeAnimation: keyframes`
   30%  {transform: rotate(0deg);}
   35%  {transform: rotate(1.5deg);}
   45%  {transform: rotate(-1.5deg);}
-  50% {transform: rotate(0deg);}
+  50%  {transform: rotate(0deg);}
   `,
 };
 
@@ -69,7 +71,7 @@ export const media = {
 };
 
 // Main transition
-export const mainTransition = "all 0.2s ease-in";
+export const mainTransition = "all 0.2s ease-in-out";
 
 // Main contanier style.
 export const ContainerStyled = styled.div`
@@ -78,6 +80,21 @@ export const ContainerStyled = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+`;
+
+// Bordered Container
+export const BorderedContainerStyled = styled(ContainerStyled)`
+  width: auto;
+  height: auto;
+  min-height: 10em;
+  /* Margin, Padding, Border */
+  padding: 1.5em;
+  border: ${border.mainBorder};
+  border-radius: ${radius.mediumRadius};
+  /* Flexbox */
+  justify-content: space-around;
+  /* BG */
+  background-color: ${colors.mainWhite};
 `;
 
 // Main container style with main background.
@@ -93,38 +110,3 @@ export const MainBGContainerStyled = styled(ContainerStyled)`
   background-position: center;
 `;
 /* END OF GENERAL */
-
-/* FORM */
-// Form
-export const FormStyled = styled.form`
-  min-width: 100vw;
-  height: auto;
-  min-height: 10em;
-`;
-
-// Form container
-export const FormContainerStyled = styled(ContainerStyled)`
-  width: 100%;
-  height: 100%;
-`;
-
-// Form Input Container
-export const FormInputContainerStyled = styled(ContainerStyled)`
-  width: 30em;
-  height: auto;
-  min-height: 10em;
-  /* Margin, Padding, Border */
-  padding: 1.5em;
-  border: ${border.mainBorder};
-  border-radius: ${radius.mediumRadius};
-  margin-bottom: 2em;
-  /* Flexbox */
-  justify-content: space-around;
-  /* BG */
-  background-color: ${colors.mainWhite};
-  /* Media medium size */
-  @media (max-width: ${media.mediumSize}) {
-    width: 90%;
-  }
-`;
-/* END OF FORM */

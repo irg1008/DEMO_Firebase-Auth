@@ -33,5 +33,4 @@ const LandingPageContainerStyled = styled(MainBGContainerStyled)`
   width: auto;
   min-height: 100vh;
   height: auto;
-  overflow: auto;
 `;
