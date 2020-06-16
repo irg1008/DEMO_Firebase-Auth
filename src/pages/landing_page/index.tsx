@@ -2,7 +2,7 @@ import React from "react";
 
 // Styled-Components
 import styled from "styled-components";
-import { MainBGContainerStyled } from "../../style/style";
+import { MainBGContainerStyled, ContainerStyled } from "../../style/style";
 
 // Logo
 import Logo from "../../components/landing_page/Logo";
@@ -18,7 +18,9 @@ import EnConstruccion from "../../components/landing_page/EnConstruccion";
 const LandingPage = () => {
   return (
     <LandingPageContainerStyled>
-      <Logo width={"70%"} />
+      <LandingLogoContainerStyled>
+        <Logo />
+      </LandingLogoContainerStyled>
       <EnConstruccion />
     </LandingPageContainerStyled>
   );
@@ -33,4 +35,9 @@ const LandingPageContainerStyled = styled(MainBGContainerStyled)`
   width: auto;
   min-height: 100vh;
   height: auto;
+`;
+
+// MainPage logo
+const LandingLogoContainerStyled = styled(ContainerStyled)`
+  width: "70%";
 `;

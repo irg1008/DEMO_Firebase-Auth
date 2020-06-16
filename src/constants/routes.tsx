@@ -8,13 +8,21 @@ import LogInPage from "../pages/log_in_page";
 
 // Page information interface
 interface PageInformation {
+  id: number;
   path?: string | any;
   exact?: boolean;
   component: any;
 }
 
+// Page id
+let pageId: number = 0;
+const getId = () => {
+  return pageId++;
+};
+
 // Loading page
 export const LANDING: PageInformation = {
+  id: getId(),
   path: "/",
   exact: true,
   component: () => <LandingPage />,
@@ -22,6 +30,7 @@ export const LANDING: PageInformation = {
 
 // Loading page
 export const SIGN_UP: PageInformation = {
+  id: getId(),
   path: "/join",
   exact: true,
   component: () => <SignUpPage />,
@@ -29,6 +38,7 @@ export const SIGN_UP: PageInformation = {
 
 // Loading page
 export const LOG_IN: PageInformation = {
+  id: getId(),
   path: "/login",
   exact: true,
   component: () => <LogInPage />,
@@ -36,6 +46,7 @@ export const LOG_IN: PageInformation = {
 
 // Loading page
 export const ERROR: PageInformation = {
+  id: getId(),
   component: () => <ErrorPage />,
 };
 

@@ -5,6 +5,7 @@ import {
   ContainerStyled,
   BorderedContainerStyled,
   media,
+  mainTransition,
 } from "../../../../style/style";
 import styled from "styled-components";
 
@@ -78,6 +79,15 @@ export const FormOtherOptionStyled = styled(BorderedContainerStyled)`
   flex-direction: row;
   /* Margin, Padding, Border */
   padding: 1em;
+  /* Cursor */
+  cursor: pointer;
+  /* Transition */
+  transition: ${mainTransition};
+  /* Hover */
+  &:hover {
+    /* Transition */
+    transition: ${mainTransition};
+  }
   /* Media medium size */
   @media (min-width: ${media.mediumSize}) {
     width: 48%;

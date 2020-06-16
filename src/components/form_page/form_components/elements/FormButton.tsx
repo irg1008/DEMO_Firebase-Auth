@@ -36,7 +36,7 @@ interface IButtonProps {
 }
 
 /**
- * Form button.
+ * Form button. Only submits when enabled
  *
  * @param {IButtonProps} props Disabled + text.
  * @returns Form Button.
@@ -44,7 +44,11 @@ interface IButtonProps {
 const FormButton = (props: IButtonProps) => {
   const { disabled, loading, text } = props;
   return (
-    <FormButtonStyled isDisabled={disabled} isLoading={loading} type="submit">
+    <FormButtonStyled
+      isDisabled={disabled}
+      isLoading={loading}
+      type={!disabled ? "submit" : "button"}
+    >
       {text}
     </FormButtonStyled>
   );

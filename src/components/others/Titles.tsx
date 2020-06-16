@@ -108,7 +108,20 @@ const Separator = (props: ISeparatorProps) => {
   );
 };
 
-export { Title1, Title2, Title3, Title4, Title5, Separator };
+// Exporting the component with all decorations added and the plain styled title.
+export {
+  Title1,
+  Title1Styled,
+  Title2,
+  Title2Styled,
+  Title3,
+  Title3Styled,
+  Title4,
+  Title4Styled,
+  Title5,
+  Title5Styled,
+  Separator,
+};
 
 // Styled-Components
 // Title 1

@@ -6,37 +6,20 @@ import styled from "styled-components";
 // Logo
 import logo from "../../assets/svg/logo.svg";
 
-// Props of functional component
-/**
- * Interface of logo props.
- *
- * @interface ILogoProps
- */
-interface ILogoProps {
-  /**
-   * Width of logo.
-   *
-   * @type {string}
-   * @memberof ILogoProps
-   */
-  width: string;
-}
 
 /**
- * Logo component with image.
+ * Logo component with image 100% width of parent.
  *
- * @param {*} props Recieved props, with.
- * @returns Logo component.
+ * @returns
  */
-const Logo = (props: ILogoProps) => {
-  const { width } = props;
-  return <LogoImgStyled imgWidth={width} src={logo} alt="silkandrock_logo" />;
+const Logo = () => {
+  return <LogoImgStyled src={logo} alt="silkandrock_logo" />;
 };
 
 export default Logo;
 
 /* Styled-Components */
 // Logo img
-const LogoImgStyled = styled.img<{ imgWidth: string }>`
-  width: ${(props) => props.imgWidth};
+const LogoImgStyled = styled.img`
+  width: 100%;
 `;

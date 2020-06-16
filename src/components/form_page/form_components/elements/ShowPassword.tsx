@@ -1,14 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 
 // Styled-Components
-import { ContainerStyled, colors, radius } from "../../../../style/style";
+import {
+  ContainerStyled,
+  colors,
+  radius,
+  mainTransition,
+  animations,
+  noSelect,
+} from "../../../../style/style";
 import styled from "styled-components";
 
 // Password icon
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 
-// Titles
-import { Title5 } from "../../../others/Titles";
+// Titles. Import of style of title 5, not title5 decorations needed.
+import { Title5Styled } from "../../../others/Titles";
 
 /**
  * Interface of props of password toggle.
@@ -47,19 +54,31 @@ const passwordVisibilityMsg = {
  */
 const ShowPassword = (props: IShowPasswordProps) => {
   const { hiddenPass, onClick } = props;
+
+  // Visibility msg
+  const visibilityMsg = hiddenPass
+    ? passwordVisibilityMsg.showPassword
+    : passwordVisibilityMsg.hidePassword;
+
+  // Hovering icon
+  const [isHovering, setIsHovering] = useState(false);
+
   return (
     <VisibilityWrapperStyled>
-      <VisibilityContainerStyled onClick={onClick}>
+      <VisibilityTitleContainerStyled isHovering={isHovering}>
+        <Title5Styled>{visibilityMsg}</Title5Styled>
+      </VisibilityTitleContainerStyled>
+      <VisibilityContainerStyled
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => {
+          setIsHovering(false);
+        }}
+        onClick={onClick}
+      >
         {hiddenPass ? (
-          <>
-            <Title5 title={passwordVisibilityMsg.showPassword} />
-            <VisibilityOff fontSize="small" />
-          </>
+          <VisibilityOff fontSize="small" />
         ) : (
-          <>
-            <Title5 title={passwordVisibilityMsg.hidePassword} />
-            <Visibility fontSize="small" />
-          </>
+          <Visibility fontSize="small" />
         )}
       </VisibilityContainerStyled>
     </VisibilityWrapperStyled>
@@ -72,22 +91,47 @@ export default ShowPassword;
 // Visibility wrapper
 const VisibilityWrapperStyled = styled(ContainerStyled)`
   width: 100%;
-  height: auto;
-  align-items: flex-end;
+  height: 2em;
+  /* Flexbox */
+  justify-content: flex-end;
+  flex-direction: row;
+  /* Margin, Padding, Border */
+  margin-bottom: 0.8em;
+`;
+
+// Visibility title container
+const VisibilityTitleContainerStyled = styled(ContainerStyled)<{
+  isHovering: boolean;
+}>`
+  height: 100%;
+  position: relative;
+  /* Flexbox */
+  flex-direction: row;
+  /* Margin, Padding, Border */
+  margin-right: 0.5em;
+  /* Font */
+  color: ${colors.mainBlack};
+  /* Transition */
+  transition: ${mainTransition};
+  /* Animation */
+  animation: ${(props) =>
+    props.isHovering ? animations.fadeInAnimation : animations.fadeOutAnimation}
+    0.2s linear forwards;
+  /* No select */
+  ${(props) => !props.isHovering && noSelect}
+  /* Cursor */
+  cursor: ${(props) => !props.isHovering && "default"};
 `;
 
 // Visibility Container
 const VisibilityContainerStyled = styled(ContainerStyled)`
-  height: 2em;
+  height: 100%;
   width: auto;
   /* Margin, Padding, Border */
   padding: 0.5em;
   border-radius: ${radius.mainRadius};
-  margin-bottom: 0.8em;
   /* BG */
   background-color: ${colors.mainBlack};
-  /* Flexbox */
-  flex-direction: row;
   /* Color */
   color: ${colors.mainWhite};
   /* Hover */

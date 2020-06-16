@@ -16,6 +16,7 @@ const App = () => {
       <Switch>
         {pages.map((route) => (
           <Route
+            key={route.id}
             path={route.path}
             exact={route.exact}
             component={route.component}

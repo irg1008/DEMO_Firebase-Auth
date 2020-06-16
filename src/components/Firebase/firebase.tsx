@@ -104,6 +104,11 @@ class Firebase {
   doSendSignInLinkToEmail = (email: string) => {
     return this.auth.sendSignInLinkToEmail(email);
   };
+
+  doSignInWithGoogle = () => {
+    let provider = new this.auth.GoogleAuthProvider();
+    return this.auth.signInWithPopup(provider);
+  };
 }
 
 export default Firebase;
