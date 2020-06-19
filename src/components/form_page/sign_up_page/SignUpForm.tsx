@@ -10,7 +10,6 @@ import { withRouter } from "react-router-dom";
 import * as ROUTES from "../../../constants/routes";
 
 // Form elements, utils, validations and wrapper
-// Forme elements
 import {
   FormInput,
   FormButton,
@@ -18,23 +17,59 @@ import {
   ShowPassword,
   FormWrapper,
   FormOptions,
+  SignWithGoogle,
 } from "../form_components";
 
 // Firebase
-import Firebase from "../../Firebase";
-import { withFirebase } from "../../Firebase";
+import Firebase, { withFirebase } from "../../Firebase";
+
+/**
+ * Interface of input.
+ *
+ * @interface IInputState
+ */
+interface IInputState {
+  /**
+   * Value of input.
+   *
+   * @type {string}
+   * @memberof IInputState
+   */
+  value: string;
+
+  /**
+   * Validity of input.
+   *
+   * @type {boolean}
+   * @memberof IInputState
+   */
+  isValid?: boolean;
+
+  /**
+   * Error mesg on input is no valid.
+   *
+   * @type {string}
+   * @memberof IInputState
+   */
+  errorMsg?: string;
+}
+
+// Initial input state.
+const INITIAL_INPUT_STATE = {
+  value: "",
+};
 
 /**
  * Interface of passes props.
  *
- * @interface IProps
+ * @interface ISignUpProps
  */
-interface IProps {
+interface ISignUpProps {
   /**
    * Firebase class.
    *
    * @type {Firebase}
-   * @memberof IProps
+   * @memberof ISignUpProps
    */
   firebase: Firebase;
 
@@ -42,7 +77,7 @@ interface IProps {
    * History of react-router-dom.
    *
    * @type {*}
-   * @memberof IProps
+   * @memberof ISignUpProps
    */
   history: any;
 }
@@ -50,90 +85,54 @@ interface IProps {
 /**
  * Interface of state.
  *
- * @interface IState
+ * @interface ISignUpState
  */
-interface IState {
+interface ISignUpState {
   /**
-   * Username.
+   * Username input.
    *
-   * @type {string}
-   * @memberof IState
+   * @type {IInputState}
+   * @memberof ISignUpState
    */
-  username: string;
+  username: IInputState;
 
   /**
    * Email.
    *
-   * @type {string}
-   * @memberof IState
+   * @type {IInputState}
+   * @memberof ISignUpState
    */
-  email: string;
+  email: IInputState;
 
   /**
    * PasswordOne.
    *
-   * @type {string}
-   * @memberof IState
+   * @type {IInputState}
+   * @memberof ISignUpState
    */
-  passwordOne: string;
+  passwordOne: IInputState;
 
   /**
    * PasswordTwo.
    *
-   * @type {string}
-   * @memberof IState
+   * @type {IInputState}
+   * @memberof ISignUpState
    */
-  passwordTwo: string;
+  passwordTwo: IInputState;
 
   /**
    * State of password visibility
    *
    * @type {boolean}
-   * @memberof IState
+   * @memberof ISignUpState
    */
   hiddenPass: boolean;
-
-  /**
-   * Validations of inputs.
-   *
-   * @type {{
-   *     usernameValid?: boolean;
-   *     emailValid?: boolean;
-   *     passwordOneValid?: boolean;
-   *     passwordTwoValid?: boolean;
-   *   }}
-   * @memberof IState
-   */
-  validations?: {
-    usernameValid?: boolean;
-    emailValid?: boolean;
-    passwordOneValid?: boolean;
-    passwordTwoValid?: boolean;
-  };
-
-  /**
-   * Error messages
-   *
-   * @type {{
-   *     usernameErrorMsg: string;
-   *     emailErrorMsg: string;
-   *     passwordOneErrorMsg: string;
-   *     passwordTwoErrorMsg: string;
-   *   }}
-   * @memberof IState
-   */
-  errorMsg?: {
-    usernameErrorMsg?: string;
-    emailErrorMsg?: string;
-    passwordOneErrorMsg?: string;
-    passwordTwoErrorMsg?: string;
-  };
 
   /**
    * Form is valid.
    *
    * @type {boolean}
-   * @memberof IState
+   * @memberof ISignUpState
    */
   isValid?: boolean;
 
@@ -141,17 +140,17 @@ interface IState {
    * Form is signing in and retrieving eny error ocurred.
    *
    * @type {boolean}
-   * @memberof IState
+   * @memberof ISignUpState
    */
   loading?: boolean;
 }
 
 // Initial state. Valid states only on initial state.
-const INITIAL_STATE: IState = {
-  username: "",
-  email: "",
-  passwordOne: "",
-  passwordTwo: "",
+const INITIAL_STATE: ISignUpState = {
+  username: { ...INITIAL_INPUT_STATE },
+  email: { ...INITIAL_INPUT_STATE },
+  passwordOne: { ...INITIAL_INPUT_STATE },
+  passwordTwo: { ...INITIAL_INPUT_STATE },
   hiddenPass: true,
 };
 
@@ -159,26 +158,14 @@ const INITIAL_STATE: IState = {
  * Base sign up form.
  *
  * @class SignUpFormBase class.
- * @extends {PureComponent<IProps, IState>}
+ * @extends {PureComponent<ISignUpProps, ISignUpState>}
  */
-class SignUpFormBase extends PureComponent<IProps, IState> {
-  constructor(props: IProps) {
+class SignUpFormBase extends PureComponent<ISignUpProps, ISignUpState> {
+  constructor(props: ISignUpProps) {
     super(props);
     // Initialices the state.
     this.state = { ...INITIAL_STATE };
   }
-
-  /**
-   * Toggles password visibility.
-   *
-   * @memberof SignUpFormBase
-   */
-  togglePasswordVisibility = () => {
-    const { hiddenPass } = this.state;
-    this.setState({
-      hiddenPass: !hiddenPass,
-    });
-  };
 
   /**
    * On submit form.
@@ -187,6 +174,7 @@ class SignUpFormBase extends PureComponent<IProps, IState> {
    * @memberof SignUpFormBase
    */
   onSubmit = (event: FormEvent) => {
+    const { firebase } = this.props;
     // Prevent default behaviour.
     event.preventDefault();
 
@@ -197,19 +185,19 @@ class SignUpFormBase extends PureComponent<IProps, IState> {
     this.setState({ loading: true });
 
     // On submit => create user, reset state and push to landing page.
-    this.props.firebase
-      .doCreateUserWithEmailAndPassword(email, passwordOne)
+    firebase
+      .doCreateUserWithEmailAndPassword(email.value, passwordOne.value)
       .then((authUser: any) => {
+        // TODO: Verify the email with verify page and add user info
         // Push to landing page
         this.props.history.push(ROUTES.LANDING.path);
       })
       .catch((error: any) => {
         // If error happens stop loading form submit
         this.setState({ loading: false });
-        // If email exists, validation of this given error
         // Note: This error code returns a 400 error to de console, exposing the app id or api key. This is not convinient but does not expose any data of the users. This happens because we manage the white domains that can access this data. Any other domain won't be able to acces users data even if they have de api key.
         if (error.code === "auth/email-already-in-use") {
-          this.individualValidation(this.emailAlreadyInUse);
+          this.emailAlreadyInUse();
         }
       });
   };
@@ -233,10 +221,10 @@ class SignUpFormBase extends PureComponent<IProps, IState> {
     // Change the value in the state of given input name prop and then validate form.
     this.setState(
       {
-        [name]: value,
+        [name]: { value },
       } as ComponentState,
       () => {
-        return this.individualValidation(callbackValidation);
+        callbackValidation();
       }
     );
   };
@@ -247,39 +235,16 @@ class SignUpFormBase extends PureComponent<IProps, IState> {
    * @memberof SignUpFormBase
    */
   validateForm = () => {
-    const validations = { ...this.state.validations };
+    const { username, email, passwordOne, passwordTwo } = this.state;
 
     // Validation.
     this.setState({
       isValid:
-        validations.usernameValid &&
-        validations.emailValid &&
-        validations.passwordOneValid &&
-        validations.passwordTwoValid,
+        username.isValid &&
+        email.isValid &&
+        passwordOne.isValid &&
+        passwordTwo.isValid,
     });
-  };
-
-  /**
-   * Prepare and call for individual validations.
-   *
-   * @memberof SignUpFormBase
-   */
-  individualValidation = (callbackValidation: any) => {
-    // Temp variables of username valid and message to display if is not.
-    let validations = { ...this.state.validations };
-    let errorMsg = { ...this.state.errorMsg };
-
-    // Callback individual validation
-    callbackValidation(validations, errorMsg);
-
-    // Update state with new validations and error messages.
-    this.setState(
-      {
-        validations,
-        errorMsg,
-      },
-      this.validateForm
-    );
   };
 
   /**
@@ -287,11 +252,16 @@ class SignUpFormBase extends PureComponent<IProps, IState> {
    *
    * @memberof SignUpFormBase
    */
-  validateUsername = (validations: any, errorMsg: any) => {
-    const { username } = this.state;
-    const userCheck = checkValidation.checkUsername(username);
-    validations.usernameValid = userCheck.isValid;
-    errorMsg.usernameErrorMsg = userCheck.errorMsg;
+  validateUsername = () => {
+    const username = { ...this.state.username };
+
+    // Check username validity.
+    const userCheck = checkValidation.checkUsername(username.value);
+    username.isValid = userCheck.isValid;
+    username.errorMsg = userCheck.errorMsg;
+
+    // Change username info.
+    this.setState({ username }, () => this.validateForm());
   };
 
   /**
@@ -299,11 +269,16 @@ class SignUpFormBase extends PureComponent<IProps, IState> {
    *
    * @memberof SignUpFormBase
    */
-  validateEmail = (validations: any, errorMsg: any) => {
-    const { email } = this.state;
-    const emailCheck = checkValidation.checkEmail(email);
-    validations.emailValid = emailCheck.isValid;
-    errorMsg.emailErrorMsg = emailCheck.errorMsg;
+  validateEmail = () => {
+    const email = { ...this.state.email };
+
+    // Check email validity.
+    const emailCheck = checkValidation.checkEmail(email.value);
+    email.isValid = emailCheck.isValid;
+    email.errorMsg = emailCheck.errorMsg;
+
+    // Change email info.
+    this.setState({ email }, () => this.validateForm());
   };
 
   /**
@@ -311,36 +286,54 @@ class SignUpFormBase extends PureComponent<IProps, IState> {
    *
    * @memberof SignUpFormBase
    */
-  emailAlreadyInUse = (validations: any, errorMsg: any) => {
-    validations.emailValid = false;
-    errorMsg.emailErrorMsg = "Este correo ya está en uso, prueba con otro";
+  emailAlreadyInUse = () => {
+    const email = { ...this.state.email };
+
+    // Change email info
+    email.isValid = false;
+    email.errorMsg = "Este correo ya está en uso, prueba con otro";
+
+    this.setState({ email }, () => this.validateForm());
   };
 
   /**
-   * Validate password one and check entire form.
+   * Validate passwords.
    *
    * @memberof SignUpFormBase
    */
-  validatePasswordOne = (validations: any, errorMsg: any) => {
-    const { passwordOne } = this.state;
-    const passwordOneCheck = checkValidation.checkFirstPassword(passwordOne);
-    validations.passwordOneValid = passwordOneCheck.isValid;
-    errorMsg.passwordOneErrorMsg = passwordOneCheck.errorMsg;
-  };
+  validatePasswords = () => {
+    const passwordOne = { ...this.state.passwordOne };
+    const passwordTwo = { ...this.state.passwordTwo };
 
-  /**
-   * Validate password two and check entire form.
-   *
-   * @memberof SignUpFormBase
-   */
-  validatePasswordTwo = (validations: any, errorMsg: any) => {
-    const { passwordOne, passwordTwo } = this.state;
-    const passwordTwoCheck = checkValidation.checkConfirmPassword(
-      passwordOne,
-      passwordTwo
+    // Check password 1
+    const passwordOneCheck = checkValidation.checkFirstPassword(
+      passwordOne.value
     );
-    validations.passwordTwoValid = passwordTwoCheck.isValid;
-    errorMsg.passwordTwoErrorMsg = passwordTwoCheck.errorMsg;
+    passwordOne.isValid = passwordOneCheck.isValid;
+    passwordOne.errorMsg = passwordOneCheck.errorMsg;
+
+    // Check password 2
+    const passwordTwoCheck = checkValidation.checkConfirmPassword(
+      passwordOne.value,
+      passwordTwo.value
+    );
+    passwordTwo.isValid = passwordTwoCheck.isValid;
+    passwordTwo.errorMsg = passwordTwoCheck.errorMsg;
+
+    // Change password info.
+    this.setState({ passwordOne, passwordTwo }, () => this.validateForm());
+  };
+
+  /**
+   * Toggles password visibility.
+   *
+   * @memberof SignUpFormBase
+   */
+  togglePasswordVisibility = () => {
+    const { hiddenPass } = this.state;
+    this.setState({
+      hiddenPass: !hiddenPass,
+    });
   };
 
   /**
@@ -350,7 +343,7 @@ class SignUpFormBase extends PureComponent<IProps, IState> {
    * @memberof SignUpFormBase
    */
   render() {
-    // State decostrution.
+    // State deconstruction.
     const {
       username,
       email,
@@ -360,56 +353,58 @@ class SignUpFormBase extends PureComponent<IProps, IState> {
       isValid,
       loading,
     } = this.state;
-    const validations = { ...this.state.validations };
-    const errorMsg = { ...this.state.errorMsg };
 
     const formContent = (
       <>
         <FormInput
           label="Nombre"
           name="username"
-          value={username}
+          value={username.value}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             this.onChange(e, this.validateUsername)
           }
           type="text"
-          isValid={validations.usernameValid}
-          errorMessage={errorMsg.usernameErrorMsg}
+          isValid={username.isValid}
+          errorMessage={username.errorMsg}
+          required
         />
         <FormInput
           label="Email"
           name="email"
-          value={email}
+          value={email.value}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             this.onChange(e, this.validateEmail)
           }
           type="text"
-          isValid={validations.emailValid}
-          errorMessage={errorMsg.emailErrorMsg}
+          isValid={email.isValid}
+          errorMessage={email.errorMsg}
+          required
         />
         <FormInput
           label="Contraseña"
           name="passwordOne"
-          value={passwordOne}
+          value={passwordOne.value}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            this.onChange(e, this.validatePasswordOne)
+            this.onChange(e, this.validatePasswords)
           }
           type="password"
-          isValid={validations.passwordOneValid}
-          errorMessage={errorMsg.passwordOneErrorMsg}
+          isValid={passwordOne.isValid}
+          errorMessage={passwordOne.errorMsg}
           hiddenPass={hiddenPass}
+          required
         />
         <FormInput
           label="Repite la contraseña"
           name="passwordTwo"
-          value={passwordTwo}
+          value={passwordTwo.value}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            this.onChange(e, this.validatePasswordTwo)
+            this.onChange(e, this.validatePasswords)
           }
           type="password"
-          isValid={validations.passwordTwoValid}
-          errorMessage={errorMsg.passwordTwoErrorMsg}
+          isValid={passwordTwo.isValid}
+          errorMessage={passwordTwo.errorMsg}
           hiddenPass={hiddenPass}
+          required
         />
         <ShowPassword
           hiddenPass={hiddenPass}
@@ -427,7 +422,7 @@ class SignUpFormBase extends PureComponent<IProps, IState> {
 
     const formBottomComponent = (
       <FormOptions
-        firstOption="Google"
+        firstOption={<SignWithGoogle />}
         secondOption="Registrarse por link mediante email"
       />
     );
@@ -443,7 +438,6 @@ class SignUpFormBase extends PureComponent<IProps, IState> {
 }
 
 // SignUpFormBase with encapsulated react and firebase.
-// Not using high order component library because of the fucking typescript thing.
 const SignUpForm = withRouter(withFirebase(SignUpFormBase));
 
 export default SignUpForm;

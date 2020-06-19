@@ -3,6 +3,7 @@ import FormButton from "./elements/FormButton";
 import ShowPassword from "./elements/ShowPassword";
 import FormOptions from "./elements/FormOptions";
 import FormInput from "./elements/FormInput";
+import SignWithGoogle from "./elements/SignWithGoogle";
 
 // Utils
 import * as checkValidation from "./utils/utils";
@@ -17,4 +18,5 @@ export {
   FormInput,
   checkValidation,
   FormWrapper,
+  SignWithGoogle,
 };

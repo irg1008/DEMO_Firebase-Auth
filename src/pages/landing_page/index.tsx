@@ -39,5 +39,5 @@ const LandingPageContainerStyled = styled(MainBGContainerStyled)`
 
 // MainPage logo
 const LandingLogoContainerStyled = styled(ContainerStyled)`
-  width: "70%";
+  width: 70%;
 `;

@@ -5,7 +5,7 @@ import {
   ContainerStyled,
   BorderedContainerStyled,
   media,
-  mainTransition,
+  colors,
 } from "../../../../style/style";
 import styled from "styled-components";
 
@@ -32,6 +32,9 @@ interface IFormOptionsProps {
   secondOption: any;
 }
 
+// Separator text
+const separatorText = "o regístrate con otros métodos";
+
 /**
  * FormOption component. Gives you two personalized button to put wherever you pass as prop.
  *
@@ -42,8 +45,17 @@ const FormOptions = (props: IFormOptionsProps) => {
   const { firstOption, secondOption } = props;
   return (
     <FormOtherOptionsContainerStyled>
-      <FormOtherOptionStyled>{firstOption}</FormOtherOptionStyled>
-      <FormOtherOptionStyled>{secondOption}</FormOtherOptionStyled>
+      {/* Separator */}
+      <FormOtherOptionsOrSeparatorStyled>
+        <FormSeparatorStyled />
+        <FormSeparatorTextStyled>{separatorText}</FormSeparatorTextStyled>
+        <FormSeparatorStyled />
+      </FormOtherOptionsOrSeparatorStyled>
+      {/* Options */}
+      <FormOtherOptionsBottomContainerStyled>
+        <FormOtherOptionStyled>{firstOption}</FormOtherOptionStyled>
+        <FormOtherOptionStyled>{secondOption}</FormOtherOptionStyled>
+      </FormOtherOptionsBottomContainerStyled>
     </FormOtherOptionsContainerStyled>
   );
 };
@@ -51,17 +63,55 @@ const FormOptions = (props: IFormOptionsProps) => {
 export default FormOptions;
 
 // Styled-Components
-// Other options of form container
+// Form options container
 export const FormOtherOptionsContainerStyled = styled(ContainerStyled)`
   width: 90%;
-  height: 8em;
+  height: auto;
   /* Margin, Padding, Border */
   margin-bottom: 2em;
+  /* Media medium size */
+  @media (min-width: ${media.mediumSize}) {
+    width: 30em;
+  }
+`;
+
+// Separator container
+export const FormOtherOptionsOrSeparatorStyled = styled(ContainerStyled)`
+  width: 100%;
+  /* Margin, Padding, Border */
+  margin: 1em 0;
+  /* Flexbox */
+  flex-direction: row;
+`;
+
+// Separator
+export const FormSeparatorStyled = styled.div`
+  height: 5px;
+  /* Flexbox */
+  flex: 1;
+  /* Margin, Padding, Border */
+  border-bottom: 1px solid ${colors.mainBlack};
+`;
+
+// Separator middle text
+export const FormSeparatorTextStyled = styled.p`
+  width: auto;
+  /* Font */
+  font-weight: normal;
+  font-style: italic;
+  /* Margin, Padding, Border */
+  padding: 0 0.8em;
+`;
+
+// Other options of form container
+export const FormOtherOptionsBottomContainerStyled = styled(ContainerStyled)`
+  width: 100%;
+  height: 10em;
   /* Flexbox */
   justify-content: space-around;
   /* Media medium size */
   @media (min-width: ${media.mediumSize}) {
-    width: 30em;
+    height: auto;
     /* Flexbox */
     flex-direction: row;
     justify-content: space-between;
@@ -72,25 +122,24 @@ export const FormOtherOptionsContainerStyled = styled(ContainerStyled)`
 // Other option
 export const FormOtherOptionStyled = styled(BorderedContainerStyled)`
   width: 100%;
-  min-height: auto;
+  height: auto;
+  min-height: 4em;
   /* Font */
   text-align: center;
   /* Flexbox */
   flex-direction: row;
   /* Margin, Padding, Border */
-  padding: 1em;
+  padding: 0.5em;
   /* Cursor */
   cursor: pointer;
-  /* Transition */
-  transition: ${mainTransition};
-  /* Hover */
-  &:hover {
-    /* Transition */
-    transition: ${mainTransition};
-  }
   /* Media medium size */
   @media (min-width: ${media.mediumSize}) {
     width: 48%;
     min-height: 5em;
+  }
+  /* On click */
+  &:active {
+    /* Cursor => Loading */
+    cursor: wait;
   }
 `;

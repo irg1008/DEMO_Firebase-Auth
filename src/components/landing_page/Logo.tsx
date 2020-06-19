@@ -4,8 +4,7 @@ import React from "react";
 import styled from "styled-components";
 
 // Logo
-import logo from "../../assets/svg/logo.svg";
-
+import { logo } from "../../assets";
 
 /**
  * Logo component with image 100% width of parent.

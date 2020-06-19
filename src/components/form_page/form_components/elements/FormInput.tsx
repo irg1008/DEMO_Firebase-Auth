@@ -5,7 +5,7 @@ import {
   ContainerStyled,
   radius,
   colors,
-  inset,
+  shadows,
   border,
   animations,
 } from "../../../../style/style";
@@ -49,7 +49,7 @@ interface IFormInputProps {
    * @memberof IFormInputProps
    */
   onChange: any;
-  
+
   /**
    * Type of input.
    *
@@ -89,6 +89,14 @@ interface IFormInputProps {
    * @memberof IFormInputProps
    */
   hiddenPass?: boolean;
+
+  /**
+   * Input is required => *
+   *
+   * @type {boolean}
+   * @memberof IFormInputProps
+   */
+  required?: boolean;
 }
 
 /**
@@ -108,11 +116,15 @@ const FormInput = (props: IFormInputProps) => {
     isValid,
     errorMessage,
     hiddenPass,
+    required,
   } = props;
 
   return (
     <FormInputStyled>
-      <FormLabelStyled>{label}</FormLabelStyled>
+      <FormLabelStyled>
+        {label}
+        {required && "*"}
+      </FormLabelStyled>
       <FormBoxContainerStyled>
         <FormBoxStyled
           name={name}
@@ -174,9 +186,9 @@ const FormBoxStyled = styled.input<{ hasError: boolean }>`
   /* BG */
   background-color: ${colors.mainWhite};
   /* Shadow */
-  -moz-box-shadow: ${inset.perfectInset};
-  -webkit-box-shadow: ${inset.perfectInset};
-  box-shadow: ${inset.perfectInset};
+  -moz-box-shadow: ${shadows.perfectInset};
+  -webkit-box-shadow: ${shadows.perfectInset};
+  box-shadow: ${shadows.perfectInset};
   /* Animation */
   animation: ${(props: any) =>
     props.hasError &&
@@ -187,11 +199,11 @@ const FormBoxStyled = styled.input<{ hasError: boolean }>`
   &:focus {
     /* Shadow */
     -moz-box-shadow: ${(props: any) =>
-      props.hasError ? inset.focusInsetError : inset.focusInset};
+      props.hasError ? shadows.focusInsetError : shadows.focusInset};
     -webkit-box-shadow: ${(props: any) =>
-      props.hasError ? inset.focusInsetError : inset.focusInset};
+      props.hasError ? shadows.focusInsetError : shadows.focusInset};
     box-shadow: ${(props: any) =>
-      props.hasError ? inset.focusInsetError : inset.focusInset};
+      props.hasError ? shadows.focusInsetError : shadows.focusInset};
   }
 `;
 
@@ -207,3 +219,5 @@ const FormErrorMessageStyled = styled.p`
   margin: 0;
   margin-top: 0.4em;
 `;
+
+// TODO: Animate input error

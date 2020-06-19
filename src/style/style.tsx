@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { keyframes } from "styled-components";
 
 // Main BG image
-import mainBG from "../assets/img/mainBG_2.png";
+import { mainBG } from "../assets";
 
 /* GENERAL */
 // Color constants
@@ -18,12 +18,13 @@ export const colors = {
 };
 
 // Shadow constants
-export const inset = {
+export const shadows = {
   perfectInset: "inset 0 1px 2px rgba(27,31,35,.075)",
   focusInset:
     "inset 0 1px 2px rgba(27,31,35,.075), 0 0 0 0.2em rgba(3,102,214,.3)",
   focusInsetError:
     "inset 0 1px 2px rgba(35, 27, 28,.075), 0 0 0 0.2em rgba(214, 3, 49,.3)",
+  hardShadow: "0 0 5px rgba(0, 0, 0, 0.5);",
 };
 
 // Border constants
@@ -77,14 +78,14 @@ export const mainTransition = "all 0.2s ease-in-out";
 
 // No selection
 export const noSelect = [
-  "-webkit-touch-callout: none;", /* iOS Safari */
-  "-webkit-user-select: none;",   /* Safari */
-  "-khtml-user-select: none;",    /* Konqueror HTML */
-  "-moz-user-select: none;",      /* Old versions of Firefox */
-  "-ms-user-select: none;",       /* Internet Explorer/Edge */
-  "user-select: none;",           /* Non-prefixed version,
-                                     currently supported by Chrome, Edge, Opera and Firefox */
-]
+  "-webkit-touch-callout: none;" /* iOS Safari */,
+  "-webkit-user-select: none;" /* Safari */,
+  "-khtml-user-select: none;" /* Konqueror HTML */,
+  "-moz-user-select: none;" /* Old versions of Firefox */,
+  "-ms-user-select: none;" /* Internet Explorer/Edge */,
+  "user-select: none;" /* Non-prefixed version,
+                                     currently supported by Chrome, Edge, Opera and Firefox */,
+];
 
 // Main contanier style.
 export const ContainerStyled = styled.div`
@@ -108,6 +109,19 @@ export const BorderedContainerStyled = styled(ContainerStyled)`
   justify-content: space-around;
   /* BG */
   background-color: ${colors.mainWhite};
+  /* Transition */
+  transition: ${mainTransition};
+  /* Hover */
+  &:hover {
+    /* BG */
+    border-color: ${colors.mainBlack};
+    /* Shadow */
+    -moz-box-shadow: ${shadows.hardShadow};
+    -webkit-box-shadow: ${shadows.hardShadow};
+    box-shadow: ${shadows.hardShadow};
+    /* Transition */
+    transition: ${mainTransition};
+  }
 `;
 
 // Main container style with main background.

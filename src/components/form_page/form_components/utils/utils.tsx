@@ -46,7 +46,7 @@ const checkEmail = (email: string) => {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     emailCheck.isValid = false;
     emailCheck.errorMsg =
-      "El email tiene que tener un formato tipo: silk@rock.com";
+      "El email tiene que tener un formato tipo: email@example.com";
   }
 
   return emailCheck;
@@ -88,9 +88,18 @@ const checkConfirmPassword = (passwordOne: string, passwordTwo: string) => {
   let passwordTwoCheck = { ...INITIAL_INPUT_CHECK };
 
   // Check password confirmation
-  if (passwordOne !== passwordTwo) {
+  if (passwordOne === "") {
+    passwordTwoCheck.isValid = false;
+    passwordTwoCheck.errorMsg = "La contraseña está vacia";
+  } else if (passwordOne !== passwordTwo) {
     passwordTwoCheck.isValid = false;
     passwordTwoCheck.errorMsg = "Las contraseñas no coinciden";
+  } else if (
+    passwordOne === passwordTwo &&
+    !checkFirstPassword(passwordTwo).isValid
+  ) {
+    passwordTwoCheck.isValid = false;
+    passwordTwoCheck.errorMsg = "La contraseña es inválida. Revisa los requisitos arriba";
   }
 
   return passwordTwoCheck;

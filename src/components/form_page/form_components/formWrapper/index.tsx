@@ -77,7 +77,7 @@ export const FormContainerStyled = styled(ContainerStyled)`
 export const FormInputContainerStyled = styled(BorderedContainerStyled)`
   width: 30em;
   /* Margin, Padding, Border */
-  margin-bottom: 1em;
+  margin-bottom: 0.5em;
   /* Media medium size */
   @media (max-width: ${media.mediumSize}) {
     width: 90%;

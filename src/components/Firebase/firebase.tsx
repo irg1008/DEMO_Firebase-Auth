@@ -30,6 +30,15 @@ class Firebase {
   private auth: any;
 
   /**
+   * Google provider
+   *
+   * @private
+   * @type {*}
+   * @memberof Firebase
+   */
+  private provider: any;
+
+  /**
    * Creates an instance of Firebase.
    *
    * @memberof Firebase
@@ -40,6 +49,10 @@ class Firebase {
 
     // Initialices the firebase authentication.
     this.auth = firebase.auth();
+    this.auth.useDeviceLanguage();
+
+    // Initialices the Google provider
+    this.provider = new firebase.auth.GoogleAuthProvider();
   }
 
   // Auth API.
@@ -88,26 +101,41 @@ class Firebase {
     this.auth.currentUser.updatePassword(password);
 
   /**
+   * Send email to user to sign up passwordless.
+   *
+   * @memberof Firebase
+   */
+  doSendSignInLinkToEmail = (email: string) => {
+    this.auth.sendSignInLinkToEmail(email);
+  };
+
+  /**
+   * Sign with google popup.
+   *
+   * @memberof Firebase
+   */
+  doSignInWithGoogleWithPopup = () => {
+    const provider = this.provider;
+    return this.auth.signInWithPopup(provider);
+  };
+
+  /**
+   * Sign with google redirect
+   *
+   * @memberof Firebase
+   */
+  doSignInWithGoogleWithRedirect = () => {
+    const provider = this.provider;
+    return this.auth.signInWithRedirect(provider);
+  };
+
+  /**
    * Get the current user.
    *
    * @memberof Firebase
    */
   doGetCurrentUser = () => {
     return this.auth.currentUser;
-  };
-
-  /**
-   * Send email to user to sign up passwordless.
-   *
-   * @memberof Firebase
-   */
-  doSendSignInLinkToEmail = (email: string) => {
-    return this.auth.sendSignInLinkToEmail(email);
-  };
-
-  doSignInWithGoogle = () => {
-    let provider = new this.auth.GoogleAuthProvider();
-    return this.auth.signInWithPopup(provider);
   };
 }
 
