@@ -33,7 +33,7 @@ interface IFormOptionsProps {
 }
 
 // Separator text
-const separatorText = "o regístrate con otros métodos";
+const separatorText = "o";
 
 /**
  * FormOption component. Gives you two personalized button to put wherever you pass as prop.
@@ -97,6 +97,7 @@ export const FormSeparatorStyled = styled.div`
 export const FormSeparatorTextStyled = styled.p`
   width: auto;
   /* Font */
+  text-align: center;
   font-weight: normal;
   font-style: italic;
   /* Margin, Padding, Border */

@@ -291,7 +291,7 @@ class SignUpFormBase extends PureComponent<ISignUpProps, ISignUpState> {
 
     // Change email info
     email.isValid = false;
-    email.errorMsg = "Este correo ya está en uso, prueba con otro";
+    email.errorMsg = "Este correo ya está en uso, inicia sesión o prueba con otro";
 
     this.setState({ email }, () => this.validateForm());
   };

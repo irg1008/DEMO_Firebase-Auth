@@ -79,13 +79,19 @@ class SignWithGoogleBase extends PureComponent<
   onClick = () => {
     const { firebase } = this.props;
 
-    // Sign with google and firebase
+    // Sign with google and firebase. This verifies email.
     firebase
       .doSignInWithGoogleWithPopup()
       .then((result: any) => {
-        console.log(firebase.doGetCurrentUser());
+        console.log(result);
+        // TODO: Redirect correctly
+
+        // Check if user is singning up or in.
+        var isNewUser: boolean = result.additionalUserInfo.isNewUser;
         //this.props.history.push(ROUTES.LANDING.path);
-        this.setState({ isNewUser: true });
+
+        // Update state
+        this.setState({ isNewUser });
       })
       .catch((error: any) => {
         console.log(error);
@@ -133,3 +139,5 @@ const GoogleTextStyled = styled(Title5Styled)`
 `;
 
 // TODO: Gestionar todas las posibilidades, que ya esté creada la cuenta de antes y darle la opcion de iniciar sesión, etc
+
+// FIXME: Que coño pasa con el sign with google en chrome y porque ahora de repente esta roto en todos los navegadores.
