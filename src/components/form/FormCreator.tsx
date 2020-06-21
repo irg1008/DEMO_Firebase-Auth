@@ -6,19 +6,19 @@ import {
   ContainerStyled,
   BorderedContainerStyled,
   media,
-} from "../../../../style/style";
+} from "../../style/style";
 
 /**
  * Interface for props on form wrapper.
  *
- * @interface IFormWrapperProps
+ * @interface IFormCreatorProps
  */
-interface IFormWrapperProps {
+interface IFormCreatorProps {
   /**
    * On submit event.
    *
    * @type {*}
-   * @memberof IFormWrapperProps
+   * @memberof IFormCreatorProps
    */
   onSubmit: any;
 
@@ -26,7 +26,7 @@ interface IFormWrapperProps {
    * Content of form. i.e. Two inputs + two buttons.
    *
    * @type {*}
-   * @memberof IFormWrapperProps
+   * @memberof IFormCreatorProps
    */
   content: any;
 
@@ -34,7 +34,7 @@ interface IFormWrapperProps {
    * Optional bottom component of form. i.e Aditional info or alternative forms.
    *
    * @type {*}
-   * @memberof IFormWrapperProps
+   * @memberof IFormCreatorProps
    */
   bottomComponent?: any;
 }
@@ -42,10 +42,10 @@ interface IFormWrapperProps {
 /**
  * Form wrapper, can strore multiple components, given a submit button is provided. Content inside wrapper cannot be empty.
  *
- * @param {IFormWrapperProps} props
+ * @param {IFormCreatorProps} props
  * @returns
  */
-const FormWrapper = (props: IFormWrapperProps) => {
+const FormCreator = (props: IFormCreatorProps) => {
   const { onSubmit, content, bottomComponent } = props;
   return (
     <FormStyled onSubmit={onSubmit}>
@@ -57,7 +57,7 @@ const FormWrapper = (props: IFormWrapperProps) => {
   );
 };
 
-export default FormWrapper;
+export default FormCreator;
 
 // Styled-Components
 // Form

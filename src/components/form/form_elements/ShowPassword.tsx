@@ -8,14 +8,14 @@ import {
   mainTransition,
   animations,
   noSelect,
-} from "../../../../style/style";
+} from "../../../style/style";
 import styled from "styled-components";
 
 // Password icon
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 
 // Titles. Import of style of title 5, not title5 decorations needed.
-import { Title5Styled } from "../../../others/Titles";
+import { Title5Styled } from "../../titles/Titles";
 
 /**
  * Interface of props of password toggle.

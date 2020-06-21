@@ -3,19 +3,19 @@ import { withRouter } from "react-router-dom";
 
 // Styled-Components
 import styled from "styled-components";
-import { ContainerStyled, media } from "../../../../style/style";
+import { ContainerStyled, media } from "../../../style/style";
 
 // Title
-import { Title5Styled } from "../../../others/Titles";
+import { Title5Styled } from "../../titles/Titles";
 
 // Firebase
-import Firebase, { withFirebase } from "../../../Firebase";
+import Firebase, { withFirebase } from "../../../utils/firebase";
 
 // Google logo
-import { googleIcon } from "../../../../assets/";
+import { googleIcon } from "../../../assets";
 
 // ROUTES
-//import * as ROUTES from "../../../../constants/routes";
+import ROUTES from "../../../routes";
 
 // Sign with google props
 /**
@@ -43,33 +43,49 @@ interface ISignGoogleProps {
 
 // Sign with google state
 /**
- * Empty state. No needed in google sign.
+ * Stores if users has been correctly signed with google.
  *
  * @interface ISignGoogleState
  */
-interface ISignGoogleState {
-  isNewUser: boolean;
-}
-
-// Initial state of sign with google.
-const INITIAL_STATE: ISignGoogleState = {
-  isNewUser: false,
-};
+interface ISignGoogleState {}
 
 class SignWithGoogleBase extends PureComponent<
   ISignGoogleProps,
   ISignGoogleState
 > {
   /**
-   * Creates an instance of SignWithGoogle.
+   * Component did mount.
    *
-   * @param {ISignGoogleProps} props
-   * @memberof SignWithGoogle
+   * @memberof SignWithGoogleBase
    */
-  constructor(props: ISignGoogleProps) {
-    super(props);
-    this.state = { ...INITIAL_STATE };
-  }
+  componentDidMount = () => {
+    const { firebase } = this.props;
+
+    // When google redirects from signing, get the outh data.
+    firebase
+      .doGetRedirectResult()
+      .then((result: any) => {
+        // Check if any data retrieved, checking if any property exists, i.e.: credential.
+        if (result.credential) {
+          // Store if user is singning up or in.
+          let isNewUser: boolean = result.additionalUserInfo.isNewUser;
+
+          // If userIsNew is true, redirect to home page, if user is not new redirect to complete sign page.
+          if (isNewUser) {
+            this.props.history.push(ROUTES.SIGN_UP.path);
+          }
+          // If userIsNew is false, redirect to main page logged in.
+          else {
+            this.props.history.push(ROUTES.LANDING.path);
+          }
+
+          console.log(result);
+        }
+      })
+      .catch((error: any) => {
+        console.log(error);
+      });
+  };
 
   /**
    * On click => Sign in with google
@@ -79,23 +95,8 @@ class SignWithGoogleBase extends PureComponent<
   onClick = () => {
     const { firebase } = this.props;
 
-    // Sign with google and firebase. This verifies email.
-    firebase
-      .doSignInWithGoogleWithPopup()
-      .then((result: any) => {
-        console.log(result);
-        // TODO: Redirect correctly
-
-        // Check if user is singning up or in.
-        var isNewUser: boolean = result.additionalUserInfo.isNewUser;
-        //this.props.history.push(ROUTES.LANDING.path);
-
-        // Update state
-        this.setState({ isNewUser });
-      })
-      .catch((error: any) => {
-        console.log(error);
-      });
+    // Sign with google and firebase. This verifies email. Does not retrieve any data or error.
+    firebase.doSignInWithGoogleWithRedirect();
   };
 
   render() {
@@ -137,7 +138,3 @@ const GoogleTextStyled = styled(Title5Styled)`
     width: 6em;
   }
 `;
-
-// TODO: Gestionar todas las posibilidades, que ya esté creada la cuenta de antes y darle la opcion de iniciar sesión, etc
-
-// FIXME: Que coño pasa con el sign with google en chrome y porque ahora de repente esta roto en todos los navegadores.

@@ -3,13 +3,13 @@ import ReactDOM from "react-dom";
 import * as serviceWorker from "./serviceWorker";
 
 // Style
-import "./style/index.css";
+import "./index.css";
 
 // Firebase
-import Firebase, { FirebaseContext } from "./components/Firebase";
+import Firebase, { FirebaseContext } from "./utils/firebase";
 
 // App
-import App from "./app/App";
+import App from "./components/app/App";
 
 ReactDOM.render(
   <React.StrictMode>

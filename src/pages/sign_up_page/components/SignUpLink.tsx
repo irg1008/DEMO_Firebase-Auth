@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 // Routes
-import { SIGN_UP } from "../../../constants/routes";
+import { SIGN_UP } from "../../../routes/routes";
 
 // Link to SignUpPage text
 const linkText = {

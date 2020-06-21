@@ -8,7 +8,7 @@ import {
   shadows,
   border,
   animations,
-} from "../../../../style/style";
+} from "../../../style/style";
 import styled, { css } from "styled-components";
 
 // Props of functional component

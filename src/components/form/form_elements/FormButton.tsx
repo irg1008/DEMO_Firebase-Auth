@@ -1,7 +1,7 @@
 import React from "react";
 
 // Styled-Components
-import { radius, colors, mainTransition } from "../../../../style/style";
+import { radius, colors, mainTransition } from "../../../style/style";
 import styled from "styled-components";
 
 /**

@@ -1,7 +1,4 @@
-import React from "react";
-
-const LogInPage = () => {
-  return <div>LogIn</div>;
-};
+// Log In Page
+import LogInPage from "./LogInPage";
 
 export default LogInPage;

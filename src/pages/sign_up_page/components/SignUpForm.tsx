@@ -7,21 +7,23 @@ import React, {
 import { withRouter } from "react-router-dom";
 
 // Routes
-import * as ROUTES from "../../../constants/routes";
+import * as ROUTES from "../../../routes/routes";
 
-// Form elements, utils, validations and wrapper
+// Form elements
 import {
   FormInput,
   FormButton,
-  checkValidation,
   ShowPassword,
-  FormWrapper,
   FormOptions,
   SignWithGoogle,
-} from "../form_components";
+} from "../../../components/form/form_elements";
+
+// Form Wrapper. Optional, but helps us create a common structure between forms.
+// Validation of form, useful when handling validation of inputs.
+import { FormCreator, inputValidation } from "../../../components/form";
 
 // Firebase
-import Firebase, { withFirebase } from "../../Firebase";
+import Firebase, { withFirebase } from "../../../utils/firebase";
 
 /**
  * Interface of input.
@@ -256,7 +258,7 @@ class SignUpFormBase extends PureComponent<ISignUpProps, ISignUpState> {
     const username = { ...this.state.username };
 
     // Check username validity.
-    const userCheck = checkValidation.checkUsername(username.value);
+    const userCheck = inputValidation.checkUsername(username.value);
     username.isValid = userCheck.isValid;
     username.errorMsg = userCheck.errorMsg;
 
@@ -273,7 +275,7 @@ class SignUpFormBase extends PureComponent<ISignUpProps, ISignUpState> {
     const email = { ...this.state.email };
 
     // Check email validity.
-    const emailCheck = checkValidation.checkEmail(email.value);
+    const emailCheck = inputValidation.checkEmail(email.value);
     email.isValid = emailCheck.isValid;
     email.errorMsg = emailCheck.errorMsg;
 
@@ -291,7 +293,8 @@ class SignUpFormBase extends PureComponent<ISignUpProps, ISignUpState> {
 
     // Change email info
     email.isValid = false;
-    email.errorMsg = "Este correo ya está en uso, inicia sesión o prueba con otro";
+    email.errorMsg =
+      "Este correo ya está en uso, inicia sesión o prueba con otro";
 
     this.setState({ email }, () => this.validateForm());
   };
@@ -306,14 +309,14 @@ class SignUpFormBase extends PureComponent<ISignUpProps, ISignUpState> {
     const passwordTwo = { ...this.state.passwordTwo };
 
     // Check password 1
-    const passwordOneCheck = checkValidation.checkFirstPassword(
+    const passwordOneCheck = inputValidation.checkFirstPassword(
       passwordOne.value
     );
     passwordOne.isValid = passwordOneCheck.isValid;
     passwordOne.errorMsg = passwordOneCheck.errorMsg;
 
     // Check password 2
-    const passwordTwoCheck = checkValidation.checkConfirmPassword(
+    const passwordTwoCheck = inputValidation.checkConfirmPassword(
       passwordOne.value,
       passwordTwo.value
     );
@@ -428,7 +431,7 @@ class SignUpFormBase extends PureComponent<ISignUpProps, ISignUpState> {
     );
 
     return (
-      <FormWrapper
+      <FormCreator
         onSubmit={this.onSubmit}
         content={formContent}
         bottomComponent={formBottomComponent}

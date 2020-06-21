@@ -2,7 +2,7 @@ import React from "react";
 
 // Styled-Components
 import styled from "styled-components";
-import { colors, media } from "../../style/style";
+import { colors, media } from "../../../style/style";
 
 // import InstagramIcon from "@material-ui/icons/Instagram";
 // import LinkedInIcon from '@material-ui/icons/LinkedIn';

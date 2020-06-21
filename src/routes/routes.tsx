@@ -51,6 +51,4 @@ export const ERROR: PageInformation = {
 };
 
 // Routes and path of every page added
-const pages = [{ ...LANDING }, { ...SIGN_UP }, { ...LOG_IN }, { ...ERROR }];
-
-export default pages;
+export const all = [{ ...LANDING }, { ...SIGN_UP }, { ...LOG_IN }, { ...ERROR }];

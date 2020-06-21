@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 // Const routes
-import pages from "../constants/routes";
+import ROUTES from "../../routes";
 
 /**
  * App.
@@ -14,7 +14,7 @@ const App = () => {
     <Router>
       {/* Navigation here */}
       <Switch>
-        {pages.map((route) => (
+        {ROUTES.all.map((route) => (
           <Route
             key={route.id}
             path={route.path}

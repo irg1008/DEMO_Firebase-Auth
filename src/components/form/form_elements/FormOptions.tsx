@@ -6,7 +6,7 @@ import {
   BorderedContainerStyled,
   media,
   colors,
-} from "../../../../style/style";
+} from "../../../style/style";
 import styled from "styled-components";
 
 /**

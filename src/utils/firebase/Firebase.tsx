@@ -1,5 +1,5 @@
 // Firebase app
-import * as firebase from "firebase/app";
+import firebase from "firebase/app";
 // Firebase Authenticator
 import "firebase/auth";
 
@@ -127,6 +127,15 @@ class Firebase {
   doSignInWithGoogleWithRedirect = () => {
     const provider = this.provider;
     return this.auth.signInWithRedirect(provider);
+  };
+
+  /**
+   * Gets the data after a redirect.
+   *
+   * @memberof Firebase
+   */
+  doGetRedirectResult = () => {
+    return this.auth.getRedirectResult();
   };
 
   /**

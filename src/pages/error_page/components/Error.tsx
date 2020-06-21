@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 
 // Styled-Components
 import styled from "styled-components";
-import { colors, ContainerStyled, media } from "../../style/style";
+import { colors, ContainerStyled, media } from "../../../style/style";
 
 // Landing route
-import { LANDING } from "../../constants/routes";
+import { LANDING } from "../../../routes/routes";
 
 /**
  * Interface of recieved props
