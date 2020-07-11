@@ -165,10 +165,10 @@ class SignUpForm extends Component<ISignUpProps, ISignUpState> {
     event.preventDefault();
 
     // Firebase and react history.
-    const { firebase, history } = this.props;
+    const { firebase } = this.props;
 
     // State decostrution.
-    const { username, email, passwordOne } = this.state;
+    const { email, passwordOne } = this.state;
 
     // Loading submit
     this.setState({ loading: true });
