@@ -5,7 +5,7 @@
 /.pnp
 .pnp.js
 
-# environmental var
+# env variables
 .env
 
 # testing
