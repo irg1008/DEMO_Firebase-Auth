@@ -11,9 +11,9 @@ import { logo } from "../../assets";
  *
  * @returns
  */
-const Logo = () => {
-  return <LogoImgStyled src={logo} alt="silkandrock_logo" />;
-};
+const Logo: React.FC = () => (
+  <LogoImgStyled src={logo} alt="silkandrock_logo" />
+);
 
 export default Logo;
 

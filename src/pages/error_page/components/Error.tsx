@@ -3,22 +3,17 @@ import { Link } from "react-router-dom";
 
 // Styled-Components
 import styled from "styled-components";
-import { colors, ContainerStyled, media } from "../../../style/style";
+import { colors, ContainerStyled, media } from "../../../style/main_style";
 
 // Landing route
-import { LANDING } from "../../../routes/routes";
+import ROUTES from "../../../routes";
 
-/**
- * Interface of recieved props
- *
- * @interface IErrorProps
- */
-interface IErrorProps {
+// Type of recieved props
+type IErrorProps = {
   /**
    * Number of error. i.e 404, 400, 200.
    *
    * @type {number}
-   * @memberof IErrorProps
    */
   errorType: number;
 
@@ -26,11 +21,9 @@ interface IErrorProps {
    * Error Message.
    *
    * @type {string}
-   * @memberof IErrorProps
    */
   errorMessage: string;
-}
-
+};
 
 /**
  * Error of error page. Returns to main page.
@@ -38,17 +31,17 @@ interface IErrorProps {
  * @param {IErrorProps} props
  * @returns Error Component.
  */
-const Error = (props: IErrorProps) => {
-  const { errorType, errorMessage } = props;
-  return (
-    <ErrorContainerStyled>
-      <ErrorTypeStyled>{errorType}</ErrorTypeStyled>
-      <Link to={LANDING.path}>
-        <ErrorMessageStyled>{errorMessage}</ErrorMessageStyled>
-      </Link>
-    </ErrorContainerStyled>
-  );
-};
+const Error: React.FC<IErrorProps> = ({
+  errorType,
+  errorMessage,
+}: IErrorProps) => (
+  <ErrorContainerStyled>
+    <ErrorTypeStyled>{errorType}</ErrorTypeStyled>
+    <Link to={ROUTES.LANDING.path}>
+      <ErrorMessageStyled>{errorMessage}</ErrorMessageStyled>
+    </Link>
+  </ErrorContainerStyled>
+);
 
 export default Error;
 
@@ -78,6 +71,10 @@ const ErrorTypeStyled = styled.h1`
   @media (max-width: ${media.mediumSize}) {
     font-size: 12em;
   }
+  /* Media small size */
+  @media (max-width: ${media.smallSize}) {
+    font-size: 8em;
+  }
 `;
 
 // Error Message
@@ -85,9 +82,14 @@ const ErrorMessageStyled = styled.p`
   /* Font */
   font-size: 2em;
   text-decoration: none;
+  text-align: center;
   /* Media medium size */
   @media (max-width: ${media.mediumSize}) {
     /* Font */
     font-size: 1.4em;
+  }
+  /* Media small size */
+  @media (max-width: ${media.smallSize}) {
+    font-size: 1.2em;
   }
 `;

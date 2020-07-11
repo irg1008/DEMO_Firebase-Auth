@@ -27,7 +27,7 @@ class Firebase {
    * @type {*}
    * @memberof Firebase
    */
-  private auth: any;
+  public auth: any;
 
   /**
    * Google provider
@@ -105,47 +105,30 @@ class Firebase {
    *
    * @memberof Firebase
    */
-  doSendSignInLinkToEmail = (email: string) => {
+  doSendSignInLinkToEmail = (email: string) =>
     this.auth.sendSignInLinkToEmail(email);
-  };
 
   /**
    * Sign with google popup.
    *
    * @memberof Firebase
    */
-  doSignInWithGoogleWithPopup = () => {
-    const provider = this.provider;
-    return this.auth.signInWithPopup(provider);
-  };
+  doSignInWithGoogleWithPopup = () => this.auth.signInWithPopup(this.provider);
 
   /**
    * Sign with google redirect
    *
    * @memberof Firebase
    */
-  doSignInWithGoogleWithRedirect = () => {
-    const provider = this.provider;
-    return this.auth.signInWithRedirect(provider);
-  };
+  doSignInWithGoogleWithRedirect = () =>
+    this.auth.signInWithRedirect(this.provider);
 
   /**
    * Gets the data after a redirect.
    *
    * @memberof Firebase
    */
-  doGetRedirectResult = () => {
-    return this.auth.getRedirectResult();
-  };
-
-  /**
-   * Get the current user.
-   *
-   * @memberof Firebase
-   */
-  doGetCurrentUser = () => {
-    return this.auth.currentUser;
-  };
+  doGetRedirectResult = () => this.auth.getRedirectResult();
 }
 
 export default Firebase;

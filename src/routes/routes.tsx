@@ -1,20 +1,42 @@
-import React from "react";
-
 // All pages
 import LandingPage from "../pages/landing_page";
 import ErrorPage from "../pages/error_page";
-import SignUpPage from "../pages/sign_up_page";
-import LogInPage from "../pages/log_in_page";
+import SignUpPage from "../pages/log_pages/sign_up_page";
+import LogInPage from "../pages/log_pages/log_in_page";
+import CompleteSignUpPage from "../pages/log_pages/complete_sign_up_page";
 
-// Page information interface
-interface PageInformation {
+// Page information type.
+type PageInformation = {
+  /**
+   * Id of room.
+   *
+   * @type {number}
+   */
   id: number;
-  path?: string | any;
-  exact?: boolean;
-  component: any;
-}
 
-// Page id
+  /**
+   * Path of page.
+   *
+   * @type {(string | any)}
+   */
+  path?: string | any;
+
+  /**
+   * Path is exact.
+   *
+   * @type {boolean}
+   */
+  exact?: boolean;
+
+  /**
+   * Component to render in given path.
+   *
+   * @type {*}
+   */
+  Component: any;
+};
+
+// Page id increaser on every call.
 let pageId: number = 0;
 const getId = () => {
   return pageId++;
@@ -25,30 +47,35 @@ export const LANDING: PageInformation = {
   id: getId(),
   path: "/",
   exact: true,
-  component: () => <LandingPage />,
+  Component: LandingPage,
 };
 
-// Loading page
+// Sign Up page
 export const SIGN_UP: PageInformation = {
   id: getId(),
-  path: "/join",
+  path: "/unete",
   exact: true,
-  component: () => <SignUpPage />,
+  Component: SignUpPage,
 };
 
-// Loading page
+// Log In page
 export const LOG_IN: PageInformation = {
   id: getId(),
-  path: "/login",
+  path: "/inicia",
   exact: true,
-  component: () => <LogInPage />,
+  Component: LogInPage,
 };
 
-// Loading page
+// Complete sign up page
+export const COMPLETE_SIGN: PageInformation = {
+  id: getId(),
+  path: "/completa_usuario",
+  exact: true,
+  Component: CompleteSignUpPage,
+};
+
+// Error page
 export const ERROR: PageInformation = {
   id: getId(),
-  component: () => <ErrorPage />,
+  Component: ErrorPage,
 };
-
-// Routes and path of every page added
-export const all = [{ ...LANDING }, { ...SIGN_UP }, { ...LOG_IN }, { ...ERROR }];

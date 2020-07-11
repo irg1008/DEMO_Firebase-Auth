@@ -6,28 +6,22 @@ import {
   colors,
   radius,
   mainTransition,
-  animations,
   noSelect,
-} from "../../../style/style";
+} from "../../../style/main_style";
 import styled from "styled-components";
 
 // Password icon
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 
 // Titles. Import of style of title 5, not title5 decorations needed.
-import { Title5Styled } from "../../titles/Titles";
+import titles from "../../titles";
 
-/**
- * Interface of props of password toggle.
- *
- * @interface IShowPasswordProps
- */
-interface IShowPasswordProps {
+// Interface of props of password toggle.
+type IShowPasswordProps = {
   /**
    * Password is hidden.
    *
    * @type {boolean}
-   * @memberof IShowPasswordProps
    */
   hiddenPass: boolean;
 
@@ -35,10 +29,9 @@ interface IShowPasswordProps {
    * On click event.
    *
    * @type {*}
-   * @memberof IShowPasswordProps
    */
   onClick: any;
-}
+};
 
 // Password message on toggle
 const passwordVisibilityMsg = {
@@ -52,9 +45,10 @@ const passwordVisibilityMsg = {
  * @param {IShowPasswordProps} props
  * @returns
  */
-const ShowPassword = (props: IShowPasswordProps) => {
-  const { hiddenPass, onClick } = props;
-
+const ShowPassword: React.FC<IShowPasswordProps> = ({
+  hiddenPass,
+  onClick,
+}: IShowPasswordProps) => {
   // Visibility msg
   const visibilityMsg = hiddenPass
     ? passwordVisibilityMsg.showPassword
@@ -66,7 +60,7 @@ const ShowPassword = (props: IShowPasswordProps) => {
   return (
     <VisibilityWrapperStyled>
       <VisibilityTitleContainerStyled isHovering={isHovering}>
-        <Title5Styled>{visibilityMsg}</Title5Styled>
+        <titles.Title5 title={visibilityMsg} />
       </VisibilityTitleContainerStyled>
       <VisibilityContainerStyled
         onMouseEnter={() => setIsHovering(true)}
@@ -104,7 +98,6 @@ const VisibilityTitleContainerStyled = styled(ContainerStyled)<{
   isHovering: boolean;
 }>`
   height: 100%;
-  position: relative;
   /* Flexbox */
   flex-direction: row;
   /* Margin, Padding, Border */
@@ -113,20 +106,22 @@ const VisibilityTitleContainerStyled = styled(ContainerStyled)<{
   color: ${colors.mainBlack};
   /* Transition */
   transition: ${mainTransition};
-  /* Animation */
-  animation: ${(props) =>
-    props.isHovering ? animations.fadeInAnimation : animations.fadeOutAnimation}
-    0.2s linear forwards;
+  /* Opacity */
+  opacity: ${(props) => (props.isHovering ? 1 : 0)};
+  /* Transform */
+  transform: ${(props) => !props.isHovering && "translateX(20%)"};
   /* No select */
   ${(props) => !props.isHovering && noSelect}
   /* Cursor */
   cursor: ${(props) => !props.isHovering && "default"};
-`;
+  `;
 
 // Visibility Container
 const VisibilityContainerStyled = styled(ContainerStyled)`
   height: 100%;
   width: auto;
+  /* Position (works like z-index here) */
+  position: relative;
   /* Margin, Padding, Border */
   padding: 0.5em;
   border-radius: ${radius.mainRadius};

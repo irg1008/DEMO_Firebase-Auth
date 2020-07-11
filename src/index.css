@@ -24,7 +24,7 @@ body {
   box-sizing: border-box; /* Opera/IE 8+ */
 }
 
-/* Selection */
+/* Selection 
 ::selection {
   background-color: rgb(184, 184, 184);
   color: rgb(255, 255, 255);
@@ -32,7 +32,7 @@ body {
 ::-moz-selection {
   background-color: rgb(184, 184, 184);
   color: rgb(58, 58, 58);
-}
+}*/
 
 /* Code */
 code {

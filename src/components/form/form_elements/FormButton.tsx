@@ -1,20 +1,15 @@
 import React from "react";
 
 // Styled-Components
-import { radius, colors, mainTransition } from "../../../style/style";
+import { radius, colors, mainTransition } from "../../../style/main_style";
 import styled from "styled-components";
 
-/**
- * Props of form button.
- *
- * @interface IButtonProps
- */
-interface IButtonProps {
+// Props of form button.
+type IButtonProps = {
   /**
    * Button is disabled.
    *
    * @type {boolean}
-   * @memberof IButtonProps
    */
   disabled?: boolean;
 
@@ -22,7 +17,6 @@ interface IButtonProps {
    * Button is loading form.
    *
    * @type {boolean}
-   * @memberof IButtonProps
    */
   loading?: boolean;
 
@@ -30,10 +24,9 @@ interface IButtonProps {
    * Text inside the button.
    *
    * @type {string}
-   * @memberof IButtonProps
    */
   text: string;
-}
+};
 
 /**
  * Form button. Only submits when enabled
@@ -41,24 +34,25 @@ interface IButtonProps {
  * @param {IButtonProps} props Disabled + text.
  * @returns Form Button.
  */
-const FormButton = (props: IButtonProps) => {
-  const { disabled, loading, text } = props;
-  return (
-    <FormButtonStyled
-      isDisabled={disabled}
-      isLoading={loading}
-      type={!disabled ? "submit" : "button"}
-    >
-      {text}
-    </FormButtonStyled>
-  );
-};
+const FormButton: React.FC<IButtonProps> = ({
+  disabled,
+  loading,
+  text,
+}: IButtonProps) => (
+  <FormButtonStyled
+    isDisabled={disabled}
+    isLoading={loading}
+    type={!disabled ? "submit" : "button"}
+  >
+    {text}
+  </FormButtonStyled>
+);
 
 export default FormButton;
 
 /* Styled-Components */
 // Form button
-export const FormButtonStyled = styled.button<{
+const FormButtonStyled = styled.button<{
   isDisabled?: boolean;
   isLoading?: boolean;
 }>`
@@ -75,6 +69,7 @@ export const FormButtonStyled = styled.button<{
     props.isDisabled || props.isLoading ? "default" : "pointer"};
   /* Font */
   font-family: inherit;
+  text-transform: ${(props) => !props.isLoading && "capitalize"};
   font-size: 11pt;
   color: ${(props) => !props.isDisabled && colors.mainWhite};
   /* BG */

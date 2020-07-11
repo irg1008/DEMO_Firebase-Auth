@@ -8,21 +8,45 @@ import {
   shadows,
   border,
   animations,
-} from "../../../style/style";
+  mainTransition,
+} from "../../../style/main_style";
 import styled, { css } from "styled-components";
 
-// Props of functional component
-/**
- * Interface of input component.
- *
- * @interface IFormInputProps
- */
-interface IFormInputProps {
+// Interface of input used on every form states.
+export type IInputState = {
+  /**
+   * Value of input.
+   *
+   * @type {string}
+   */
+  value: string;
+
+  /**
+   * Validity of input.
+   *
+   * @type {boolean}
+   */
+  isValid?: boolean;
+
+  /**
+   * Error mesg on input is no valid.
+   *
+   * @type {string}
+   */
+  errorMsg?: string;
+};
+
+// Initial input state.
+export const INITIAL_INPUT_STATE: IInputState = {
+  value: "",
+};
+
+// Types of input component props.
+type IFormInputProps = {
   /**
    * Label of input.
    *
    * @type {string}
-   * @memberof IFormInputProps
    */
   label: string;
 
@@ -30,7 +54,6 @@ interface IFormInputProps {
    * Name of input.
    *
    * @type {string}
-   * @memberof IFormInputProps
    */
   name: string;
 
@@ -38,7 +61,6 @@ interface IFormInputProps {
    * Value inside input.
    *
    * @type {string}
-   * @memberof IFormInputProps
    */
   value: string;
 
@@ -46,7 +68,6 @@ interface IFormInputProps {
    * On change event.
    *
    * @type {*}
-   * @memberof IFormInputProps
    */
   onChange: any;
 
@@ -54,7 +75,6 @@ interface IFormInputProps {
    * Type of input.
    *
    * @type {string}
-   * @memberof IFormInputProps
    */
   type: string;
 
@@ -62,7 +82,6 @@ interface IFormInputProps {
    * Placeholder of input.
    *
    * @type {string}
-   * @memberof IFormInputProps
    */
   placeholder?: string;
 
@@ -70,7 +89,6 @@ interface IFormInputProps {
    * Value is valid.
    *
    * @type {boolean}
-   * @memberof IFormInputProps
    */
   isValid?: boolean;
 
@@ -78,7 +96,6 @@ interface IFormInputProps {
    * Error on value not valid.
    *
    * @type {string}
-   * @memberof IFormInputProps
    */
   errorMessage?: string;
 
@@ -86,7 +103,6 @@ interface IFormInputProps {
    * If type is password, temporal state of hidden/shown.
    *
    * @type {boolean}
-   * @memberof IFormInputProps
    */
   hiddenPass?: boolean;
 
@@ -94,10 +110,9 @@ interface IFormInputProps {
    * Input is required => *
    *
    * @type {boolean}
-   * @memberof IFormInputProps
    */
   required?: boolean;
-}
+};
 
 /**
  * Form input component.
@@ -105,42 +120,40 @@ interface IFormInputProps {
  * @param {IFormInputProps} props
  * @returns
  */
-const FormInput = (props: IFormInputProps) => {
-  const {
-    label,
-    name,
-    value,
-    onChange,
-    type,
-    placeholder,
-    isValid,
-    errorMessage,
-    hiddenPass,
-    required,
-  } = props;
-
-  return (
-    <FormInputStyled>
-      <FormLabelStyled>
-        {label}
-        {required && "*"}
-      </FormLabelStyled>
-      <FormBoxContainerStyled>
-        <FormBoxStyled
-          name={name}
-          value={value}
-          onChange={onChange}
-          type={type === "password" ? (hiddenPass ? "password" : "text") : type}
-          placeholder={placeholder}
-          hasError={isValid === false}
-        />
-      </FormBoxContainerStyled>
-      {!isValid && (
-        <FormErrorMessageStyled>{errorMessage}</FormErrorMessageStyled>
-      )}
-    </FormInputStyled>
-  );
-};
+const FormInput: React.FC<IFormInputProps> = ({
+  label,
+  name,
+  value,
+  onChange,
+  type,
+  placeholder,
+  isValid,
+  errorMessage,
+  hiddenPass,
+  required,
+}: IFormInputProps) => (
+  <FormInputStyled>
+    <FormLabelStyled>
+      {label}
+      {required && "*"}
+    </FormLabelStyled>
+    <FormBoxContainerStyled>
+      <FormBoxStyled
+        name={name}
+        value={value}
+        onChange={onChange}
+        type={type === "password" ? (hiddenPass ? "password" : "text") : type}
+        placeholder={placeholder}
+        hasError={isValid === false}
+      />
+    </FormBoxContainerStyled>
+    {!isValid && (
+      <FormErrorMessageStyled hasError={isValid === false}>
+        {errorMessage}
+      </FormErrorMessageStyled>
+    )}
+  </FormInputStyled>
+);
 
 export default FormInput;
 
@@ -195,6 +208,8 @@ const FormBoxStyled = styled.input<{ hasError: boolean }>`
     css`
       ${animations.shakeAnimation} 0.5s;
     `};
+  /* Transition */
+  transition: ${mainTransition};
   /* Focus */
   &:focus {
     /* Shadow */
@@ -204,11 +219,13 @@ const FormBoxStyled = styled.input<{ hasError: boolean }>`
       props.hasError ? shadows.focusInsetError : shadows.focusInset};
     box-shadow: ${(props: any) =>
       props.hasError ? shadows.focusInsetError : shadows.focusInset};
+    /* Transition */
+    transition: ${mainTransition};
   }
 `;
 
 // Error message
-const FormErrorMessageStyled = styled.p`
+const FormErrorMessageStyled = styled.p<{ hasError: boolean }>`
   width: 100%;
   /* Font */
   color: ${colors.red};
@@ -218,6 +235,8 @@ const FormErrorMessageStyled = styled.p`
   padding: 0;
   margin: 0;
   margin-top: 0.4em;
+  /* Animation */
+  animation: ${(props) =>
+      props.hasError && animations.moveBottomFromTopAndFadeInAnimation}
+    0.2s;
 `;
-
-// TODO: Animate input error

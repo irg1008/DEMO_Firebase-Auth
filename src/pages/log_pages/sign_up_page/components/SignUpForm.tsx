@@ -1,13 +1,8 @@
-import React, {
-  PureComponent,
-  FormEvent,
-  ChangeEvent,
-  ComponentState,
-} from "react";
-import { withRouter } from "react-router-dom";
+import React, { Component, FormEvent, ChangeEvent } from "react";
+import { withRouter, Redirect } from "react-router-dom";
 
 // Routes
-import * as ROUTES from "../../../routes/routes";
+import ROUTES from "../../../../routes";
 
 // Form elements
 import {
@@ -15,63 +10,35 @@ import {
   FormButton,
   ShowPassword,
   FormOptions,
-  SignWithGoogle,
-} from "../../../components/form/form_elements";
+  FormLink,
+} from "../../../../components/form/form_elements";
+
+// Sign without password
+import { SignWithoutPassword } from "../../email_sign/components";
+
+// Input state
+import {
+  IInputState,
+  INITIAL_INPUT_STATE,
+} from "../../../../components/form/form_elements/FormInput";
 
 // Form Wrapper. Optional, but helps us create a common structure between forms.
 // Validation of form, useful when handling validation of inputs.
-import { FormCreator, inputValidation } from "../../../components/form";
+import FormCreator from "../../../../components/form";
+import inputValidation from "../../../../components/form/utils";
 
 // Firebase
-import Firebase, { withFirebase } from "../../../utils/firebase";
+import Firebase, { withFirebase } from "../../../../components/firebase";
 
-/**
- * Interface of input.
- *
- * @interface IInputState
- */
-interface IInputState {
-  /**
-   * Value of input.
-   *
-   * @type {string}
-   * @memberof IInputState
-   */
-  value: string;
+// Local auth.
+import { withAuth } from "../../../../components/auth";
 
-  /**
-   * Validity of input.
-   *
-   * @type {boolean}
-   * @memberof IInputState
-   */
-  isValid?: boolean;
-
-  /**
-   * Error mesg on input is no valid.
-   *
-   * @type {string}
-   * @memberof IInputState
-   */
-  errorMsg?: string;
-}
-
-// Initial input state.
-const INITIAL_INPUT_STATE = {
-  value: "",
-};
-
-/**
- * Interface of passes props.
- *
- * @interface ISignUpProps
- */
-interface ISignUpProps {
+// Types of passes props.
+type ISignUpProps = {
   /**
    * Firebase class.
    *
    * @type {Firebase}
-   * @memberof ISignUpProps
    */
   firebase: Firebase;
 
@@ -79,22 +46,31 @@ interface ISignUpProps {
    * History of react-router-dom.
    *
    * @type {*}
-   * @memberof ISignUpProps
    */
   history: any;
-}
 
-/**
- * Interface of state.
- *
- * @interface ISignUpState
- */
-interface ISignUpState {
+  /**
+   * Auth consumer.
+   *
+   * @type {*}
+   */
+  authContext: {
+    /**
+     * Auth local user.
+     *
+     * @type {*}
+     */
+    user: any;
+  };
+};
+
+// Types of state.
+
+type ISignUpState = {
   /**
    * Username input.
    *
    * @type {IInputState}
-   * @memberof ISignUpState
    */
   username: IInputState;
 
@@ -102,7 +78,6 @@ interface ISignUpState {
    * Email.
    *
    * @type {IInputState}
-   * @memberof ISignUpState
    */
   email: IInputState;
 
@@ -110,7 +85,6 @@ interface ISignUpState {
    * PasswordOne.
    *
    * @type {IInputState}
-   * @memberof ISignUpState
    */
   passwordOne: IInputState;
 
@@ -118,7 +92,6 @@ interface ISignUpState {
    * PasswordTwo.
    *
    * @type {IInputState}
-   * @memberof ISignUpState
    */
   passwordTwo: IInputState;
 
@@ -126,7 +99,6 @@ interface ISignUpState {
    * State of password visibility
    *
    * @type {boolean}
-   * @memberof ISignUpState
    */
   hiddenPass: boolean;
 
@@ -134,7 +106,6 @@ interface ISignUpState {
    * Form is valid.
    *
    * @type {boolean}
-   * @memberof ISignUpState
    */
   isValid?: boolean;
 
@@ -142,10 +113,9 @@ interface ISignUpState {
    * Form is signing in and retrieving eny error ocurred.
    *
    * @type {boolean}
-   * @memberof ISignUpState
    */
   loading?: boolean;
-}
+};
 
 // Initial state. Valid states only on initial state.
 const INITIAL_STATE: ISignUpState = {
@@ -159,10 +129,10 @@ const INITIAL_STATE: ISignUpState = {
 /**
  * Base sign up form.
  *
- * @class SignUpFormBase class.
- * @extends {PureComponent<ISignUpProps, ISignUpState>}
+ * @class SignUpForm class.
+ * @extends {Component<ISignUpProps, ISignUpState>}
  */
-class SignUpFormBase extends PureComponent<ISignUpProps, ISignUpState> {
+class SignUpForm extends Component<ISignUpProps, ISignUpState> {
   constructor(props: ISignUpProps) {
     super(props);
     // Initialices the state.
@@ -170,15 +140,32 @@ class SignUpFormBase extends PureComponent<ISignUpProps, ISignUpState> {
   }
 
   /**
+   * Only mount page if not signed. If signed redirect to main.
+   *
+   * @memberof SignUpForm
+   */
+  componentDidMount = (): void => {
+    const { firebase } = this.props;
+
+    // On auth change listener.
+    firebase.auth.onAuthStateChanged((user: any) => {
+      // Set user of auth context.
+      if (!user) document.title = "Silk&Rock - Únete";
+    });
+  };
+
+  /**
    * On submit form.
    *
    * @param {FormEvent} event Form event.
-   * @memberof SignUpFormBase
+   * @memberof SignUpForm
    */
-  onSubmit = (event: FormEvent) => {
-    const { firebase } = this.props;
+  onSubmit = (event: FormEvent): void => {
     // Prevent default behaviour.
     event.preventDefault();
+
+    // Firebase and react history.
+    const { firebase, history } = this.props;
 
     // State decostrution.
     const { username, email, passwordOne } = this.state;
@@ -189,18 +176,20 @@ class SignUpFormBase extends PureComponent<ISignUpProps, ISignUpState> {
     // On submit => create user, reset state and push to landing page.
     firebase
       .doCreateUserWithEmailAndPassword(email.value, passwordOne.value)
-      .then((authUser: any) => {
-        // TODO: Verify the email with verify page and add user info
-        // Push to landing page
-        this.props.history.push(ROUTES.LANDING.path);
+      .then((result: any) => {
+        // TODO: Redirect to verify page
+        console.log(
+          "Redirect to verify page on new account sign up without signing in"
+        );
       })
       .catch((error: any) => {
+        // Note: This error code returns a 400 error to the console, exposing the app id or api key. This is not convinient but does not expose any data of the users. This happens because we manage the white domains that can access this data. Any other domain won't be able to acces users data even if they have de api key.
+        if (error.code === "auth/email-already-in-use")
+          this.emailAlreadyInUse();
+      })
+      .then(() => {
         // If error happens stop loading form submit
         this.setState({ loading: false });
-        // Note: This error code returns a 400 error to de console, exposing the app id or api key. This is not convinient but does not expose any data of the users. This happens because we manage the white domains that can access this data. Any other domain won't be able to acces users data even if they have de api key.
-        if (error.code === "auth/email-already-in-use") {
-          this.emailAlreadyInUse();
-        }
       });
   };
 
@@ -208,12 +197,12 @@ class SignUpFormBase extends PureComponent<ISignUpProps, ISignUpState> {
    * On input change.
    *
    * @param {ChangeEvent} event Input event.
-   * @memberof SignUpFormBase
+   * @memberof SignUpForm
    */
   onChange = (
     event: ChangeEvent<HTMLInputElement>,
-    callbackValidation: any
-  ) => {
+    callbackValidation?: any
+  ): void => {
     // Prevent default behaviour.
     event.preventDefault();
 
@@ -223,8 +212,9 @@ class SignUpFormBase extends PureComponent<ISignUpProps, ISignUpState> {
     // Change the value in the state of given input name prop and then validate form.
     this.setState(
       {
+        ...this.state,
         [name]: { value },
-      } as ComponentState,
+      },
       () => {
         callbackValidation();
       }
@@ -234,9 +224,9 @@ class SignUpFormBase extends PureComponent<ISignUpProps, ISignUpState> {
   /**
    * Validation of form.
    *
-   * @memberof SignUpFormBase
+   * @memberof SignUpForm
    */
-  validateForm = () => {
+  validateForm = (): void => {
     const { username, email, passwordOne, passwordTwo } = this.state;
 
     // Validation.
@@ -252,16 +242,13 @@ class SignUpFormBase extends PureComponent<ISignUpProps, ISignUpState> {
   /**
    * Validate username and check entire form.
    *
-   * @memberof SignUpFormBase
+   * @memberof SignUpForm
    */
-  validateUsername = () => {
-    const username = { ...this.state.username };
-
+  validateUsername = (): void => {
     // Check username validity.
-    const userCheck = inputValidation.checkUsername(username.value);
-    username.isValid = userCheck.isValid;
-    username.errorMsg = userCheck.errorMsg;
-
+    const userCheck = inputValidation.checkUsername(this.state.username.value);
+    // Username
+    const username = { ...this.state.username, ...userCheck };
     // Change username info.
     this.setState({ username }, () => this.validateForm());
   };
@@ -269,16 +256,13 @@ class SignUpFormBase extends PureComponent<ISignUpProps, ISignUpState> {
   /**
    * Validate email and check entire form.
    *
-   * @memberof SignUpFormBase
+   * @memberof SignUpForm
    */
-  validateEmail = () => {
-    const email = { ...this.state.email };
-
+  validateEmail = (): void => {
     // Check email validity.
-    const emailCheck = inputValidation.checkEmail(email.value);
-    email.isValid = emailCheck.isValid;
-    email.errorMsg = emailCheck.errorMsg;
-
+    const emailCheck = inputValidation.checkEmail(this.state.email.value);
+    // Email
+    const email = { ...this.state.email, ...emailCheck };
     // Change email info.
     this.setState({ email }, () => this.validateForm());
   };
@@ -286,42 +270,40 @@ class SignUpFormBase extends PureComponent<ISignUpProps, ISignUpState> {
   /**
    * Email is already in use.
    *
-   * @memberof SignUpFormBase
+   * @memberof SignUpForm
    */
-  emailAlreadyInUse = () => {
-    const email = { ...this.state.email };
-
+  emailAlreadyInUse = (): void =>
     // Change email info
-    email.isValid = false;
-    email.errorMsg =
-      "Este correo ya está en uso, inicia sesión o prueba con otro";
-
-    this.setState({ email }, () => this.validateForm());
-  };
+    this.setState(
+      {
+        email: {
+          ...this.state.email,
+          isValid: false,
+          errorMsg:
+            "Este correo ya está en uso, inicia sesión o prueba con otro",
+        },
+      },
+      () => this.validateForm()
+    );
 
   /**
    * Validate passwords.
    *
-   * @memberof SignUpFormBase
+   * @memberof SignUpForm
    */
-  validatePasswords = () => {
-    const passwordOne = { ...this.state.passwordOne };
-    const passwordTwo = { ...this.state.passwordTwo };
-
+  validatePasswords = (): void => {
     // Check password 1
     const passwordOneCheck = inputValidation.checkFirstPassword(
-      passwordOne.value
+      this.state.passwordOne.value
     );
-    passwordOne.isValid = passwordOneCheck.isValid;
-    passwordOne.errorMsg = passwordOneCheck.errorMsg;
+    const passwordOne = { ...this.state.passwordOne, ...passwordOneCheck };
 
     // Check password 2
     const passwordTwoCheck = inputValidation.checkConfirmPassword(
-      passwordOne.value,
-      passwordTwo.value
+      this.state.passwordOne.value,
+      this.state.passwordTwo.value
     );
-    passwordTwo.isValid = passwordTwoCheck.isValid;
-    passwordTwo.errorMsg = passwordTwoCheck.errorMsg;
+    const passwordTwo = { ...this.state.passwordTwo, ...passwordTwoCheck };
 
     // Change password info.
     this.setState({ passwordOne, passwordTwo }, () => this.validateForm());
@@ -330,20 +312,16 @@ class SignUpFormBase extends PureComponent<ISignUpProps, ISignUpState> {
   /**
    * Toggles password visibility.
    *
-   * @memberof SignUpFormBase
+   * @memberof SignUpForm
    */
-  togglePasswordVisibility = () => {
-    const { hiddenPass } = this.state;
-    this.setState({
-      hiddenPass: !hiddenPass,
-    });
-  };
+  togglePasswordVisibility = () =>
+    this.setState({ hiddenPass: !this.state.hiddenPass });
 
   /**
    * Sign up form and validation of inputs.
    *
    * @returns SignUpForm.
-   * @memberof SignUpFormBase
+   * @memberof SignUpForm
    */
   render() {
     // State deconstruction.
@@ -357,6 +335,10 @@ class SignUpFormBase extends PureComponent<ISignUpProps, ISignUpState> {
       loading,
     } = this.state;
 
+    // Props deconstruction
+    const { authContext } = this.props;
+
+    // Form Content
     const formContent = (
       <>
         <FormInput
@@ -378,7 +360,7 @@ class SignUpFormBase extends PureComponent<ISignUpProps, ISignUpState> {
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             this.onChange(e, this.validateEmail)
           }
-          type="text"
+          type="email"
           isValid={email.isValid}
           errorMessage={email.errorMsg}
           required
@@ -420,27 +402,35 @@ class SignUpFormBase extends PureComponent<ISignUpProps, ISignUpState> {
             loading ? "Comprobando que todo esté correcto..." : "Crear Cuenta"
           }
         />
+        <FormLink
+          text="¿Ya estás registrado?"
+          linkText="Inicia sesión"
+          to={ROUTES.LOG_IN.path}
+        />
       </>
     );
 
+    // Form bottom component
     const formBottomComponent = (
       <FormOptions
-        firstOption={<SignWithGoogle />}
-        secondOption="Registrarse por link mediante email"
+        secondOption={
+          <SignWithoutPassword text="Registro por link via email" />
+        }
       />
     );
 
-    return (
+    // If user is logged push to landing.
+    return authContext.user !== null ? (
+      <Redirect to={ROUTES.LANDING.path} />
+    ) : (
       <FormCreator
         onSubmit={this.onSubmit}
         content={formContent}
         bottomComponent={formBottomComponent}
+        title="únete"
       />
     );
   }
 }
 
-// SignUpFormBase with encapsulated react and firebase.
-const SignUpForm = withRouter(withFirebase(SignUpFormBase));
-
-export default SignUpForm;
+export default withAuth(withRouter(withFirebase(SignUpForm)));

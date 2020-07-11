@@ -1,15 +1,15 @@
-import React, { PureComponent } from "react";
+import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 
 // Styled-Components
 import styled from "styled-components";
-import { ContainerStyled, media } from "../../../style/style";
+import { ContainerStyled, media } from "../../../style/main_style";
 
 // Title
-import { Title5Styled } from "../../titles/Titles";
+import titles from "../../titles";
 
-// Firebase
-import Firebase, { withFirebase } from "../../../utils/firebase";
+// Firebase class and consumer.
+import Firebase, { withFirebase } from "../../firebase";
 
 // Google logo
 import { googleIcon } from "../../../assets";
@@ -17,18 +17,32 @@ import { googleIcon } from "../../../assets";
 // ROUTES
 import ROUTES from "../../../routes";
 
+// Loading context consumer.
+import { withLoading } from "../../loading";
+
+// Google Cookie interface and typed.
+type IGoogleCookie = {
+  /**
+   * Google cookie id.
+   *
+   * @type {string}
+   */
+  id: string;
+
+  /**
+   * Google cookie value.
+   *
+   * @type {string}
+   */
+  value: string;
+};
+
 // Sign with google props
-/**
- * Sign with google props
- *
- * @interface ISignGoogleProps
- */
-interface ISignGoogleProps {
+type ISignGoogleProps = {
   /**
    * Firebase prop passed from form
    *
    * @type {Firebase}
-   * @memberof ISignGoogleProps
    */
   firebase: Firebase;
 
@@ -36,55 +50,78 @@ interface ISignGoogleProps {
    * History of router.
    *
    * @type {*}
-   * @memberof ISignGoogleProps
    */
   history: any;
-}
 
-// Sign with google state
+  /**
+   * The loading context consumer, used to change loading data.
+   *
+   * @type {*}
+   */
+  loadingContext: {
+    /**
+     * Show loading.
+     *
+     * @type {*}
+     */
+    showLoading: any;
+
+    /**
+     * Hide loading.
+     *
+     * @type {*}
+     */
+    hideLoading: any;
+  };
+};
+
 /**
- * Stores if users has been correctly signed with google.
+ * Sign with google. The user that signs up with google us verified and logged in directyl.
  *
- * @interface ISignGoogleState
+ * @class SignWithGoogle
+ * @extends {Component<ISignGoogleProps>}
  */
-interface ISignGoogleState {}
+class SignWithGoogle extends Component<ISignGoogleProps> {
+  // Google cookie.
+  private googleCookie: IGoogleCookie = {
+    id: "google-user-auth",
+    value: "true",
+  };
 
-class SignWithGoogleBase extends PureComponent<
-  ISignGoogleProps,
-  ISignGoogleState
-> {
   /**
    * Component did mount.
    *
-   * @memberof SignWithGoogleBase
+   * @memberof SignWithGoogle
    */
-  componentDidMount = () => {
-    const { firebase } = this.props;
+  componentDidMount = (): void => {
+    const { history, firebase, loadingContext } = this.props;
+    const { googleCookie } = this;
 
-    // When google redirects from signing, get the outh data.
-    firebase
-      .doGetRedirectResult()
-      .then((result: any) => {
-        // Check if any data retrieved, checking if any property exists, i.e.: credential.
-        if (result.credential) {
-          // Store if user is singning up or in.
-          let isNewUser: boolean = result.additionalUserInfo.isNewUser;
+    // If cookie is setted, show loading and then remove cookie.
+    if (localStorage.getItem(googleCookie.id)) {
+      // Set the page to loading.
+      loadingContext.showLoading();
 
-          // If userIsNew is true, redirect to home page, if user is not new redirect to complete sign page.
-          if (isNewUser) {
-            this.props.history.push(ROUTES.SIGN_UP.path);
+      // When google redirects from signing, get the outh data.
+      firebase
+        .doGetRedirectResult()
+        .then((result: any) => {
+          // Check if any data retrieved, checking if any property exists, i.e.: credential.
+          if (result.credential) {
+            // It doesnt matter if user is new, we logged him and redirect.
+            history.push(ROUTES.LANDING.path);
           }
-          // If userIsNew is false, redirect to main page logged in.
-          else {
-            this.props.history.push(ROUTES.LANDING.path);
-          }
-
-          console.log(result);
-        }
-      })
-      .catch((error: any) => {
-        console.log(error);
-      });
+        })
+        .catch((error: any) => {
+          console.log(error);
+        })
+        .then(() => {
+          // Set the page to loading.
+          loadingContext.hideLoading();
+          // Remove the used cookie.
+          localStorage.removeItem(googleCookie.id);
+        });
+    }
   };
 
   /**
@@ -92,27 +129,37 @@ class SignWithGoogleBase extends PureComponent<
    *
    * @memberof SignWithGoogle
    */
-  onClick = () => {
+  onClick = (): void => {
     const { firebase } = this.props;
+    const { googleCookie } = this;
 
     // Sign with google and firebase. This verifies email. Does not retrieve any data or error.
     firebase.doSignInWithGoogleWithRedirect();
+
+    // Set a cookie that we are fetching data, to use in redirect
+    localStorage.setItem(googleCookie.id, googleCookie.value);
   };
 
+  /**
+   * Return google sign in.
+   *
+   * @returns
+   * @memberof SignWithGoogle
+   */
   render() {
     return (
       <GoogleContainerStyled onClick={this.onClick}>
         <GoogleLogoStyled src={googleIcon} alt="google_icon" />
-        <GoogleTextStyled>Únete con Google</GoogleTextStyled>
+        <TextContainer>
+          <titles.Title5 title="Únete con Google" />
+        </TextContainer>
       </GoogleContainerStyled>
     );
   }
 }
 
 // Google sign encapsullated with firebase and react for routing and using of firebase functions. Done this way for reusability.
-const SignWithGoogle = withRouter(withFirebase(SignWithGoogleBase));
-
-export default SignWithGoogle;
+export default withRouter(withFirebase(withLoading(SignWithGoogle)));
 
 // Styled-Components
 // Google container
@@ -120,21 +167,25 @@ const GoogleContainerStyled = styled(ContainerStyled)`
   width: 100%;
   height: 100%;
   /* Font */
-  font-weight: bold;
+  text-align: center;
   /* Flexbox */
   flex-direction: row;
+  /* Margin, Padding, Border */
+  padding: 0 2em;
 `;
 
 // Logo
 const GoogleLogoStyled = styled.img`
   height: 2em;
-  margin-right: 0.5em;
 `;
 
 // Google text
-const GoogleTextStyled = styled(Title5Styled)`
+const TextContainer = styled(ContainerStyled)`
+  width: 8em;
+  /* Margin, Padding, Border */
+  margin-left: 0.5em;
   /* Media */
-  @media (min-width: ${media.mediumSize}) {
-    width: 6em;
+  @media (max-width: ${media.mediumSize}) {
+    width: auto;
   }
 `;

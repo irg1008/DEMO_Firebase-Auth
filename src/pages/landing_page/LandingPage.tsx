@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 // Styled-Components
 import styled from "styled-components";
-import { MainBGContainerStyled, ContainerStyled } from "../../style/style";
+import { MainBGContainerStyled, ContainerStyled } from "../../style/main_style";
 
 // Logo
-import Logo from "../../components/logo/Logo";
+import Logo from "../../components/logo";
 
 // En Construccion
 import EnConstruccion from "./components/EnConstruccion";
@@ -15,7 +15,11 @@ import EnConstruccion from "./components/EnConstruccion";
  *
  * @returns Main page.
  */
-const LandingPage = () => {
+const LandingPage: React.FC = () => {
+  useEffect(() => {
+    document.title = "Silk&Rock - Work Uniforms";
+  });
+
   return (
     <LandingPageContainerStyled>
       <LandingLogoContainerStyled>
@@ -35,9 +39,12 @@ const LandingPageContainerStyled = styled(MainBGContainerStyled)`
   width: auto;
   min-height: 100vh;
   height: auto;
+  /* Margin, Padding, Border */
+  padding-top: 5em;
 `;
 
 // MainPage logo
 const LandingLogoContainerStyled = styled(ContainerStyled)`
   width: 70%;
+  max-width: 1000px;
 `;

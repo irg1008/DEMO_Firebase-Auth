@@ -1,13 +1,13 @@
-import styled from "styled-components";
-import { keyframes } from "styled-components";
+// Styled-Components.
+import styled, { keyframes } from "styled-components";
 
 // Main BG image
 import { mainBG } from "../assets";
 
-/* GENERAL */
 // Color constants
 export const colors = {
   mainBlack: "#1f1f1f",
+  darkBrown: "#231F20",
   mainGrey: "#eeeeee",
   darkGrey: "#d1d5da",
   blue: "#4d90fe",
@@ -25,6 +25,7 @@ export const shadows = {
   focusInsetError:
     "inset 0 1px 2px rgba(35, 27, 28,.075), 0 0 0 0.2em rgba(214, 3, 49,.3)",
   hardShadow: "0 0 5px rgba(0, 0, 0, 0.5);",
+  bottomShadow: "0px 0px 8px 2px #000000;",
 };
 
 // Border constants
@@ -37,32 +38,40 @@ export const border = {
 export const radius = {
   mainRadius: "0.2em",
   mediumRadius: "0.4em",
+  fullRadius: "10em",
 };
 
 // Animations
 export const animations = {
   fadeInAnimation: keyframes`
-  from {opacity: 0;}
-  to   {opacity: 1;}
-`,
+    0%   {opacity: 0;}
+    100% {opacity: 1;}
+  `,
 
   fadeOutAnimation: keyframes`
-  from {opacity: 1;}
-  to   {opacity: 0;}
-`,
+    0%   {opacity: 1;}
+    100% {opacity: 0;}
+  `,
 
-  moveInFromLeftAnimation: keyframes`
-  from {transform: translateX(-100%);
-        opacity: 0;}
-  to   {transform: translateX(0);
-        opacity: 1}
+  moveBottomFromTopAndFadeInAnimation: keyframes`
+    0% {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    60% {
+      transform: translateY(15%);
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
   `,
 
   shakeAnimation: keyframes`
-  30%  {transform: rotate(0deg);}
-  35%  {transform: rotate(1.5deg);}
-  45%  {transform: rotate(-1.5deg);}
-  50%  {transform: rotate(0deg);}
+    30% {transform: rotate(0deg);}
+    35% {transform: rotate(1.5deg);}
+    45% {transform: rotate(-1.5deg);}
+    50% {transform: rotate(0deg);}
   `,
 };
 
@@ -136,4 +145,51 @@ export const MainBGContainerStyled = styled(ContainerStyled)`
     url(${mainBG});
   background-position: center;
 `;
-/* END OF GENERAL */
+
+// Button Styled
+export const ButtonStyled = styled.button`
+  width: auto;
+  height: 2.5em;
+  /* Margin, Padding, Border */
+  padding: 0 0.8em;
+  border-width: 0.2em;
+  border-color: ${colors.mainBlack};
+  border-style: solid;
+  border-radius: ${radius.fullRadius};
+  /* Outline */
+  outline: none;
+  /* Cursor */
+  cursor: pointer;
+  /* Font */
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 11pt;
+  text-transform: capitalize;
+  color: ${colors.mainBlack};
+  /* BG */
+  background: radial-gradient(
+    circle,
+    ${colors.mainBlack} 10%,
+    ${colors.mainGrey} 10%,
+    ${colors.mainGrey} 20%,
+    transparent 20%
+  );
+  background-size: 300% 100%;
+  background-position: right bottom;
+  background-repeat: no-repeat;
+  /* Transition */
+  transition: all 0.3s ease-in-out;
+  /* Hover */
+  &:hover {
+    /* Font */
+    color: ${colors.mainWhite};
+    background-size: 1000% 1000%;
+    background-position: center center;
+    /* Shadow */
+    -moz-box-shadow: ${shadows.hardShadow};
+    -webkit-box-shadow: ${shadows.hardShadow};
+    box-shadow: ${shadows.hardShadow};
+    /* Transition */
+    transition: all 0.3s ease-in-out;
+  }
+`;

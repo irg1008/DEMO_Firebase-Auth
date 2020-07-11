@@ -1,30 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 // Error
 import Error from "./components/Error";
 
 // Styled-Components
 import styled from "styled-components";
-import { MainBGContainerStyled } from "../../style/style";
-
-// Error 404 message
-const errorMessage = {
-  errorType: 404,
-  errorMessage: "Vuelve por donde has venido",
-};
+import { MainBGContainerStyled } from "../../style/main_style";
 
 /**
  * Error page component.
  *
  * @returns Error page.
  */
-const ErrorPage = () => {
+const ErrorPage: React.FC = () => {
+  useEffect(() => {
+    document.title = "Silk&Rock - Error";
+  });
+
   return (
     <ErrorPageContainerStyled>
-      <Error
-        errorType={errorMessage.errorType}
-        errorMessage={errorMessage.errorMessage}
-      />
+      <Error errorType={404} errorMessage="Vuelve por donde has venido" />
     </ErrorPageContainerStyled>
   );
 };
@@ -38,4 +33,6 @@ const ErrorPageContainerStyled = styled(MainBGContainerStyled)`
   width: auto;
   min-height: 100vh;
   height: auto;
+  /* Margin, Padding, Border */
+  padding-top: 5em;
 `;

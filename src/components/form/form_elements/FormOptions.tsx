@@ -6,31 +6,28 @@ import {
   BorderedContainerStyled,
   media,
   colors,
-} from "../../../style/style";
+} from "../../../style/main_style";
 import styled from "styled-components";
 
-/**
- * Options of component.
- *
- * @interface IFormOptionsProps
- */
-interface IFormOptionsProps {
+// SignWithGoogle
+import { SignWithGoogle } from "./";
+
+// Options of component.
+type IFormOptionsProps = {
   /**
-   * First option of form. i.e Google sign up/in.
+   * First option of form. If no first option is given, assumes sign with google.
    *
    * @type {*}
-   * @memberof IFormOptionsProps
    */
-  firstOption: any;
+  firstOption?: any;
 
   /**
    * Second option of form. i.e Sign Up passwordless.
    *
    * @type {*}
-   * @memberof IFormOptionsProps
    */
   secondOption: any;
-}
+};
 
 // Separator text
 const separatorText = "o";
@@ -41,30 +38,30 @@ const separatorText = "o";
  * @param {IFormOptionsProps} props
  * @returns
  */
-const FormOptions = (props: IFormOptionsProps) => {
-  const { firstOption, secondOption } = props;
-  return (
-    <FormOtherOptionsContainerStyled>
-      {/* Separator */}
-      <FormOtherOptionsOrSeparatorStyled>
-        <FormSeparatorStyled />
-        <FormSeparatorTextStyled>{separatorText}</FormSeparatorTextStyled>
-        <FormSeparatorStyled />
-      </FormOtherOptionsOrSeparatorStyled>
-      {/* Options */}
-      <FormOtherOptionsBottomContainerStyled>
-        <FormOtherOptionStyled>{firstOption}</FormOtherOptionStyled>
-        <FormOtherOptionStyled>{secondOption}</FormOtherOptionStyled>
-      </FormOtherOptionsBottomContainerStyled>
-    </FormOtherOptionsContainerStyled>
-  );
-};
+const FormOptions: React.FC<IFormOptionsProps> = ({
+  firstOption,
+  secondOption,
+}: IFormOptionsProps) => (
+  <FormOptionsContainer>
+    {/* Separator */}
+    <OptionsSeparator>
+      <SeparatorLine />
+      <SeparatorText>{separatorText}</SeparatorText>
+      <SeparatorLine />
+    </OptionsSeparator>
+    {/* Options */}
+    <OptionsContainer>
+      <Option>{firstOption || <SignWithGoogle />}</Option>
+      <Option>{secondOption}</Option>
+    </OptionsContainer>
+  </FormOptionsContainer>
+);
 
 export default FormOptions;
 
 // Styled-Components
 // Form options container
-export const FormOtherOptionsContainerStyled = styled(ContainerStyled)`
+const FormOptionsContainer = styled(ContainerStyled)`
   width: 90%;
   height: auto;
   /* Margin, Padding, Border */
@@ -76,8 +73,9 @@ export const FormOtherOptionsContainerStyled = styled(ContainerStyled)`
 `;
 
 // Separator container
-export const FormOtherOptionsOrSeparatorStyled = styled(ContainerStyled)`
+const OptionsSeparator = styled(ContainerStyled)`
   width: 100%;
+  height: auto;
   /* Margin, Padding, Border */
   margin: 1em 0;
   /* Flexbox */
@@ -85,7 +83,7 @@ export const FormOtherOptionsOrSeparatorStyled = styled(ContainerStyled)`
 `;
 
 // Separator
-export const FormSeparatorStyled = styled.div`
+const SeparatorLine = styled.div`
   height: 5px;
   /* Flexbox */
   flex: 1;
@@ -94,7 +92,7 @@ export const FormSeparatorStyled = styled.div`
 `;
 
 // Separator middle text
-export const FormSeparatorTextStyled = styled.p`
+const SeparatorText = styled.p`
   width: auto;
   /* Font */
   text-align: center;
@@ -105,9 +103,9 @@ export const FormSeparatorTextStyled = styled.p`
 `;
 
 // Other options of form container
-export const FormOtherOptionsBottomContainerStyled = styled(ContainerStyled)`
+const OptionsContainer = styled(ContainerStyled)`
   width: 100%;
-  height: 10em;
+  height: 8em;
   /* Flexbox */
   justify-content: space-around;
   /* Media medium size */
@@ -121,26 +119,21 @@ export const FormOtherOptionsBottomContainerStyled = styled(ContainerStyled)`
 `;
 
 // Other option
-export const FormOtherOptionStyled = styled(BorderedContainerStyled)`
+const Option = styled(BorderedContainerStyled)`
   width: 100%;
-  height: auto;
-  min-height: 4em;
+  height: 3.5em;
+  min-height: 0;
   /* Font */
   text-align: center;
-  /* Flexbox */
-  flex-direction: row;
+  /* Overflow */
+  overflow: hidden;
   /* Margin, Padding, Border */
-  padding: 0.5em;
+  padding: 0;
   /* Cursor */
   cursor: pointer;
   /* Media medium size */
   @media (min-width: ${media.mediumSize}) {
+    height: 6em;
     width: 48%;
-    min-height: 5em;
-  }
-  /* On click */
-  &:active {
-    /* Cursor => Loading */
-    cursor: wait;
   }
 `;
