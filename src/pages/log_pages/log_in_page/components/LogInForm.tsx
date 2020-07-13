@@ -1,5 +1,5 @@
 import React, { ChangeEvent, FormEvent, Component } from "react";
-import { Redirect, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 
 // Form elements
 import {
@@ -11,7 +11,7 @@ import {
 } from "../../../../components/form/form_elements";
 
 // Sign without password
-import { SignWithoutPassword } from "../../email_sign/components";
+import { SignWithoutPassword } from "../../components/email_sign";
 
 // Form Wrapper. Optional, but helps us create a common structure between forms.
 // Validation of form, useful when handling validation of inputs.
@@ -132,21 +132,6 @@ class LogInPage extends Component<ILogInProps, ILoginState> {
     // Initialices the state.
     this.state = { ...INITIAL_STATE };
   }
-
-  /**
-   * Only mount page if not signed. If signed redirect to main.
-   *
-   * @memberof LogInPage
-   */
-  componentDidMount = (): void => {
-    const { firebase } = this.props;
-
-    // On auth change listener.
-    firebase.auth.onAuthStateChanged((user: any) => {
-      // Set user of auth context.
-      if (!user) document.title = "Silk&Rock - Inicia Sesión";
-    });
-  };
 
   /**
    * On submit form => Set to loading and log in.
@@ -324,9 +309,6 @@ class LogInPage extends Component<ILogInProps, ILoginState> {
     // State desconstruction.
     const { email, password, hiddenPass, isValid, loading } = this.state;
 
-    // Props desconstruction.
-    const { authContext } = this.props;
-
     // Form Content
     const formContent = (
       <>
@@ -362,7 +344,7 @@ class LogInPage extends Component<ILogInProps, ILoginState> {
         <FormButton
           disabled={!isValid}
           loading={loading}
-          text={loading ? "Comprobando datos..." : "Inicia sesión"}
+          text={loading ? "Comprobando datos..." : "Iniciar sesión"}
         />
         <FormLink
           text="¿No estás registrado?"
@@ -380,9 +362,7 @@ class LogInPage extends Component<ILogInProps, ILoginState> {
     );
 
     // If user is logged push to landing.
-    return authContext.user !== null ? (
-      <Redirect to={ROUTES.LANDING.path} />
-    ) : (
+    return (
       <FormCreator
         onSubmit={this.onSubmit}
         content={formContent}

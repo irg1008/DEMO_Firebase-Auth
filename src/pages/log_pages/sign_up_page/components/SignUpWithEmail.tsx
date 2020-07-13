@@ -1,7 +1,7 @@
 import React, { FormEvent } from "react";
 
 // Sign with email component.
-import EmailSignPage from "../../email_sign";
+import EmailSignPage from "../../components/email_sign";
 
 const SignUpWithEmail: React.FC = () => {
   const onSubmit = (event: FormEvent): void => {

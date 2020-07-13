@@ -1,5 +1,5 @@
 import React, { Component, FormEvent, ChangeEvent } from "react";
-import { withRouter, Redirect } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 
 // Routes
 import ROUTES from "../../../../routes";
@@ -14,7 +14,7 @@ import {
 } from "../../../../components/form/form_elements";
 
 // Sign without password
-import { SignWithoutPassword } from "../../email_sign/components";
+import { SignWithoutPassword } from "../../components/email_sign";
 
 // Input state
 import {
@@ -29,9 +29,6 @@ import inputValidation from "../../../../components/form/utils";
 
 // Firebase
 import Firebase, { withFirebase } from "../../../../components/firebase";
-
-// Local auth.
-import { withAuth } from "../../../../components/auth";
 
 // Types of passes props.
 type ISignUpProps = {
@@ -48,20 +45,6 @@ type ISignUpProps = {
    * @type {*}
    */
   history: any;
-
-  /**
-   * Auth consumer.
-   *
-   * @type {*}
-   */
-  authContext: {
-    /**
-     * Auth local user.
-     *
-     * @type {*}
-     */
-    user: any;
-  };
 };
 
 // Types of state.
@@ -138,21 +121,6 @@ class SignUpForm extends Component<ISignUpProps, ISignUpState> {
     // Initialices the state.
     this.state = { ...INITIAL_STATE };
   }
-
-  /**
-   * Only mount page if not signed. If signed redirect to main.
-   *
-   * @memberof SignUpForm
-   */
-  componentDidMount = (): void => {
-    const { firebase } = this.props;
-
-    // On auth change listener.
-    firebase.auth.onAuthStateChanged((user: any) => {
-      // Set user of auth context.
-      if (!user) document.title = "Silk&Rock - Únete";
-    });
-  };
 
   /**
    * On submit form.
@@ -324,7 +292,7 @@ class SignUpForm extends Component<ISignUpProps, ISignUpState> {
    * @memberof SignUpForm
    */
   render() {
-    // State deconstruction.
+    // State decostruction.
     const {
       username,
       email,
@@ -334,9 +302,6 @@ class SignUpForm extends Component<ISignUpProps, ISignUpState> {
       isValid,
       loading,
     } = this.state;
-
-    // Props deconstruction
-    const { authContext } = this.props;
 
     // Form Content
     const formContent = (
@@ -420,9 +385,7 @@ class SignUpForm extends Component<ISignUpProps, ISignUpState> {
     );
 
     // If user is logged push to landing.
-    return authContext.user !== null ? (
-      <Redirect to={ROUTES.LANDING.path} />
-    ) : (
+    return (
       <FormCreator
         onSubmit={this.onSubmit}
         content={formContent}
@@ -433,4 +396,4 @@ class SignUpForm extends Component<ISignUpProps, ISignUpState> {
   }
 }
 
-export default withAuth(withRouter(withFirebase(SignUpForm)));
+export default withRouter(withFirebase(SignUpForm));

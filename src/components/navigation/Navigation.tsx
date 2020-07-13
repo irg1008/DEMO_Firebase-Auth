@@ -86,10 +86,10 @@ const Navigation: React.FC<INavigationProps> = ({
           ) : (
             <>
               <ListItem onClick={toggleButton}>
-                <NavLink to={ROUTES.LOG_IN.path}>Log In</NavLink>
+                <NavLink to={ROUTES.LOG_IN.path}>Inicia Sesión</NavLink>
               </ListItem>
               <ListItem onClick={toggleButton}>
-                <NavLink to={ROUTES.SIGN_UP.path}>Sign Up</NavLink>
+                <NavLink to={ROUTES.SIGN_UP.path}>Únete</NavLink>
               </ListItem>
             </>
           )}

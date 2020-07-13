@@ -1,27 +1,27 @@
 import React, { ChangeEvent, Component } from "react";
 
 // Firebase consumer
-import Firebase, { withFirebase } from "../../../components/firebase";
+import Firebase, { withFirebase } from "../../../../components/firebase";
 
 // Form creator and input validations
-import FormCreator from "../../../components/form";
-import inputValidation from "../../../components/form/utils";
+import FormCreator from "../../../../components/form";
+import inputValidation from "../../../../components/form/utils";
 
 // Form elements. In this case we are ansering for the user, so not password, let just import an input an a submit button.
-import { FormInput, FormButton } from "../../../components/form/form_elements";
+import { FormInput, FormButton } from "../../../../components/form/form_elements";
 
 // Input needed information.
 import {
   IInputState,
   INITIAL_INPUT_STATE,
-} from "../../../components/form/form_elements/FormInput";
+} from "../../../../components/form/form_elements/FormInput";
 
 // Auth context
-import { withAuth } from "../../../components/auth";
+import { withAuth } from "../../../../components/auth";
 
 // Styled-components
 import styled from "styled-components";
-import { ContainerStyled } from "../../../style/main_style";
+import { ContainerStyled } from "../../../../style/main_style";
 
 // Arrow icon
 import ArrowIcon from "@material-ui/icons/ArrowBackIos";

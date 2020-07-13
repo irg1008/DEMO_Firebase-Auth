@@ -1,7 +1,7 @@
 import React, { FormEvent } from "react";
 
 // Sign with email component.
-import EmailSignPage from "../../email_sign";
+import EmailSignPage from "../../components/email_sign";
 
 const LogInWithEmail: React.FC = () => {
   const onSubmit = (event: FormEvent): void => {
@@ -11,7 +11,13 @@ const LogInWithEmail: React.FC = () => {
     console.log("inicia sesión submit");
   };
 
-  return <EmailSignPage title="inicia por correo" otherOptionText="otras opciones de inicio" onSubmit={onSubmit} />;
+  return (
+    <EmailSignPage
+      title="inicia por correo"
+      otherOptionText="otras opciones de inicio"
+      onSubmit={onSubmit}
+    />
+  );
 };
 
 export default LogInWithEmail;

@@ -14,6 +14,9 @@ import { LoadingProvider } from "./components/loading";
 // Auth
 import { AuthProvider } from "./components/auth";
 
+// Router Provider
+import { BrowserRouter as Router } from "react-router-dom";
+
 // App
 import App from "./components/app";
 
@@ -22,7 +25,9 @@ ReactDOM.render(
     <FirebaseProvider>
       <AuthProvider>
         <LoadingProvider>
-          <App />
+          <Router>
+            <App />
+          </Router>
         </LoadingProvider>
       </AuthProvider>
     </FirebaseProvider>

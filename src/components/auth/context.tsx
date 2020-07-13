@@ -26,6 +26,9 @@ const AuthProvider: React.FC = ({ children }: any) => {
   // Loading state.
   const [user, setUser] = useState(null);
 
+  // Auth is loaded
+  const [authIsLoaded, setAuthIsLoaded] = useState(false);
+
   // Auth passwordless
   const [passwordlessAuth, setPasswordlessAuth] = useState(false);
 
@@ -35,6 +38,8 @@ const AuthProvider: React.FC = ({ children }: any) => {
       value={{
         user,
         setUser,
+        authIsLoaded,
+        setAuthIsLoaded,
         passwordlessAuth,
         setPasswordlessAuth,
       }}

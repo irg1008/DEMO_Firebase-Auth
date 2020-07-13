@@ -17,9 +17,6 @@ import { googleIcon } from "../../../assets";
 // ROUTES
 import ROUTES from "../../../routes";
 
-// Loading context consumer.
-import { withLoading } from "../../loading";
-
 // Google Cookie interface and typed.
 type IGoogleCookie = {
   /**
@@ -52,27 +49,6 @@ type ISignGoogleProps = {
    * @type {*}
    */
   history: any;
-
-  /**
-   * The loading context consumer, used to change loading data.
-   *
-   * @type {*}
-   */
-  loadingContext: {
-    /**
-     * Show loading.
-     *
-     * @type {*}
-     */
-    showLoading: any;
-
-    /**
-     * Hide loading.
-     *
-     * @type {*}
-     */
-    hideLoading: any;
-  };
 };
 
 /**
@@ -94,14 +70,11 @@ class SignWithGoogle extends Component<ISignGoogleProps> {
    * @memberof SignWithGoogle
    */
   componentDidMount = (): void => {
-    const { history, firebase, loadingContext } = this.props;
+    const { history, firebase } = this.props;
     const { googleCookie } = this;
 
-    // If cookie is setted, show loading and then remove cookie.
+    // If cookie is setted, check for google info.
     if (localStorage.getItem(googleCookie.id)) {
-      // Set the page to loading.
-      loadingContext.showLoading();
-
       // When google redirects from signing, get the outh data.
       firebase
         .doGetRedirectResult()
@@ -116,8 +89,6 @@ class SignWithGoogle extends Component<ISignGoogleProps> {
           console.log(error);
         })
         .then(() => {
-          // Set the page to loading.
-          loadingContext.hideLoading();
           // Remove the used cookie.
           localStorage.removeItem(googleCookie.id);
         });
@@ -159,7 +130,7 @@ class SignWithGoogle extends Component<ISignGoogleProps> {
 }
 
 // Google sign encapsullated with firebase and react for routing and using of firebase functions. Done this way for reusability.
-export default withRouter(withFirebase(withLoading(SignWithGoogle)));
+export default withRouter(withFirebase(SignWithGoogle));
 
 // Styled-Components
 // Google container

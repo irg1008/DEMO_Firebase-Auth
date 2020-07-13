@@ -13,7 +13,10 @@ import FormCreator from "../../../../components/form";
 import inputValidation from "../../../../components/form/utils";
 
 // Form elements. In this case we are ansering for the user, so not password, let just import an input an a submit button.
-import { FormInput, FormButton } from "../../../../components/form/form_elements";
+import {
+  FormInput,
+  FormButton,
+} from "../../../../components/form/form_elements";
 
 // Input needed information.
 import {
@@ -21,9 +24,6 @@ import {
   INITIAL_INPUT_STATE,
 } from "../../../../components/form/form_elements/FormInput";
 import { withRouter } from "react-router-dom";
-
-// ROUTES
-import ROUTES from "../../../../routes";
 
 // Auth consumer.
 import { withAuth } from "../../../../components/auth";
@@ -119,28 +119,6 @@ class CompleteSignUpForm extends Component<
   }
 
   /**
-   * When component mounts check if current user is logged, if not => Redirect to sign up page.
-   *
-   * @memberof CompleteSignUpForm
-   */
-  componentDidMount = (): void => {
-    const { authContext, history } = this.props;
-
-    // TODO check what to change to get the user on mount.
-
-    // If user exists.
-    if (authContext.user) {
-      // If signed and already has a name redirect to landing.
-      authContext.user.displayName
-        ? history.push(ROUTES.LANDING.path)
-        : // If signed and doesn't have a name.
-          console.log("adding user name");
-    }
-    // If user doesn't exists
-    else history.push(ROUTES.SIGN_UP.path);
-  };
-
-  /**
    * On form submit.
    *
    * @memberof CompleteSignUpForm
@@ -158,6 +136,7 @@ class CompleteSignUpForm extends Component<
     this.setState({ loading: true });
 
     // TODO: Update user info with firebase prop. No need for recheck user existance because this page is only available if exists
+    console.log("completar cuenta");
 
     // Submit stops loading.
     this.setState({ loading: false });

@@ -3,10 +3,10 @@ import App from "./App";
 export default App;
 
 // => TODO LIST
-// TODO: Clean all forms and form pages correctly
-// TODO: Make verify page and finish complete page. see how to use with firebase
-// TODO: Finish only mail submits.
 // TODO: Controlar en el log in que esta verificado y poner error sino.
-// TODO: Mensaje de mira tu correo para verificar; en el sign up.
-// TODO: Mensaje de mira tu correo para iniciar sesión o unirte en el sign with email.
+// TODO: Ver si pasamos los mensajes con las rutas de log y sign y si lo hacemos cambiando las rutas en plan sign => sign/email => sign/email/verificar. Igual podemos usar esto para detectar solo el primer sign y hacer los redirects oportunos.
 // TODO: Añadir el forgot password y el change username.
+// TODO: Revisar si algún componente se puede convertir a functional y limpiar tipos..
+// TODO: Hide navbar on certain routes.
+// TODO: Complete Message pages sign and log.
+// TODO: Google sign overrides normal sign and the password is forgotten. Save password or something??
