@@ -1,4 +1,4 @@
-import React, { ChangeEvent, Component } from "react";
+import React, { ChangeEvent, Component, FormEvent } from "react";
 
 // Firebase consumer
 import Firebase, { withFirebase } from "../../../../components/firebase";
@@ -8,7 +8,10 @@ import FormCreator from "../../../../components/form";
 import inputValidation from "../../../../components/form/utils";
 
 // Form elements. In this case we are ansering for the user, so not password, let just import an input an a submit button.
-import { FormInput, FormButton } from "../../../../components/form/form_elements";
+import {
+  FormInput,
+  FormButton,
+} from "../../../../components/form/form_elements";
 
 // Input needed information.
 import {
@@ -93,20 +96,19 @@ type ICompleteSignState = {
   email: IInputState;
 
   /**
-   * Submit is loading.
-   *
-   * @type {boolean}
-   * @memberof ICompleteSignState
-   */
-  loading?: boolean;
-
-  /**
    * Form is valid.
    *
    * @type {boolean}
    * @memberof ICompleteSignState
    */
   isValid?: boolean;
+
+  /**
+   * Form is loading.
+   *
+   * @type {boolean}
+   */
+  loading?: boolean;
 };
 
 // Initial complete sign up state.
@@ -126,6 +128,35 @@ class EmailSignForm extends Component<ICompleteSignProps, ICompleteSignState> {
     // Initialices the state.
     this.state = { ...INITIAL_STATE };
   }
+
+  /**
+   * On component unmount.
+   *
+   * @memberof EmailSignForm
+   */
+  componentWillUnmount = (): void => {
+    // Props desostruction.
+    const { authContext } = this.props;
+
+    // When finished with log in page set the auth to password. Change this if wanted to reset to normal lof
+    authContext.setPasswordlessAuth(false);
+  };
+
+  /**
+   * On form submit call parent sbutmit.
+   *
+   * @memberof EmailSignForm
+   */
+  onSubmit = (event: FormEvent): void => {
+    // Firebase
+    // const { firebase } = this.props;
+
+    // Prevent default behaviour.
+    event.preventDefault();
+
+    // Call the submit of father
+    this.props.onSubmit();
+  };
 
   /**
    * On input change.
@@ -194,7 +225,7 @@ class EmailSignForm extends Component<ICompleteSignProps, ICompleteSignState> {
     const { email, isValid, loading } = this.state;
 
     // Props
-    const { title, otherOptionText, onSubmit, authContext } = this.props;
+    const { title, otherOptionText, authContext } = this.props;
 
     // Form Content
     const formContent = (
@@ -224,7 +255,11 @@ class EmailSignForm extends Component<ICompleteSignProps, ICompleteSignState> {
     );
 
     return (
-      <FormCreator onSubmit={onSubmit} content={formContent} title={title} />
+      <FormCreator
+        onSubmit={this.onSubmit}
+        content={formContent}
+        title={title}
+      />
     );
   }
 }

@@ -16,6 +16,9 @@ import {
 // Sign without password
 import { SignWithoutPassword } from "../../components/email_sign";
 
+// Floating Message
+import { withFloatingMsg } from "../../../../components/floating_message";
+
 // Input state
 import {
   IInputState,
@@ -40,7 +43,25 @@ type ISignUpProps = {
   firebase: Firebase;
 
   /**
-   * History of react-router-dom.
+   * Floating message context.
+   *
+   * @type {{
+   *     setMessage: any;
+   *     showMessage: any;
+   *     hideMessage: any;
+   *   }}
+   */
+  floatingMsgContext: {
+    /**
+     * Show the message.
+     *
+     * @type {*}
+     */
+    showMessage: any;
+  };
+
+  /**
+   * React router history.
    *
    * @type {*}
    */
@@ -106,6 +127,7 @@ const INITIAL_STATE: ISignUpState = {
   email: { ...INITIAL_INPUT_STATE },
   passwordOne: { ...INITIAL_INPUT_STATE },
   passwordTwo: { ...INITIAL_INPUT_STATE },
+  isValid: false,
   hiddenPass: true,
 };
 
@@ -133,10 +155,10 @@ class SignUpForm extends Component<ISignUpProps, ISignUpState> {
     event.preventDefault();
 
     // Firebase and react history.
-    const { firebase } = this.props;
+    const { firebase, floatingMsgContext, history } = this.props;
 
     // State decostrution.
-    const { email, passwordOne } = this.state;
+    const { username, email, passwordOne } = this.state;
 
     // Loading submit
     this.setState({ loading: true });
@@ -145,10 +167,28 @@ class SignUpForm extends Component<ISignUpProps, ISignUpState> {
     firebase
       .doCreateUserWithEmailAndPassword(email.value, passwordOne.value)
       .then((result: any) => {
-        // TODO: Redirect to verify page
-        console.log(
-          "Redirect to verify page on new account sign up without signing in"
-        );
+        // User
+        const { user } = result;
+
+        // Update user username.
+        user.updateProfile({ displayName: username.value });
+
+        // Send verification message.
+        user.sendEmailVerification().then(() => {
+          // Set message
+          floatingMsgContext.showMessage(
+            'Te hemos enviado un correo a "' +
+              email.value +
+              '" para confirmar la cuenta y poder iniciar sesión',
+            10000
+          );
+        });
+
+        // Force sign out until user sign in from sign in page.
+        firebase.doSignOut().then(() => {
+          // Redirect to log in.
+          history.push(ROUTES.LOG_IN.path);
+        });
       })
       .catch((error: any) => {
         // Note: This error code returns a 400 error to the console, exposing the app id or api key. This is not convinient but does not expose any data of the users. This happens because we manage the white domains that can access this data. Any other domain won't be able to acces users data even if they have de api key.
@@ -156,7 +196,7 @@ class SignUpForm extends Component<ISignUpProps, ISignUpState> {
           this.emailAlreadyInUse();
       })
       .then(() => {
-        // If error happens stop loading form submit
+        // Stop loading after sign up.
         this.setState({ loading: false });
       });
   };
@@ -378,9 +418,7 @@ class SignUpForm extends Component<ISignUpProps, ISignUpState> {
     // Form bottom component
     const formBottomComponent = (
       <FormOptions
-        secondOption={
-          <SignWithoutPassword text="Registro por link via email" />
-        }
+        secondOption={<SignWithoutPassword text="Registro por link" />}
       />
     );
 
@@ -396,4 +434,4 @@ class SignUpForm extends Component<ISignUpProps, ISignUpState> {
   }
 }
 
-export default withRouter(withFirebase(SignUpForm));
+export default withRouter(withFloatingMsg(withFirebase(SignUpForm)));

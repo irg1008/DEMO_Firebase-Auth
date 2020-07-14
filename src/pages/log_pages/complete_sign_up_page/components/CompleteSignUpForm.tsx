@@ -23,7 +23,6 @@ import {
   IInputState,
   INITIAL_INPUT_STATE,
 } from "../../../../components/form/form_elements/FormInput";
-import { withRouter } from "react-router-dom";
 
 // Auth consumer.
 import { withAuth } from "../../../../components/auth";
@@ -41,14 +40,6 @@ interface ICompleteSignProps {
    * @memberof ICompleteSignProps
    */
   firebase: Firebase;
-
-  /**
-   * History of react-router-dom.
-   *
-   * @type {*}
-   * @memberof ISignUpProps
-   */
-  history: any;
 
   /**
    * Auth local consumer.
@@ -124,10 +115,10 @@ class CompleteSignUpForm extends Component<
    * @memberof CompleteSignUpForm
    */
   onSubmit = (event: FormEvent) => {
-    //const { firebase } = this.props;
+    const { firebase } = this.props;
 
     // Get the username of state to update current user.
-    //const { username } = this.state;
+    const { username } = this.state;
 
     // Prevent default behaviour.
     event.preventDefault();
@@ -135,11 +126,11 @@ class CompleteSignUpForm extends Component<
     // Submit is loading.
     this.setState({ loading: true });
 
-    // TODO: Update user info with firebase prop. No need for recheck user existance because this page is only available if exists
-    console.log("completar cuenta");
-
-    // Submit stops loading.
-    this.setState({ loading: false });
+    // Update user name.
+    firebase.doUpdateProfile(username.value).then(() => {
+      // Submit stops loading.
+      this.setState({ loading: false });
+    });
   };
 
   /**
@@ -244,6 +235,6 @@ class CompleteSignUpForm extends Component<
   }
 }
 
-export default withAuth(withRouter(withFirebase(CompleteSignUpForm)));
+export default withAuth(withFirebase(CompleteSignUpForm));
 
 // TODO: Check if we want to add password on this final reg. Only that because we now the email or phone of wich this page is accessed.

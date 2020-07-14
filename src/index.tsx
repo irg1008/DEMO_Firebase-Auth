@@ -17,6 +17,9 @@ import { AuthProvider } from "./components/auth";
 // Router Provider
 import { BrowserRouter as Router } from "react-router-dom";
 
+// Floating Message Provider
+import { FloatingMsgProvider } from "./components/floating_message";
+
 // App
 import App from "./components/app";
 
@@ -25,9 +28,11 @@ ReactDOM.render(
     <FirebaseProvider>
       <AuthProvider>
         <LoadingProvider>
-          <Router>
-            <App />
-          </Router>
+          <FloatingMsgProvider>
+            <Router>
+              <App />
+            </Router>
+          </FloatingMsgProvider>
         </LoadingProvider>
       </AuthProvider>
     </FirebaseProvider>

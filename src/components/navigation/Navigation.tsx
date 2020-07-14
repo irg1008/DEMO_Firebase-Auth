@@ -76,7 +76,7 @@ const Navigation: React.FC<INavigationProps> = ({
               Home
             </NavLink>
           </ListItem>
-          {authContext.user /*&& authContext.user.emailVerified*/ ? (
+          {authContext.user ? (
             <>
               <ListItem>
                 <SignOutButton />
@@ -143,7 +143,7 @@ const Navbar = styled.nav`
   /* z-index */
   z-index: 2;
   /* BG */
-  background-color: ${colors.mainGrey};
+  background-color: ${colors.mainWhite};
   /* Position */
   position: fixed;
   /* Margin, Padding, Border */

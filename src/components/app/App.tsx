@@ -16,6 +16,9 @@ import Loading, { withLoading } from "../loading";
 // Authentication
 import { withAuth } from "../auth";
 
+// FloatingMessage
+import FloatingMessage from "../floating_message";
+
 // Types of app props.
 type IAppProps = {
   /**
@@ -96,21 +99,19 @@ class App extends Component<IAppProps> {
    */
   componentDidMount = (): void => {
     // Firebase consumer.
-    const { firebase, loadingContext } = this.props;
-
-    // Set user funtion of auth consumer.
-    const { setUser, setAuthIsLoaded } = this.props.authContext;
+    const { firebase, loadingContext, authContext } = this.props;
 
     // Start loading
     loadingContext.showLoading();
 
     // We recheck the user on app mount. Like reload or redirects. The user is check on log in and sign out.
     firebase.auth.onAuthStateChanged((user: any) => {
-      // TODO: Set user of auth context only if the user is verified.
-      setUser(user);
+      // Set user of auth context.
+      if (user && user.emailVerified) authContext.setUser(user);
+      else authContext.setUser(null);
 
       // Set the auth is loaded.
-      setAuthIsLoaded(true);
+      authContext.setAuthIsLoaded(true);
 
       // Hide loading message.
       loadingContext.hideLoading();
@@ -128,6 +129,8 @@ class App extends Component<IAppProps> {
       <>
         {/* Loading overlay. Is not a condition rendering because we want fading => Soluction: Overlay message with own context. Do not mistake with auth state, used for change the loading. Other aspects can trigger loading as well */}
         <Loading />
+        {/* Floating message shown for user info all over the app */}
+        <FloatingMessage />
         {/* Navigation */}
         <Navigation />
         {/* Router */}

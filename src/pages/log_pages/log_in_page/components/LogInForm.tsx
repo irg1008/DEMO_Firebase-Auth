@@ -1,5 +1,4 @@
 import React, { ChangeEvent, FormEvent, Component } from "react";
-import { withRouter } from "react-router-dom";
 
 // Form elements
 import {
@@ -30,8 +29,8 @@ import {
   INITIAL_INPUT_STATE,
 } from "../../../../components/form/form_elements/FormInput";
 
-// Auth consumer
-import { withAuth } from "../../../../components/auth";
+// Floating Message
+import { withFloatingMsg } from "../../../../components/floating_message";
 
 // Types of of passes props.
 type ILogInProps = {
@@ -43,31 +42,21 @@ type ILogInProps = {
   firebase: Firebase;
 
   /**
-   * History of react-router-dom.
+   * Floating message context.
    *
-   * @type {*}
+   * @type {{
+   *     setMessage: any;
+   *     showMessage: any;
+   *     hideMessage: any;
+   *   }}
    */
-  history: any;
-
-  /**
-   * Loading consumer values.
-   *
-   * @type {*}
-   */
-  authContext: {
+  floatingMsgContext: {
     /**
-     * Set app user on log in.
+     * Show the message.
      *
      * @type {*}
      */
-    setUser: any;
-
-    /**
-     * App user.
-     *
-     * @type {*}
-     */
-    user: any;
+    showMessage: any;
   };
 };
 
@@ -122,7 +111,6 @@ const INITIAL_STATE: ILoginState = {
  * @param {*} {
  *   firebase,
  *   authContext,
- *   history,
  * }
  * @returns
  */
@@ -142,8 +130,8 @@ class LogInPage extends Component<ILogInProps, ILoginState> {
     // Prevent default behaviour.
     event.preventDefault();
 
-    // Firebase and react history.
-    const { firebase, history, authContext } = this.props;
+    // Firebase.
+    const { firebase } = this.props;
 
     // State decostrution.
     const { email, password } = this.state;
@@ -155,19 +143,17 @@ class LogInPage extends Component<ILogInProps, ILoginState> {
     firebase
       .doSignInWithEmailAndPassword(email.value, password.value)
       .then((result: any) => {
-        // On auth change listener.
-        firebase.auth.onAuthStateChanged((user: any) => {
-          // Set user of auth context.
-          if (user) {
-            authContext.setUser(user);
-            // TODO: If user is not verified send to very before login in.
-            user.emailVerified
-              ? history.push(ROUTES.LANDING.path)
-              : console.log(
-                  "this email needs to be verified, change me to a page that calls the verify firebase function"
-                );
-          }
-        });
+        // User
+        const { user } = result;
+
+        // If user exists but is not verified
+        if (!user.emailVerified) {
+          // Force sign out.
+          firebase.doSignOut();
+
+          // Set error message on email.
+          this.userNotVerfied(user);
+        }
       })
       .catch((error: any) => {
         // Error handling
@@ -265,7 +251,7 @@ class LogInPage extends Component<ILogInProps, ILoginState> {
     this.setState(
       {
         password: {
-          value: "",
+          ...this.state.password,
           isValid: false,
           errorMsg:
             "La contraseña es inválida o no existe. Si te has creado la cuenta con Google, incia abajo y crea una contraseña en tu perfil",
@@ -290,6 +276,64 @@ class LogInPage extends Component<ILogInProps, ILoginState> {
       },
       () => this.validateForm()
     );
+
+  /**
+   * User is not verified.
+   *
+   * @memberof LogInPage
+   */
+  userNotVerfied = (user: any): void => {
+    // Floating context
+    const { floatingMsgContext } = this.props;
+
+    // Email
+    const { email } = this.state;
+
+    // Error msg
+    const errorMsg = (
+      <>
+        {"Verifica la cuenta para poder entrar. "}
+        <span
+          style={{ textDecoration: "underline", cursor: "pointer" }}
+          onClick={() => {
+            // Send verification message.
+            user.sendEmailVerification();
+
+            // Set message
+            floatingMsgContext.showMessage(
+              'Te hemos reenviado un correo a "' + email.value + '"',
+              10000
+            );
+
+            // Change state.
+            this.setState(
+              {
+                email: {
+                  ...email,
+                  isValid: true,
+                },
+              },
+              () => this.validateForm()
+            );
+          }}
+        >
+          {"Reenviar correo"}
+        </span>
+      </>
+    );
+
+    // Change state.
+    this.setState(
+      {
+        email: {
+          ...email,
+          isValid: false,
+          errorMsg,
+        },
+      },
+      () => this.validateForm()
+    );
+  };
 
   /**
    * Toggle password show/hide.
@@ -357,7 +401,7 @@ class LogInPage extends Component<ILogInProps, ILoginState> {
     // Form bottom component
     const formBottomComponent = (
       <FormOptions
-        secondOption={<SignWithoutPassword text="Inicio por link al email" />}
+        secondOption={<SignWithoutPassword text="Inicio por link" />}
       />
     );
 
@@ -373,4 +417,4 @@ class LogInPage extends Component<ILogInProps, ILoginState> {
   }
 }
 
-export default withAuth(withRouter(withFirebase(LogInPage)));
+export default withFloatingMsg(withFirebase(LogInPage));

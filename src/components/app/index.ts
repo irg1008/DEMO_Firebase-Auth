@@ -2,11 +2,12 @@
 import App from "./App";
 export default App;
 
-// => TODO LIST
-// TODO: Controlar en el log in que esta verificado y poner error sino.
-// TODO: Ver si pasamos los mensajes con las rutas de log y sign y si lo hacemos cambiando las rutas en plan sign => sign/email => sign/email/verificar. Igual podemos usar esto para detectar solo el primer sign y hacer los redirects oportunos.
+// => TODO & FIXME LIST
+// TODO: Ver si pasamos los mensajes con las rutas de log y sign y si lo hacemos cambiando las rutas en plan sign => sign/email
 // TODO: Añadir el forgot password y el change username.
 // TODO: Revisar si algún componente se puede convertir a functional y limpiar tipos..
-// TODO: Hide navbar on certain routes.
-// TODO: Complete Message pages sign and log.
-// TODO: Google sign overrides normal sign and the password is forgotten. Save password or something??
+// TODO: Hide navbar on certain routes. (Importance level 0)
+// FIXME: Google sign overrides normal sign and the password is forgotten. Save password or something?? => Solution: fetchSignInMethodsForEmail
+// TODO: Personalize verify and email log and sign emails and check how to redirect to page directly (Importance level 0)
+// TODO: Add animations like navbar up on phone or floating message out. (Importance level 0)
+// TODO: Finish log in with email link. And send sign or log in email checking if user already exist value in user.

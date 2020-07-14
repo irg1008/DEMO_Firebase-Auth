@@ -13,6 +13,7 @@ import {
 import styled, { css } from "styled-components";
 
 // Interface of input used on every form states.
+// TODO: In next version use the prop interface and get all form inputs as json and then render all form with same component with map.
 export type IInputState = {
   /**
    * Value of input.
@@ -31,9 +32,9 @@ export type IInputState = {
   /**
    * Error mesg on input is no valid.
    *
-   * @type {string}
+   * @type {any}
    */
-  errorMsg?: string;
+  errorMsg?: any;
 };
 
 // Initial input state.
@@ -97,7 +98,7 @@ type IFormInputProps = {
    *
    * @type {string}
    */
-  errorMessage?: string;
+  errorMessage?: any;
 
   /**
    * If type is password, temporal state of hidden/shown.

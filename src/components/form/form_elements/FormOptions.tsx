@@ -6,6 +6,7 @@ import {
   BorderedContainerStyled,
   media,
   colors,
+  radius,
 } from "../../../style/main_style";
 import styled from "styled-components";
 
@@ -129,6 +130,7 @@ const Option = styled(BorderedContainerStyled)`
   overflow: hidden;
   /* Margin, Padding, Border */
   padding: 0;
+  border-radius: ${radius.fullRadius};
   /* Cursor */
   cursor: pointer;
   /* Media medium size */

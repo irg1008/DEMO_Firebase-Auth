@@ -2,10 +2,10 @@ import React from "react";
 
 // Styled-Components
 import styled from "styled-components";
-import { media, ContainerStyled } from "../../../../style/main_style";
+import { media, ContainerStyled, colors } from "../../../../style/main_style";
 
 // Email icon
-import EmailIcon from "@material-ui/icons/Email";
+import EmailIcon from "@material-ui/icons/EmailRounded";
 
 // Titles
 import titles from "../../../../components/titles";
@@ -61,7 +61,7 @@ const SignWithoutPassword: React.FC<ISignWithoutPasswordProps> = ({
     <SignPasswordlessContainerStyled
       onClick={() => authContext.setPasswordlessAuth(true)}
     >
-      <EmailIcon style={{ fontSize: "2em" }} />
+      <EmailIcon style={{ color: colors.mainBlack, fontSize: "2em" }} />
       <TextContainer>
         <titles.Title5 title={text} />
       </TextContainer>

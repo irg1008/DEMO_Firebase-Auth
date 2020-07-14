@@ -129,6 +129,14 @@ class Firebase {
    * @memberof Firebase
    */
   doGetRedirectResult = () => this.auth.getRedirectResult();
+
+  /**
+   * Update user profile.
+   *
+   * @memberof Firebase
+   */
+  doUpdateProfile = (displayName: string, photoURL?: string) =>
+    this.auth.currentUser.updateProfile({ displayName, photoURL });
 }
 
 export default Firebase;

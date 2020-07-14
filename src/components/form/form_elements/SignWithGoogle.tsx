@@ -79,6 +79,7 @@ class SignWithGoogle extends Component<ISignGoogleProps> {
       firebase
         .doGetRedirectResult()
         .then((result: any) => {
+          // TODO: Check if user has alreadya an account with that email and display message.
           // Check if any data retrieved, checking if any property exists, i.e.: credential.
           if (result.credential) {
             // It doesnt matter if user is new, we logged him and redirect.

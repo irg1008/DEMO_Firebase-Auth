@@ -57,7 +57,7 @@ const CompleteSignUpPage: React.FC<ICompleteSignProps> = ({
 
       setPageIsLoaded(true);
     }
-  }, [authContext.authIsLoaded]);
+  }, [authContext.authIsLoaded, authContext.user]);
 
   if (pageIsLoaded) {
     return authContext.user ? (

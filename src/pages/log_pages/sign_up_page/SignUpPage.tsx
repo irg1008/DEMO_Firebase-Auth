@@ -66,7 +66,7 @@ const SignUpPage: React.FC<ISignUpPageProps> = ({
 
       setPageIsLoaded(true);
     }
-  }, [authContext.authIsLoaded]);
+  }, [authContext]);
 
   if (pageIsLoaded) {
     return authContext.user ? (

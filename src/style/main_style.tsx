@@ -13,7 +13,7 @@ export const colors = {
   blue: "#4d90fe",
   darkerBlue: "#297aff",
   red: "#fe4d4d",
-  mainWhite: "#fff",
+  mainWhite: "#f7f7f7",
   darkRed: "#d93025",
 };
 
@@ -25,7 +25,7 @@ export const shadows = {
   focusInsetError:
     "inset 0 1px 2px rgba(35, 27, 28,.075), 0 0 0 0.2em rgba(214, 3, 49,.3)",
   hardShadow: "0 0 5px rgba(0, 0, 0, 0.5);",
-  bottomShadow: "0px 0px 8px 2px #000000;",
+  bottomShadow: "0 10px 15px -10px rgba(0, 0, 0, 0.5);",
 };
 
 // Border constants
@@ -113,24 +113,16 @@ export const BorderedContainerStyled = styled(ContainerStyled)`
   /* Margin, Padding, Border */
   padding: 1.5em;
   border: ${border.mainBorder};
+  border-color: ${colors.mainBlack};
   border-radius: ${radius.mediumRadius};
   /* Flexbox */
   justify-content: space-around;
   /* BG */
   background-color: ${colors.mainWhite};
-  /* Transition */
-  transition: ${mainTransition};
-  /* Hover */
-  &:hover {
-    /* BG */
-    border-color: ${colors.mainBlack};
-    /* Shadow */
-    -moz-box-shadow: ${shadows.hardShadow};
-    -webkit-box-shadow: ${shadows.hardShadow};
-    box-shadow: ${shadows.hardShadow};
-    /* Transition */
-    transition: ${mainTransition};
-  }
+  /* Shadow */
+  -moz-box-shadow: ${shadows.bottomShadow};
+  -webkit-box-shadow: ${shadows.bottomShadow};
+  box-shadow: ${shadows.bottomShadow};
 `;
 
 // Main container style with main background.
@@ -138,9 +130,9 @@ export const MainBGContainerStyled = styled(ContainerStyled)`
   /* BG */
   background-image: linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.6),
-      rgba(255, 255, 255, 0) 50%,
-      rgba(255, 255, 255, 0.6) 100%
+      rgba(255, 255, 255, 0.8),
+      rgba(255, 255, 255, 0.6) 50%,
+      rgba(255, 255, 255, 0.8) 100%
     ),
     url(${mainBG});
   background-position: center;

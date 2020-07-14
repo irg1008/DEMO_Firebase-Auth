@@ -41,6 +41,13 @@ type ILogInPageProps = {
      * @type {boolean}
      */
     passwordlessAuth: boolean;
+
+    /**
+     * Passwordless setter.
+     *
+     * @type {*}
+     */
+    setPasswordlessAuth: any;
   };
 };
 
@@ -64,9 +71,10 @@ const LogInPage: React.FC<ILogInPageProps> = ({
       // Change page title if page loads.
       if (!authContext.user) document.title = "Silk&Rock - Inicia Sesión";
 
+      // Load page.
       setPageIsLoaded(true);
     }
-  }, [authContext.authIsLoaded]);
+  }, [authContext]);
 
   if (pageIsLoaded) {
     return authContext.user ? (
