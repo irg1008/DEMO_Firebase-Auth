@@ -16,9 +16,10 @@ import EnConstruccion from "./components/EnConstruccion";
  * @returns Main page.
  */
 const LandingPage: React.FC = () => {
+  // On load change title.
   useEffect(() => {
     document.title = "Silk&Rock - Work Uniforms";
-  });
+  }, []);
 
   return (
     <LandingPageContainerStyled>

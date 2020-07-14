@@ -113,6 +113,13 @@ type IFormInputProps = {
    * @type {boolean}
    */
   required?: boolean;
+
+  /**
+   * Max length of input.
+   *
+   * @type {number}
+   */
+  maxLength?: number;
 };
 
 /**
@@ -132,6 +139,7 @@ const FormInput: React.FC<IFormInputProps> = ({
   errorMessage,
   hiddenPass,
   required,
+  maxLength,
 }: IFormInputProps) => (
   <FormInputStyled>
     <FormLabelStyled>
@@ -142,6 +150,7 @@ const FormInput: React.FC<IFormInputProps> = ({
       <FormBoxStyled
         name={name}
         value={value}
+        maxLength={maxLength}
         onChange={onChange}
         type={type === "password" ? (hiddenPass ? "password" : "text") : type}
         placeholder={placeholder}

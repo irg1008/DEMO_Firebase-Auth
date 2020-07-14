@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import { Route, Switch, withRouter } from "react-router-dom";
+import React, { useLayoutEffect, useCallback } from "react";
+import { Route, Switch } from "react-router-dom";
 
 // Const routes
 import { routesArray } from "../../routes";
@@ -50,13 +50,6 @@ type IAppProps = {
   };
 
   /**
-   * Location of router props.
-   *
-   * @type {*}
-   */
-  location: any;
-
-  /**
    * The loading context consumer, used to change loading data.
    *
    * @type {*}
@@ -86,27 +79,31 @@ type IAppProps = {
 };
 
 /**
- * App class.
+ * App component.
  *
- * @class App
- * @extends {Component<IAppProps>}
+ * @param {IAppProps} {
+ *   firebase,
+ *   loadingContext,
+ *   authContext,
+ * }
+ * @returns
  */
-class App extends Component<IAppProps> {
+const App: React.FC<IAppProps> = ({
+  firebase,
+  loadingContext,
+  authContext,
+}: IAppProps) => {
   /**
-   * On component mount start oading and check for user signed.
+   * Load app.
    *
-   * @memberof App
    */
-  componentDidMount = (): void => {
-    // Firebase consumer.
-    const { firebase, loadingContext, authContext } = this.props;
-
+  const loadApp = useCallback(() => {
     // Start loading
     loadingContext.showLoading();
 
     // We recheck the user on app mount. Like reload or redirects. The user is check on log in and sign out.
     firebase.auth.onAuthStateChanged((user: any) => {
-      // Set user of auth context.
+      // Set user of auth context only if verified.
       if (user && user.emailVerified) authContext.setUser(user);
       else authContext.setUser(null);
 
@@ -116,38 +113,33 @@ class App extends Component<IAppProps> {
       // Hide loading message.
       loadingContext.hideLoading();
     });
-  };
+  }, [firebase.auth, authContext, loadingContext]);
 
-  /**
-   * Render app.
-   *
-   * @returns
-   * @memberof App
-   */
-  render() {
-    return (
-      <>
-        {/* Loading overlay. Is not a condition rendering because we want fading => Soluction: Overlay message with own context. Do not mistake with auth state, used for change the loading. Other aspects can trigger loading as well */}
-        <Loading />
-        {/* Floating message shown for user info all over the app */}
-        <FloatingMessage />
-        {/* Navigation */}
-        <Navigation />
-        {/* Router */}
-        <Switch>
-          {routesArray.map((route) => (
-            <Route
-              key={route.id}
-              path={route.path}
-              exact={route.exact}
-              component={route.Component}
-            />
-          ))}
-        </Switch>
-      </>
-    );
-  }
-}
+  // On component mounts
+  useLayoutEffect(() => loadApp(), [loadApp]);
+
+  return (
+    <>
+      {/* Loading overlay. Is not a condition rendering because we want fading => Soluction: Overlay message with own context. Do not mistake with auth state, used for change the loading. Other aspects can trigger loading as well */}
+      <Loading />
+      {/* Floating message shown for user info all over the app */}
+      <FloatingMessage />
+      {/* Navigation */}
+      <Navigation />
+      {/* Router */}
+      <Switch>
+        {routesArray.map((route) => (
+          <Route
+            key={route.id}
+            path={route.path}
+            exact={route.exact}
+            component={route.Component}
+          />
+        ))}
+      </Switch>
+    </>
+  );
+};
 
 // App uploads the user when mounted. May be a problem to access it on other components componentDidMount function.
-export default withLoading(withAuth(withRouter(withFirebase(App))));
+export default withLoading(withAuth(withFirebase(App)));

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { NavLink as RouterNavLink, Link } from "react-router-dom";
 
 // Styled-Components.
@@ -49,6 +49,35 @@ type INavigationProps = {
 const Navigation: React.FC<INavigationProps> = ({
   authContext,
 }: INavigationProps) => {
+  // Username width
+  const [userWidth, setUserWidth] = useState(0);
+
+  // Username DOM reference.
+  const usernameRef = useRef<HTMLDivElement>(null);
+
+  // On username set => Record with.
+  useEffect(() => {
+    if (usernameRef.current)
+      setUserWidth(usernameRef.current.children[0].scrollWidth);
+  }, []);
+
+  // Render username.
+  const renderUsername = (username: string) => {
+    // Max width
+    const userMaxWidth = 140;
+
+    // Render username with title only if width overflows parents.
+    return (
+      <UsernameContainer ref={usernameRef} userMaxWidth={userMaxWidth}>
+        {userWidth > userMaxWidth ? (
+          <Username title={authContext.user.displayName}>{username}</Username>
+        ) : (
+          <Username>{username}</Username>
+        )}
+      </UsernameContainer>
+    );
+  };
+
   // Ham menu is open.
   const [isActive, setIsOpen] = useState(false);
 
@@ -81,7 +110,7 @@ const Navigation: React.FC<INavigationProps> = ({
               <ListItem>
                 <SignOutButton />
               </ListItem>
-              {authContext.user.displayName}
+              {renderUsername(authContext.user.displayName)}
             </>
           ) : (
             <>
@@ -118,6 +147,7 @@ const NavbarBackground = styled.div<{ isActive: boolean }>`
   /* Position */
   position: fixed;
   /* Filter */
+  -webkit-backdrop-filter: blur(0.5rem);
   backdrop-filter: blur(0.5rem);
   /* BG */
   background-color: rgba(20, 20, 20, 0.8);
@@ -280,4 +310,23 @@ const NavLink = styled(RouterNavLink)`
     /* BG */
     background: ${colors.mainBlack};
   }
+`;
+
+// Username container
+const UsernameContainer = styled.div<{ userMaxWidth: number }>`
+  max-width: ${(props) => `${props.userMaxWidth}px`};
+`;
+
+// Username
+const Username = styled.div`
+  width: 100%;
+  /* Overflow */
+  overflow: hidden;
+  /* White-Space */
+  white-space: nowrap;
+  /* Margin, Padding, Border */
+  padding: 1em 0;
+  margin: 0;
+  /* Font */
+  text-overflow: ellipsis;
 `;

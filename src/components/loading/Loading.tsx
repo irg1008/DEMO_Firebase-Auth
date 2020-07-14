@@ -89,7 +89,7 @@ const LoadingSpinnerStyled = styled(LoadingSpinner)`
 `;
 
 // Loading text styled
-const LoadinLogoStyled = styled.p`
+const LoadinLogoStyled = styled.div`
   height: 2em;
   /* Animation */
   animation: ${animations.moveBottomFromTopAndFadeInAnimation} 1s ease-out;

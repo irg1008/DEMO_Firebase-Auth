@@ -13,9 +13,10 @@ import { MainBGContainerStyled } from "../../style/main_style";
  * @returns Error page.
  */
 const ErrorPage: React.FC = () => {
+  // On load change title.
   useEffect(() => {
     document.title = "Silk&Rock - Error";
-  });
+  }, []);
 
   return (
     <ErrorPageContainerStyled>
