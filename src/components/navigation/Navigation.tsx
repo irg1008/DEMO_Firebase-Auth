@@ -15,28 +15,16 @@ import {
 import { SignOutButton } from ".";
 
 // Routes
-import ROUTES from "../../routes";
+import { ROUTES } from "../../routes";
 
 // Logo
 import Logo from "../logo";
 
 // Authentication
-import { withAuth } from "../auth";
+import { useFirebase } from "../firebase";
 
 // Hamburger
 import { HamburgerThreeDYReverse as HamburgerIcon } from "react-animated-burgers";
-
-// Type of Navigation.
-type INavigationProps = {
-  /**
-   * Auth context props.
-   *
-   * @type {*}
-   */
-  authContext: {
-    user: any;
-  };
-};
 
 /**
  * Navigation component.
@@ -46,14 +34,15 @@ type INavigationProps = {
  * }
  * @returns
  */
-const Navigation: React.FC<INavigationProps> = ({
-  authContext,
-}: INavigationProps) => {
+const Navigation: React.FC = () => {
   // Username width
   const [userWidth, setUserWidth] = useState(0);
 
   // Username DOM reference.
   const usernameRef = useRef<HTMLDivElement>(null);
+
+  // Username
+  const { authUser } = useFirebase().state;
 
   // On username set => Record with.
   useEffect(() => {
@@ -62,65 +51,73 @@ const Navigation: React.FC<INavigationProps> = ({
   }, []);
 
   // Render username.
-  const renderUsername = (username: string) => {
-    // Max width
-    const userMaxWidth = 140;
-
-    // Render username with title only if width overflows parents.
-    return (
-      <UsernameContainer ref={usernameRef} userMaxWidth={userMaxWidth}>
-        {userWidth > userMaxWidth ? (
-          <Username title={authContext.user.displayName}>{username}</Username>
-        ) : (
-          <Username>{username}</Username>
-        )}
-      </UsernameContainer>
-    );
-  };
+  const renderUsername = (
+    username: string,
+    userMaxWidth: number,
+    unit: "px" | "%" | "em"
+  ) => (
+    <UsernameContainer ref={usernameRef} {...{ userMaxWidth, unit }}>
+      {userWidth > userMaxWidth ? (
+        <Username title={username}>{username}</Username>
+      ) : (
+        <Username>{username}</Username>
+      )}
+    </UsernameContainer>
+  );
 
   // Ham menu is open.
-  const [isActive, setIsOpen] = useState(false);
+  const [isActive, setIsActive] = useState(false);
 
   // Toggle ham menu.
-  const toggleButton = () => setIsOpen(!isActive);
+  const toggleButton = () => setIsActive(!isActive);
+
+  // Logo and hamburger.
+  const LogoAndHamburger = (
+    <NavMain>
+      <NavLogo onClick={() => setIsActive(false)}>
+        <Link to={ROUTES.LANDING.path}>
+          <Logo />
+        </Link>
+      </NavLogo>
+      <NavHamIcon
+        buttonWidth={30}
+        barColor={colors.darkBrown}
+        {...{ isActive, toggleButton }}
+      />
+    </NavMain>
+  );
+
+  // Links
+  const Links = (
+    <>
+      <ListItem onClick={toggleButton}>
+        <NavLink to={ROUTES.LOG_IN.path}>Inicia Sesión</NavLink>
+      </ListItem>
+      <ListItem onClick={toggleButton}>
+        <NavLink to={ROUTES.SIGN_UP.path}>Únete</NavLink>
+      </ListItem>
+    </>
+  );
 
   return (
     <NavbarContainer>
       <Navbar>
-        <NavMain>
-          <NavLogo onClick={() => setIsOpen(false)}>
-            <Link to={ROUTES.LANDING.path}>
-              <Logo />
-            </Link>
-          </NavLogo>
-          <NavHamIcon
-            buttonWidth={30}
-            barColor={colors.darkBrown}
-            {...{ isActive, toggleButton }}
-          />
-        </NavMain>
+        {LogoAndHamburger}
         <List isActive={isActive}>
           <ListItem onClick={toggleButton}>
             <NavLink exact to={ROUTES.LANDING.path}>
               Home
             </NavLink>
           </ListItem>
-          {authContext.user ? (
+          {authUser && authUser.displayName ? (
             <>
               <ListItem>
                 <SignOutButton />
               </ListItem>
-              {renderUsername(authContext.user.displayName)}
+              {renderUsername(authUser.displayName, 140, "px")}
             </>
           ) : (
-            <>
-              <ListItem onClick={toggleButton}>
-                <NavLink to={ROUTES.LOG_IN.path}>Inicia Sesión</NavLink>
-              </ListItem>
-              <ListItem onClick={toggleButton}>
-                <NavLink to={ROUTES.SIGN_UP.path}>Únete</NavLink>
-              </ListItem>
-            </>
+            Links
           )}
         </List>
       </Navbar>
@@ -129,7 +126,7 @@ const Navigation: React.FC<INavigationProps> = ({
   );
 };
 
-export default withAuth(Navigation);
+export default Navigation;
 
 // Styled-Components
 // Navbar conatiner
@@ -313,8 +310,8 @@ const NavLink = styled(RouterNavLink)`
 `;
 
 // Username container
-const UsernameContainer = styled.div<{ userMaxWidth: number }>`
-  max-width: ${(props) => `${props.userMaxWidth}px`};
+const UsernameContainer = styled.div<{ userMaxWidth: number; unit: string }>`
+  max-width: ${({ userMaxWidth, unit }) => `${userMaxWidth}${unit}`};
 `;
 
 // Username

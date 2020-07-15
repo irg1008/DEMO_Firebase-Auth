@@ -6,7 +6,7 @@ import styled from "styled-components";
 import { colors, ContainerStyled, media } from "../../../style/main_style";
 
 // Landing route
-import ROUTES from "../../../routes";
+import { ROUTES } from "../../../routes";
 
 // Type of recieved props
 type IErrorProps = {

@@ -121,11 +121,16 @@ const MessageClose = styled(ContainerStyled)<{ show: boolean }>`
   /* Cursor */
   cursor: pointer;
   /* Opacity */
-  opacity: ${(props) => (props.show ? 1 : 0)};
+  opacity: ${(props) => (props.show ? 0.6 : 0)};
   /* Transition */
   transition: ${mainTransition};
   /* Media medium size */
   @media (max-width: ${media.mediumSize}) {
+    /* Opacity */
+    opacity: 0.6;
+  }
+  /* Hover */
+  &:hover {
     /* Opacity */
     opacity: 1;
   }
@@ -137,6 +142,6 @@ const MessageText = styled.p`
   text-transform: uppercase;
   font-weight: bold;
   text-align: center;
-  line-height: 2em;
+  line-height: 1.5em;
   color: ${colors.mainGrey};
 `;

@@ -1,7 +1,14 @@
 // Individual routes
 import * as ROUTES from "./routes";
 
-export default ROUTES;
+// Protected routes
+import ProtectedRoutes from "./ProtectedRoutes";
 
-// All pages on array
-export const routesArray = Object.values(ROUTES);
+// Type
+import type { IPageType } from "./routes";
+
+export { ROUTES };
+
+export default ProtectedRoutes;
+
+export type { IPageType };

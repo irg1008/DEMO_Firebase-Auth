@@ -1,9 +1,14 @@
 // Import loading context and provider.
-import { withLoading, LoadingProvider } from "./context";
+import { useLoading, withLoading, LoadingProvider } from "./context";
+
+// Loading context type
+import type { ILoadingContext } from "./context";
 
 // Loading class
 import Loading from "./Loading";
 
+export type { ILoadingContext };
+
 export default Loading;
 
-export { withLoading, LoadingProvider };
+export { useLoading, withLoading, LoadingProvider };

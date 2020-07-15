@@ -1,5 +1,5 @@
 // Firebase app
-import firebase from "firebase/app";
+import firebaseApp from "firebase/app";
 // Firebase Authenticator
 import "firebase/auth";
 
@@ -45,14 +45,14 @@ class Firebase {
    */
   constructor() {
     // Initialices de Firebase app.
-    firebase.initializeApp(config);
+    firebaseApp.initializeApp(config);
 
     // Initialices the firebase authentication.
-    this.auth = firebase.auth();
+    this.auth = firebaseApp.auth();
     this.auth.useDeviceLanguage();
 
     // Initialices the Google provider
-    this.provider = new firebase.auth.GoogleAuthProvider();
+    this.provider = new firebaseApp.auth.GoogleAuthProvider();
   }
 
   // Auth API.
@@ -139,4 +139,5 @@ class Firebase {
     this.auth.currentUser.updateProfile({ displayName, photoURL });
 }
 
-export default Firebase;
+const firebase = new Firebase();
+export default firebase;

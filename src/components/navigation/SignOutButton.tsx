@@ -1,65 +1,28 @@
 import React from "react";
-import { withRouter } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 // Firebase consumer.
-import Firebase, { withFirebase } from "../firebase";
+import { firebase } from "../firebase";
 
 // Styled-Components.
 import { ButtonStyled } from "../../style/main_style";
 
 // Routes
-import ROUTES from "../../routes";
-
-// Auth consumer.
-import { withAuth } from "../../components/auth";
-
-// sign out button props.
-type SignOutButtonProps = {
-  /**
-   * Firebase consumer.
-   *
-   * @type {Firebase}
-   */
-  firebase: Firebase;
-
-  /**
-   * Router history.
-   *
-   * @type {*}
-   */
-  history: any;
-
-  /**
-   * Auth consumer.
-   *
-   * @type {*}
-   */
-  authContext: {
-    /**
-     * Set user function.
-     *
-     * @type {*}
-     */
-    setUser: any;
-  };
-};
+import { ROUTES } from "../../routes";
 
 /**
  * Sign out button.
  *
  * @returns
  */
-const SignOutButton: React.FC<SignOutButtonProps> = ({
-  firebase,
-  authContext,
-  history,
-}: SignOutButtonProps) => {
+const SignOutButton: React.FC = () => {
+  // History
+  const history = useHistory();
+
+  // On sign out button click
   const onClick = (): void => {
     // Sign out in firebase.
     firebase.doSignOut();
-
-    // Sign out the local user.
-    authContext.setUser(null);
 
     // Push to landing on sign out.
     history.push(ROUTES.LANDING.path);
@@ -75,4 +38,4 @@ const SignOutButton: React.FC<SignOutButtonProps> = ({
   );
 };
 
-export default withRouter(withAuth(withFirebase(SignOutButton)));
+export default SignOutButton;

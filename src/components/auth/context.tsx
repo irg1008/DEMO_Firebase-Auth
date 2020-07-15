@@ -1,14 +1,55 @@
-import React, { useState } from "react";
+import React, { createContext, useReducer, useContext } from "react";
+
+// State types.
+type IAuthState = {
+  authIsPasswordless: boolean;
+};
+
+// Initial state.
+const INITIAL_STATE: IAuthState = {
+  authIsPasswordless: false,
+};
+
+// Actio type and payload values.
+type Action = { type: "SET_AUTH_PASSWORDLESS"; authIsPasswordless: boolean };
+
+// Context state.
+type IAuthContext = {
+  state: IAuthState;
+  dispatch: (action: Action) => void;
+};
+
+// Initial context state.
+const INITIAL_AUTH: IAuthContext = {
+  state: INITIAL_STATE,
+  dispatch: () => {},
+};
+
+/**
+ * Reducer from useReducer hook.
+ *
+ * @param {IAuthState} state
+ * @param {Action} action
+ * @returns
+ */
+const reducer = (state: IAuthState, action: Action) => {
+  switch (action.type) {
+    case "SET_AUTH_PASSWORDLESS": {
+      const { authIsPasswordless } = action;
+      return { ...state, authIsPasswordless };
+    }
+    default:
+      throw new Error();
+  }
+};
 
 // CONTEXT
-const AuthContext = React.createContext<any>(null);
+const AuthContext = createContext(INITIAL_AUTH);
 
-// CONSUMER
-/**
- * Consumer of loading component. Not props passed to child.
- *
- * @param {*} Component
- */
+// FUNCTIONAL CONSUMER
+const useAuth = () => useContext(AuthContext);
+
+// CLASS CONSUMER
 const withAuth = (Component: any) => (props: any) => (
   <AuthContext.Consumer>
     {(authContext) => <Component {...props} authContext={authContext} />}
@@ -17,37 +58,19 @@ const withAuth = (Component: any) => (props: any) => (
 
 // PROVIDER
 /**
- * Loading provider.
+ * Context provider.
  *
- * @param {*} props
+ * @param {*} { children }
  * @returns
  */
 const AuthProvider: React.FC = ({ children }: any) => {
-  // Loading state.
-  const [user, setUser] = useState(null);
-
-  // Auth is loaded
-  const [authIsLoaded, setAuthIsLoaded] = useState(false);
-
-  // Auth passwordless
-  const [passwordlessAuth, setPasswordlessAuth] = useState(false);
-
-  // We pass the loading value and the handling functions to be used by consumers and passed to the loading child.
+  const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        setUser,
-        authIsLoaded,
-        setAuthIsLoaded,
-        passwordlessAuth,
-        setPasswordlessAuth,
-      }}
-    >
+    <AuthContext.Provider value={{ state, dispatch }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Export consumer and provider
-export { withAuth, AuthProvider };
+export { useAuth, AuthProvider, withAuth };
+export type { IAuthContext };

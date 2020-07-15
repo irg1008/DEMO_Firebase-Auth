@@ -1,8 +1,5 @@
 import React, { ChangeEvent, Component, FormEvent } from "react";
 
-// Firebase consumer
-import Firebase, { withFirebase } from "../../../../components/firebase";
-
 // Form creator and input validations
 import FormCreator from "../../../../components/form";
 import inputValidation from "../../../../components/form/utils";
@@ -20,7 +17,7 @@ import {
 } from "../../../../components/form/form_elements/FormInput";
 
 // Auth context
-import { withAuth } from "../../../../components/auth";
+import { withAuth, IAuthContext } from "../../../../components/auth";
 
 // Styled-components
 import styled from "styled-components";
@@ -31,14 +28,6 @@ import ArrowIcon from "@material-ui/icons/ArrowBackIos";
 
 // Complete sign props.
 type ICompleteSignProps = {
-  /**
-   * Firebase class used to change and complete user and other data.
-   *
-   * @type {Firebase}
-   * @memberof ICompleteSignProps
-   */
-  firebase: Firebase;
-
   /**
    * On submit, call passed prop.
    *
@@ -61,28 +50,11 @@ type ICompleteSignProps = {
   otherOptionText: string;
 
   /**
-   * Auth context to change the password method.
+   * AuthContext consumer for classes.
    *
-   * @type {{
-   *     passwordlessAuth: boolean;
-   *     setPasswordlessAuth: any;
-   *   }}
+   * @type {IAuthContext}
    */
-  authContext: {
-    /**
-     * Passwordless boolean.
-     *
-     * @type {boolean}
-     */
-    passwordlessAuth: boolean;
-
-    /**
-     * Passwordless setter.
-     *
-     * @type {*}
-     */
-    setPasswordlessAuth: any;
-  };
+  authContext: IAuthContext;
 };
 
 // Types for the state.
@@ -134,13 +106,7 @@ class EmailSignForm extends Component<ICompleteSignProps, ICompleteSignState> {
    *
    * @memberof EmailSignForm
    */
-  componentWillUnmount = (): void => {
-    // Props desostruction.
-    const { authContext } = this.props;
-
-    // When finished with log in page set the auth to password. Change this if wanted to reset to normal lof
-    authContext.setPasswordlessAuth(false);
-  };
+  componentWillUnmount = (): void => this.removePasswordlessAuth();
 
   /**
    * On form submit call parent sbutmit.
@@ -186,6 +152,22 @@ class EmailSignForm extends Component<ICompleteSignProps, ICompleteSignState> {
   };
 
   /**
+   * REmove the passwordless auth of auth context.
+   *
+   * @memberof EmailSignForm
+   */
+  removePasswordlessAuth = (): void => {
+    // Props desostruction.
+    const { authContext } = this.props;
+
+    // When finished with log in page set the auth to password. Change this if wanted to reset to normal sign type.
+    authContext.dispatch({
+      type: "SET_AUTH_PASSWORDLESS",
+      authIsPasswordless: false,
+    });
+  };
+
+  /**
    * Validate entire form.
    *
    * @memberof EmailSignForm
@@ -225,7 +207,7 @@ class EmailSignForm extends Component<ICompleteSignProps, ICompleteSignState> {
     const { email, isValid, loading } = this.state;
 
     // Props
-    const { title, otherOptionText, authContext } = this.props;
+    const { title, otherOptionText } = this.props;
 
     // Form Content
     const formContent = (
@@ -247,7 +229,7 @@ class EmailSignForm extends Component<ICompleteSignProps, ICompleteSignState> {
           loading={loading}
           text={loading ? "Enviando link..." : "Enviar link"}
         />
-        <OtherOptions onClick={() => authContext.setPasswordlessAuth(false)}>
+        <OtherOptions onClick={this.removePasswordlessAuth}>
           <ArrowIcon fontSize="inherit" />
           <OtheOptionsText>{otherOptionText}</OtheOptionsText>
         </OtherOptions>
@@ -264,7 +246,7 @@ class EmailSignForm extends Component<ICompleteSignProps, ICompleteSignState> {
   }
 }
 
-export default withAuth(withFirebase(EmailSignForm));
+export default withAuth(EmailSignForm);
 
 // Styled-Components
 // Other options container

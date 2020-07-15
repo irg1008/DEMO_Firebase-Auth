@@ -1,14 +1,43 @@
-import React, { useState } from "react";
+import React, { useContext, createContext, useReducer } from "react";
 
-// Loading Context
-const LoadingContext = React.createContext<any>(null);
+type ILoadingState = {
+  loading: boolean;
+};
 
-// CONSUMER
-/**
- * Consumer of loading component. Not props passed to child.
- *
- * @param {*} Component
- */
+const INITIAL_STATE: ILoadingState = {
+  loading: false,
+};
+
+type Action = { type: "SHOW_LOAD" } | { type: "HIDE_LOAD" };
+
+type ILoadingContext = {
+  state: ILoadingState;
+  dispatch: (action: Action) => void;
+};
+
+const INTIIAL_LOADING: ILoadingContext = {
+  state: INITIAL_STATE,
+  dispatch: () => {},
+};
+
+const reducer = (state: ILoadingState, action: Action) => {
+  switch (action.type) {
+    case "SHOW_LOAD": {
+      return { ...state, loading: true };
+    }
+    case "HIDE_LOAD": {
+      return { ...state, loading: false };
+    }
+    default: {
+      throw new Error();
+    }
+  }
+};
+
+const LoadingContext = createContext(INTIIAL_LOADING);
+
+const useLoading = () => useContext(LoadingContext);
+
 const withLoading = (Component: any) => (props: any) => (
   <LoadingContext.Consumer>
     {(loadingContext) => (
@@ -17,42 +46,16 @@ const withLoading = (Component: any) => (props: any) => (
   </LoadingContext.Consumer>
 );
 
-// PROVIDER
-/**
- * Loading provider.
- *
- * @param {*} props
- * @returns
- */
 const LoadingProvider: React.FC = ({ children }: any) => {
-  // Loading state.
-  const [loading, setLoading] = useState(false);
+  const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
-  /**
-   * Show Loading.
-   *
-   */
-  const showLoading = (): void => setLoading(true);
-
-  /**
-   * Hide loading.
-   *
-   */
-  const hideLoading = (): void => setLoading(false);
-
-  // We pass the loading value and the handling functions to be used by consumers and passed to the loading child.
   return (
-    <LoadingContext.Provider
-      value={{
-        loading,
-        showLoading,
-        hideLoading,
-      }}
-    >
+    <LoadingContext.Provider value={{ state, dispatch }}>
       {children}
     </LoadingContext.Provider>
   );
 };
 
-// Export consumer and provider
-export { withLoading, LoadingProvider };
+export { useLoading, withLoading, LoadingProvider };
+
+export type { ILoadingContext };

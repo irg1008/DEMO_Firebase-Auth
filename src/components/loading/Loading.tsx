@@ -8,27 +8,10 @@ import { ContainerStyled, media, animations } from "../../style/main_style";
 import { LoadingSpinner } from "./loading_elements";
 
 // Loading consumer.
-import { withLoading } from ".";
+import { useLoading } from ".";
 
 // Silk&Rock logo
 import Logo from "../logo/Logo";
-
-// Loading props types.
-type ILoadingProps = {
-  /**
-   * The loadind data passed by consumer.
-   *
-   * @type {*}
-   */
-  loadingContext: {
-    /**
-     * Is loading.
-     *
-     * @type {boolean}
-     */
-    loading: boolean;
-  };
-};
 
 /**
  * Loading component.
@@ -36,10 +19,8 @@ type ILoadingProps = {
  * @param {*} props
  * @returns
  */
-const Loading: React.FC<ILoadingProps> = ({
-  loadingContext,
-}: ILoadingProps) => (
-  <OverlayContainerStyled show={loadingContext.loading}>
+const Loading: React.FC = () => (
+  <OverlayContainerStyled show={useLoading().state.loading}>
     <LoadingContainerStyled>
       <LoadinLogoStyled>
         <Logo />
@@ -49,7 +30,7 @@ const Loading: React.FC<ILoadingProps> = ({
   </OverlayContainerStyled>
 );
 
-export default withLoading(Loading);
+export default Loading;
 
 // Styled-Components
 // Full display container

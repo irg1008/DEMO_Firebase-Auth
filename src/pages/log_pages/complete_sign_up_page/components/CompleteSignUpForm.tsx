@@ -6,7 +6,7 @@ import React, {
 } from "react";
 
 // Firebase consumer
-import Firebase, { withFirebase } from "../../../../components/firebase";
+import { firebase } from "../../../../components/firebase";
 
 // Form creator and input validations
 import FormCreator from "../../../../components/form";
@@ -24,50 +24,23 @@ import {
   INITIAL_INPUT_STATE,
 } from "../../../../components/form/form_elements/FormInput";
 
-// Auth consumer.
-import { withAuth } from "../../../../components/auth";
-
 /**
  * Complete sign props.
  *
  * @interface ICompleteSignProps
  */
-interface ICompleteSignProps {
-  /**
-   * Firebase class used to change and complete user and other data.
-   *
-   * @type {Firebase}
-   * @memberof ICompleteSignProps
-   */
-  firebase: Firebase;
-
-  /**
-   * Auth local consumer.
-   *
-   * @type {*}
-   * @memberof ICompleteSignProps
-   */
-  authContext: {
-    /**
-     * Auth user.
-     *
-     * @type {*}
-     */
-    user: any;
-  };
-}
+type ICompleteSignProps = {};
 
 /**
  * Interface for the state.
  *
  * @interface ICompleteSignState
  */
-interface ICompleteSignState {
+type ICompleteSignState = {
   /**
    * Username, info not filled in previous form.
    *
    * @type {IInputState}
-   * @memberof ICompleteSignState
    */
   username: IInputState;
 
@@ -75,7 +48,6 @@ interface ICompleteSignState {
    * Submit is loading.
    *
    * @type {boolean}
-   * @memberof ICompleteSignState
    */
   loading?: boolean;
 
@@ -83,10 +55,9 @@ interface ICompleteSignState {
    * Form is valid.
    *
    * @type {boolean}
-   * @memberof ICompleteSignState
    */
   isValid?: boolean;
-}
+};
 
 // Initial complete sign up state.
 const INITIAL_STATE: ICompleteSignState = {
@@ -115,8 +86,6 @@ class CompleteSignUpForm extends Component<
    * @memberof CompleteSignUpForm
    */
   onSubmit = (event: FormEvent) => {
-    const { firebase } = this.props;
-
     // Get the username of state to update current user.
     const { username } = this.state;
 
@@ -235,6 +204,6 @@ class CompleteSignUpForm extends Component<
   }
 }
 
-export default withAuth(withFirebase(CompleteSignUpForm));
+export default CompleteSignUpForm;
 
 // TODO: Check if we want to add password on this final reg. Only that because we now the email or phone of wich this page is accessed.

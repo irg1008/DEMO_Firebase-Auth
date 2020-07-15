@@ -1,55 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Redirect } from "react-router-dom";
 
 // Log in form.
 import { LogInForm, LogInWithEmail } from "./components";
 
 // Auth context consumer.
-import { withAuth } from "../../../components/auth";
+import { useAuth } from "../../../components/auth";
+
+// Firebase context
+import { useFirebase } from "../../../components/firebase";
 
 // Routes
-import ROUTES from "../../../routes";
-
-// Types of log in page.
-type ILogInPageProps = {
-  /**
-   * Auth context to change the password method.
-   *
-   * @type {{
-   *     passwordlessAuth: boolean;
-   *     setPasswordlessAuth: any;
-   *   }}
-   */
-  authContext: {
-    /**
-     * User of auth context.
-     *
-     * @type {*}
-     */
-    user: any;
-
-    /**
-     * Auth is loaded.
-     *
-     * @type {boolean}
-     */
-    authIsLoaded: boolean;
-
-    /**
-     * Passwordless boolean.
-     *
-     * @type {boolean}
-     */
-    passwordlessAuth: boolean;
-
-    /**
-     * Passwordless setter.
-     *
-     * @type {*}
-     */
-    setPasswordlessAuth: any;
-  };
-};
+import { ROUTES } from "../../../routes";
 
 /**
  * Log in page.
@@ -58,36 +20,26 @@ type ILogInPageProps = {
  *   authContext,
  * }
  */
-const LogInPage: React.FC<ILogInPageProps> = ({
-  authContext,
-}: ILogInPageProps) => {
-  // State to save when to load.
-  const [pageIsLoaded, setPageIsLoaded] = useState(false);
+const LogInPage: React.FC = () => {
+  // Auth state decostruction
+  const { authIsPasswordless } = useAuth().state;
+
+  // Firebase context
+  const { authUser } = useFirebase().state;
 
   // We load page when auth finishes.
   useEffect(() => {
-    // If auth finishes loading.
-    if (authContext.authIsLoaded) {
-      // Change page title if page loads.
-      if (!authContext.user) document.title = "Silk&Rock - Inicia Sesión";
+    // Change page title if page loads.
+    if (!authUser) document.title = "Silk&Rock - Inicia Sesión";
+  }, [authUser]);
 
-      // Load page.
-      setPageIsLoaded(true);
-    }
-  }, [authContext]);
-
-  if (pageIsLoaded) {
-    return authContext.user ? (
-      <Redirect to={ROUTES.LANDING.path} />
-    ) : authContext.passwordlessAuth ? (
-      <LogInWithEmail />
-    ) : (
-      <LogInForm />
-    );
-  } else {
-    // While page wait for app to retrieve all data. Renders nothing. This is o issue because loading message is on top until full auth loading.
-    return <></>;
-  }
+  return authUser ? (
+    <Redirect to={ROUTES.LANDING.path} />
+  ) : authIsPasswordless ? (
+    <LogInWithEmail />
+  ) : (
+    <LogInForm />
+  );
 };
 
-export default withAuth(LogInPage);
+export default LogInPage;

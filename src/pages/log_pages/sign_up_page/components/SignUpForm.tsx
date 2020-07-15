@@ -2,7 +2,7 @@ import React, { Component, FormEvent, ChangeEvent } from "react";
 import { withRouter } from "react-router-dom";
 
 // Routes
-import ROUTES from "../../../../routes";
+import { ROUTES } from "../../../../routes";
 
 // Form elements
 import {
@@ -31,17 +31,10 @@ import FormCreator from "../../../../components/form";
 import inputValidation from "../../../../components/form/utils";
 
 // Firebase
-import Firebase, { withFirebase } from "../../../../components/firebase";
+import { firebase } from "../../../../components/firebase";
 
 // Types of passes props.
 type ISignUpProps = {
-  /**
-   * Firebase class.
-   *
-   * @type {Firebase}
-   */
-  firebase: Firebase;
-
   /**
    * Floating message context.
    *
@@ -155,7 +148,7 @@ class SignUpForm extends Component<ISignUpProps, ISignUpState> {
     event.preventDefault();
 
     // Firebase and react history.
-    const { firebase, floatingMsgContext, history } = this.props;
+    const { floatingMsgContext, history } = this.props;
 
     // State decostrution.
     const { username, email, passwordOne } = this.state;
@@ -434,4 +427,4 @@ class SignUpForm extends Component<ISignUpProps, ISignUpState> {
   }
 }
 
-export default withRouter(withFloatingMsg(withFirebase(SignUpForm)));
+export default withRouter(withFloatingMsg(SignUpForm));

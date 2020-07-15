@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 
 // Styled-Components
 import styled from "styled-components";
@@ -9,13 +9,13 @@ import { ContainerStyled, media } from "../../../style/main_style";
 import titles from "../../titles";
 
 // Firebase class and consumer.
-import Firebase, { withFirebase } from "../../firebase";
+import { firebase } from "../../firebase";
 
 // Google logo
 import { googleIcon } from "../../../assets";
 
 // ROUTES
-import ROUTES from "../../../routes";
+import { ROUTES } from "../../../routes";
 
 // Google Cookie interface and typed.
 type IGoogleCookie = {
@@ -35,21 +35,14 @@ type IGoogleCookie = {
 };
 
 // Sign with google props
-type ISignGoogleProps = {
-  /**
-   * Firebase prop passed from form
-   *
-   * @type {Firebase}
-   */
-  firebase: Firebase;
-
+interface ISignGoogleProps extends RouteComponentProps {
   /**
    * History of router.
    *
    * @type {*}
    */
   history: any;
-};
+}
 
 /**
  * Sign with google. The user that signs up with google us verified and logged in directyl.
@@ -70,7 +63,7 @@ class SignWithGoogle extends Component<ISignGoogleProps> {
    * @memberof SignWithGoogle
    */
   componentDidMount = (): void => {
-    const { history, firebase } = this.props;
+    const { history } = this.props;
     const { googleCookie } = this;
 
     // If cookie is setted, check for google info.
@@ -102,7 +95,6 @@ class SignWithGoogle extends Component<ISignGoogleProps> {
    * @memberof SignWithGoogle
    */
   onClick = (): void => {
-    const { firebase } = this.props;
     const { googleCookie } = this;
 
     // Sign with google and firebase. This verifies email. Does not retrieve any data or error.
@@ -131,7 +123,7 @@ class SignWithGoogle extends Component<ISignGoogleProps> {
 }
 
 // Google sign encapsullated with firebase and react for routing and using of firebase functions. Done this way for reusability.
-export default withRouter(withFirebase(SignWithGoogle));
+export default withRouter(SignWithGoogle);
 
 // Styled-Components
 // Google container

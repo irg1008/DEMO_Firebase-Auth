@@ -1,145 +1,73 @@
-import React, { useLayoutEffect, useCallback } from "react";
-import { Route, Switch } from "react-router-dom";
-
-// Const routes
-import { routesArray } from "../../routes";
+import React, { useLayoutEffect } from "react";
 
 // Firebase consumer.
-import Firebase, { withFirebase } from "../firebase";
-
-// Navigation
-import { Navigation } from "../navigation";
-
-// Loading component
-import Loading, { withLoading } from "../loading";
-
-// Authentication
-import { withAuth } from "../auth";
+import { useFirebase } from "../firebase";
 
 // FloatingMessage
 import FloatingMessage from "../floating_message";
 
-// Types of app props.
-type IAppProps = {
-  /**
-   * Firebase of firebase condumer.
-   *
-   * @type {Firebase}
-   */
-  firebase: Firebase;
+// Loading component
+import Loading, { useLoading } from "../loading";
 
-  /**
-   * Auth context consumer.
-   *
-   * @type {*}
-   */
-  authContext: {
-    /**
-     * Set user of context.
-     *
-     * @type {*}
-     */
-    setUser: any;
+// Navigation
+import { Navigation } from "../navigation";
 
-    /**
-     * Set auth state.
-     *
-     * @type {*}
-     */
-    setAuthIsLoaded: any;
-  };
-
-  /**
-   * The loading context consumer, used to change loading data.
-   *
-   * @type {*}
-   */
-  loadingContext: {
-    /**
-     * Show loading.
-     *
-     * @type {*}
-     */
-    showLoading: any;
-
-    /**
-     * Hide loading.
-     *
-     * @type {*}
-     */
-    hideLoading: any;
-
-    /**
-     * App loading.
-     *
-     * @type {boolean}
-     */
-    loading: boolean;
-  };
-};
+// Routes
+import ProtectedRoutes from "../../routes";
 
 /**
- * App component.
+ * App class.
  *
- * @param {IAppProps} {
- *   firebase,
- *   loadingContext,
- *   authContext,
- * }
- * @returns
+ * @class App
+ * @extends {Component<IAppProps>}
  */
-const App: React.FC<IAppProps> = ({
-  firebase,
-  loadingContext,
-  authContext,
-}: IAppProps) => {
+const App: React.FC = () => {
+  // Firebase
+  const { authHasLoaded } = useFirebase().state;
+
+  // Loading
+  const changeLoad = useLoading().dispatch;
+
   /**
-   * Load app.
+   * On component mount start oading and check for user signed.
    *
+   * @memberof App
    */
-  const loadApp = useCallback(() => {
+  useLayoutEffect(() => {
     // Start loading
-    loadingContext.showLoading();
+    changeLoad({ type: "SHOW_LOAD" });
 
-    // We recheck the user on app mount. Like reload or redirects. The user is check on log in and sign out.
-    firebase.auth.onAuthStateChanged((user: any) => {
-      // Set user of auth context only if verified.
-      if (user && user.emailVerified) authContext.setUser(user);
-      else authContext.setUser(null);
-
-      // Set the auth is loaded.
-      authContext.setAuthIsLoaded(true);
-
+    if (authHasLoaded) {
       // Hide loading message.
-      loadingContext.hideLoading();
-    });
-  }, [firebase.auth, authContext, loadingContext]);
+      changeLoad({ type: "HIDE_LOAD" });
+    }
+  }, [authHasLoaded, changeLoad]);
 
-  // On component mounts
-  useLayoutEffect(() => loadApp(), [loadApp]);
+  /**
+   * Render app.
+   *
+   * @returns
+   * @memberof App
+   */
 
   return (
     <>
-      {/* Loading overlay. Is not a condition rendering because we want fading => Soluction: Overlay message with own context. Do not mistake with auth state, used for change the loading. Other aspects can trigger loading as well */}
+      {/* Loading overlay */}
       <Loading />
-      {/* Floating message shown for user info all over the app */}
-      <FloatingMessage />
-      {/* Navigation */}
-      <Navigation />
-      {/* Router */}
-      <Switch>
-        {routesArray.map((route) => (
-          <Route
-            key={route.id}
-            path={route.path}
-            exact={route.exact}
-            component={route.Component}
-          />
-        ))}
-      </Switch>
+      {/* Load rest of app when auth has loaded */}
+      {authHasLoaded && (
+        <>
+          {/* Floating message shown for user info all over the app */}
+          <FloatingMessage />
+          {/* Navigation */}
+          <Navigation />
+          {/* Routes */}
+          <ProtectedRoutes />
+        </>
+      )}
     </>
   );
 };
 
 // App uploads the user when mounted. May be a problem to access it on other components componentDidMount function.
-export default withLoading(withAuth(withFirebase(App)));
+export default App;

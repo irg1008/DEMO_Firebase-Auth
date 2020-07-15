@@ -11,7 +11,7 @@ import EmailIcon from "@material-ui/icons/EmailRounded";
 import titles from "../../../../components/titles";
 
 // Auth context
-import { withAuth } from "../../../../components/auth";
+import { useAuth } from "../../../../components/auth";
 
 // Type of signing without email or google.
 type ISignWithoutPasswordProps = {
@@ -21,30 +21,6 @@ type ISignWithoutPasswordProps = {
    * @type {string}
    */
   text: string;
-
-  /**
-   * Auth context to change the password method.
-   *
-   * @type {{
-   *     passwordlessAuth: boolean;
-   *     setPasswordlessAuth: any;
-   *   }}
-   */
-  authContext: {
-    /**
-     * Passwordless boolean.
-     *
-     * @type {boolean}
-     */
-    passwordlessAuth: boolean;
-
-    /**
-     * Passwordless setter.
-     *
-     * @type {*}
-     */
-    setPasswordlessAuth: any;
-  };
 };
 
 /**
@@ -55,12 +31,19 @@ type ISignWithoutPasswordProps = {
  */
 const SignWithoutPassword: React.FC<ISignWithoutPasswordProps> = ({
   text,
-  authContext,
 }: ISignWithoutPasswordProps) => {
+  // Auth context
+  const authContext = useAuth();
+
+  // On click on sign with email => Set log without password true.
+  const setPasswordlessAuth = (): void =>
+    authContext.dispatch({
+      type: "SET_AUTH_PASSWORDLESS",
+      authIsPasswordless: true,
+    });
+
   return (
-    <SignPasswordlessContainerStyled
-      onClick={() => authContext.setPasswordlessAuth(true)}
-    >
+    <SignPasswordlessContainerStyled onClick={setPasswordlessAuth}>
       <EmailIcon style={{ color: colors.mainBlack, fontSize: "2em" }} />
       <TextContainer>
         <titles.Title5 title={text} />
@@ -69,7 +52,7 @@ const SignWithoutPassword: React.FC<ISignWithoutPasswordProps> = ({
   );
 };
 
-export default withAuth(SignWithoutPassword);
+export default SignWithoutPassword;
 
 // Styled-Components
 // Sign passwordless

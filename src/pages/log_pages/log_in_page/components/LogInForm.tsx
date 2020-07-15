@@ -18,10 +18,14 @@ import FormCreator from "../../../../components/form";
 import inputValidation from "../../../../components/form/utils";
 
 // Routes
-import ROUTES from "../../../../routes";
+import { ROUTES } from "../../../../routes";
 
 // Firebase
-import Firebase, { withFirebase } from "../../../../components/firebase";
+import {
+  withFirebase,
+  IFirebaseContext,
+  firebase,
+} from "../../../../components/firebase";
 
 // Input state
 import {
@@ -39,7 +43,7 @@ type ILogInProps = {
    *
    * @type {Firebase}
    */
-  firebase: Firebase;
+  firebaseContext: IFirebaseContext;
 
   /**
    * Floating message context.
@@ -130,9 +134,6 @@ class LogInPage extends Component<ILogInProps, ILoginState> {
     // Prevent default behaviour.
     event.preventDefault();
 
-    // Firebase.
-    const { firebase } = this.props;
-
     // State decostrution.
     const { email, password } = this.state;
 
@@ -218,6 +219,8 @@ class LogInPage extends Component<ILogInProps, ILoginState> {
     const emailCheck = inputValidation.checkEmail(this.state.email.value);
     // Email
     const email = { ...this.state.email, ...emailCheck };
+    // On email change set password valid.
+    if (this.state.password.isValid === false) this.validatePassword();
     // Change email info.
     this.setState({ email }, () => this.validateForm());
   };
@@ -251,6 +254,7 @@ class LogInPage extends Component<ILogInProps, ILoginState> {
     this.setState(
       {
         password: {
+          // We reset the value in case email is wrong, not password.
           ...this.state.password,
           isValid: false,
           errorMsg:
