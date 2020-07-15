@@ -9,7 +9,7 @@ import { ContainerStyled, media } from "../../../style/main_style";
 import titles from "../../titles";
 
 // Firebase class and consumer.
-import { firebase } from "../../firebase";
+import { firebase } from "../../../context/firebase";
 
 // Google logo
 import { googleIcon } from "../../../assets";

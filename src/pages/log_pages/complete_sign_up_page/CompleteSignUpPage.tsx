@@ -5,7 +5,7 @@ import { Redirect } from "react-router-dom";
 import CompleteSignUpForm from "./components/CompleteSignUpForm";
 
 // Firebase context consumer.
-import { useFirebase } from "../../../components/firebase";
+import { useFirebase } from "../../../context/firebase";
 
 // Routes
 import { ROUTES } from "../../../routes";

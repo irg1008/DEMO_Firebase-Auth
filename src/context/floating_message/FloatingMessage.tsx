@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 // Styled-Components
 import styled from "styled-components";
@@ -12,42 +12,45 @@ import {
 } from "../../style/main_style";
 
 // Floating message context
-import { withFloatingMsg } from "./context";
+import { useFloatingMsg } from "./";
 
 // CloseIcon
 import CloseIcon from "@material-ui/icons/Close";
 
-// Floating message props
-type IFloatingMessageProps = {
-  floatingMsgContext: {
-    /**
-     * Message of floating component.
-     *
-     * @type {any}
-     */
-    message: any;
+const FloatingMessage: React.FC = () => {
+  // Floating context
+  const { show, timeoutTime, message } = useFloatingMsg().state;
+  const floatingMsgDispatch = useFloatingMsg().dispatch;
 
-    /**
-     * Show message value.
-     *
-     * @type {boolean}
-     */
-    show: boolean;
-
-    /**
-     * Hide message.
-     *
-     * @type {*}
-     */
-    hideMessage: any;
-  };
-};
-
-const FloatingMessage: React.FC<IFloatingMessageProps> = ({
-  floatingMsgContext,
-}: IFloatingMessageProps) => {
   // Show close button
   const [showClose, setShowClose] = useState(false);
+
+  const [timer, setTimer] = useState(0);
+
+  // Hide message
+  const hideMessage = useCallback(() => {
+    floatingMsgDispatch({ type: "HIDE_FLOATING" });
+  }, [floatingMsgDispatch]);
+
+  const createTimeout = useCallback(
+    (timeoutTime?: number) => {
+      setTimer(
+        setTimeout(() => {
+          hideMessage();
+        }, timeoutTime)
+      );
+    },
+    [hideMessage]
+  );
+
+  useEffect(() => {
+    // If show is setted to true
+    if (show) {
+      if (!timer) createTimeout(timeoutTime);
+    } else if (!show) {
+      if (timer) clearTimeout(timer);
+    }
+  }, [show, timeoutTime, createTimeout, timer]);
 
   return (
     <MessageContainer
@@ -55,20 +58,17 @@ const FloatingMessage: React.FC<IFloatingMessageProps> = ({
       onMouseLeave={() => {
         setShowClose(false);
       }}
-      show={floatingMsgContext.show}
+      show={show}
     >
-      <MessageClose
-        show={showClose}
-        onClick={() => floatingMsgContext.hideMessage()}
-      >
+      <MessageClose show={showClose} onClick={hideMessage}>
         <CloseIcon color="inherit" fontSize="inherit" />
       </MessageClose>
-      <MessageText>{floatingMsgContext.message}</MessageText>
+      <MessageText>{message}</MessageText>
     </MessageContainer>
   );
 };
 
-export default withFloatingMsg(FloatingMessage);
+export default FloatingMessage;
 
 // Styled-Components
 // Message container
@@ -81,6 +81,8 @@ const MessageContainer = styled(ContainerStyled)<{ show: boolean }>`
   z-index: 1;
   /* Opacity */
   opacity: ${(props) => (props.show ? 1 : 0)};
+  /* Transform */
+  transform: ${(props) => (props.show ? "translateY(0)" : "translateY(100%)")};
   /* Position */
   position: fixed;
   bottom: 2em;
@@ -104,8 +106,11 @@ const MessageContainer = styled(ContainerStyled)<{ show: boolean }>`
   /* Media medium size */
   @media (max-width: ${media.mediumSize}) {
     min-width: 100%;
+    /* Position */
     bottom: 0;
     right: 0;
+    /* Margin, Padding, Border */
+    border-radius: 1em 1em 0 0;
   }
 `;
 

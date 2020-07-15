@@ -21,7 +21,7 @@ import { ROUTES } from "../../routes";
 import Logo from "../logo";
 
 // Authentication
-import { useFirebase } from "../firebase";
+import { useFirebase } from "../../context/firebase";
 
 // Hamburger
 import { HamburgerThreeDYReverse as HamburgerIcon } from "react-animated-burgers";

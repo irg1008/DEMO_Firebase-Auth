@@ -25,7 +25,7 @@ import {
   withFirebase,
   IFirebaseContext,
   firebase,
-} from "../../../../components/firebase";
+} from "../../../../context/firebase";
 
 // Input state
 import {
@@ -34,7 +34,10 @@ import {
 } from "../../../../components/form/form_elements/FormInput";
 
 // Floating Message
-import { withFloatingMsg } from "../../../../components/floating_message";
+import {
+  withFloatingMsg,
+  IFloatingMsgContext,
+} from "../../../../context/floating_message";
 
 // Types of of passes props.
 type ILogInProps = {
@@ -54,14 +57,7 @@ type ILogInProps = {
    *     hideMessage: any;
    *   }}
    */
-  floatingMsgContext: {
-    /**
-     * Show the message.
-     *
-     * @type {*}
-     */
-    showMessage: any;
-  };
+  floatingMsgContext: IFloatingMsgContext;
 };
 
 // Types of state.
@@ -304,10 +300,10 @@ class LogInPage extends Component<ILogInProps, ILoginState> {
             user.sendEmailVerification();
 
             // Set message
-            floatingMsgContext.showMessage(
-              'Te hemos reenviado un correo a "' + email.value + '"',
-              10000
-            );
+            floatingMsgContext.dispatch({
+              type: "SHOW_FLOATING",
+              message: 'Te hemos reenviado un correo a "' + email.value + '"',
+            });
 
             // Change state.
             this.setState(

@@ -1,5 +1,5 @@
 import React, { Component, FormEvent, ChangeEvent } from "react";
-import { withRouter } from "react-router-dom";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 
 // Routes
 import { ROUTES } from "../../../../routes";
@@ -17,7 +17,10 @@ import {
 import { SignWithoutPassword } from "../../components/email_sign";
 
 // Floating Message
-import { withFloatingMsg } from "../../../../components/floating_message";
+import {
+  withFloatingMsg,
+  IFloatingMsgContext,
+} from "../../../../context/floating_message";
 
 // Input state
 import {
@@ -31,10 +34,10 @@ import FormCreator from "../../../../components/form";
 import inputValidation from "../../../../components/form/utils";
 
 // Firebase
-import { firebase } from "../../../../components/firebase";
+import { firebase } from "../../../../context/firebase";
 
 // Types of passes props.
-type ISignUpProps = {
+type ISignUpProps = RouteComponentProps & {
   /**
    * Floating message context.
    *
@@ -44,21 +47,7 @@ type ISignUpProps = {
    *     hideMessage: any;
    *   }}
    */
-  floatingMsgContext: {
-    /**
-     * Show the message.
-     *
-     * @type {*}
-     */
-    showMessage: any;
-  };
-
-  /**
-   * React router history.
-   *
-   * @type {*}
-   */
-  history: any;
+  floatingMsgContext: IFloatingMsgContext;
 };
 
 // Types of state.
@@ -169,12 +158,13 @@ class SignUpForm extends Component<ISignUpProps, ISignUpState> {
         // Send verification message.
         user.sendEmailVerification().then(() => {
           // Set message
-          floatingMsgContext.showMessage(
-            'Te hemos enviado un correo a "' +
+          floatingMsgContext.dispatch({
+            type: "SHOW_FLOATING",
+            message:
+              'Te hemos enviado un correo a "' +
               email.value +
               '" para confirmar la cuenta y poder iniciar sesión',
-            10000
-          );
+          });
         });
 
         // Force sign out until user sign in from sign in page.

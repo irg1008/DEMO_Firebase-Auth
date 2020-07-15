@@ -2,7 +2,7 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 
 // Firebase consumer.
-import { firebase } from "../firebase";
+import { firebase } from "../../context/firebase";
 
 // Styled-Components.
 import { ButtonStyled } from "../../style/main_style";

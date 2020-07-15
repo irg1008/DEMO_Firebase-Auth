@@ -5,13 +5,13 @@ import styled from "styled-components";
 import { ContainerStyled, media, animations } from "../../style/main_style";
 
 // Loading component.
-import { LoadingSpinner } from "./loading_elements";
+import { LoadingSpinner } from "../../context/loading/loading_elements";
 
 // Loading consumer.
 import { useLoading } from ".";
 
 // Silk&Rock logo
-import Logo from "../logo/Logo";
+import Logo from "../../components/logo";
 
 /**
  * Loading component.

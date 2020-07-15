@@ -11,6 +11,7 @@ export default App;
 // TODO: Personalize verify and email log and sign emails and check how to redirect to page directly and html template (Importance level 0)
 // TODO: Add animations like navbar up on phone or floating message out. (Importance level 0)
 // TODO: Finish log in with email link. And send sign or log in email checking if user already exist value in user.
-// TODO: Remove all overlays and show every time hidden. i.e loading gif
+// TODO: Remove all overlays and show every time hidden. i.e loading gif. See this page: https://czaplinski.io/blog/super-easy-animation-with-react-hooks/
 // TODO: Change the forms to a context and reducer.
 // TODO: Revisar y comentar.
+// TODO: Convert floating context to a queue of floating messages

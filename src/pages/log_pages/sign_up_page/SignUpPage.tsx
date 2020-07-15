@@ -5,10 +5,10 @@ import { Redirect } from "react-router-dom";
 import { SignUpForm, SignUpWithEmail } from "./components";
 
 // Auth context consumer.
-import { useAuth } from "../../../components/auth";
+import { useAuth } from "../../../context/auth";
 
 // Firebase context
-import { useFirebase } from "../../../components/firebase";
+import { useFirebase } from "../../../context/firebase";
 
 // Routes
 import { ROUTES } from "../../../routes";

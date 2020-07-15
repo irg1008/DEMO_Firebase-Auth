@@ -1,13 +1,13 @@
 import React, { useLayoutEffect } from "react";
 
 // Firebase consumer.
-import { useFirebase } from "../firebase";
+import { useFirebase } from "../../context/firebase";
 
 // FloatingMessage
-import FloatingMessage from "../floating_message";
+import FloatingMessage from "../../context/floating_message";
 
 // Loading component
-import Loading, { useLoading } from "../loading";
+import Loading, { useLoading } from "../../context/loading";
 
 // Navigation
 import { Navigation } from "../navigation";

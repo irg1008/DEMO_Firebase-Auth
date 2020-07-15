@@ -6,7 +6,7 @@ import React, {
 } from "react";
 
 // Firebase consumer
-import { firebase } from "../../../../components/firebase";
+import { firebase } from "../../../../context/firebase";
 
 // Form creator and input validations
 import FormCreator from "../../../../components/form";

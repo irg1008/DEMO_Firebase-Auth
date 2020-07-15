@@ -11,7 +11,7 @@ import EmailIcon from "@material-ui/icons/EmailRounded";
 import titles from "../../../../components/titles";
 
 // Auth context
-import { useAuth } from "../../../../components/auth";
+import { useAuth } from "../../../../context/auth";
 
 // Type of signing without email or google.
 type ISignWithoutPasswordProps = {

@@ -17,7 +17,7 @@ import {
 } from "../../../../components/form/form_elements/FormInput";
 
 // Auth context
-import { withAuth, IAuthContext } from "../../../../components/auth";
+import { withAuth, IAuthContext } from "../../../../context/auth";
 
 // Styled-components
 import styled from "styled-components";

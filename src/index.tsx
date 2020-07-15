@@ -5,37 +5,17 @@ import * as serviceWorker from "./serviceWorker";
 // Style
 import "./index.css";
 
-// Firebase
-import { FirebaseProvider } from "./components/firebase";
-
-// Loading
-import { LoadingProvider } from "./components/loading";
-
-// Auth
-import { AuthProvider } from "./components/auth";
-
-// Router Provider
-import { BrowserRouter as Router } from "react-router-dom";
-
-// Floating Message Provider
-import { FloatingMsgProvider } from "./components/floating_message";
+// All providers
+import ProvidersWrapper from "./context/ProvidersWrapper";
 
 // App
 import App from "./components/app";
 
 ReactDOM.render(
   <React.StrictMode>
-    <FirebaseProvider>
-      <AuthProvider>
-        <LoadingProvider>
-          <FloatingMsgProvider>
-            <Router>
-              <App />
-            </Router>
-          </FloatingMsgProvider>
-        </LoadingProvider>
-      </AuthProvider>
-    </FirebaseProvider>
+    <ProvidersWrapper>
+      <App />
+    </ProvidersWrapper>
   </React.StrictMode>,
   document.getElementById("root")
 );
