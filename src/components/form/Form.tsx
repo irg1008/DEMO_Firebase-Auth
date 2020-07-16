@@ -1,6 +1,6 @@
 import React from "react";
 
-// Styled-Components
+// Styled-Components.
 import styled from "styled-components";
 import {
   ContainerStyled,
@@ -9,45 +9,52 @@ import {
   media,
 } from "../../style/main_style";
 
-// Titles
+// Titles.
 import { Title1Styled } from "../../components/titles/Titles";
 
-// Interface for props on form wrapper.
+// Form props type.
 type IFormCreatorProps = {
-  /**
-   * On submit event.
-   *
-   * @type {*}
-   */
-  onSubmit: any;
-
-  /**
-   * Content of form. i.e. Two inputs + two buttons.
-   *
-   * @type {*}
-   */
-  content: any;
-
-  /**
-   * Optional bottom component of form. i.e Aditional info or alternative forms.
-   *
-   * @type {*}
-   */
-  bottomComponent?: any;
-
   /**
    * Title of form.
    *
    * @type {string}
    */
   title: string;
+
+  /**
+   * Content of form.
+   * i.e: Two inputs + showPassword component + one button.
+   *
+   * @type {*}
+   */
+  content: any;
+
+  /**
+   * Optional bottom component of form.
+   * i.e: Aditional info or alternative forms.
+   *
+   * @type {*}
+   */
+  bottomComponent?: any;
+
+  /**
+   * On submit function.
+   *
+   * @type {*}
+   */
+  onSubmit: any;
 };
 
 /**
- * Form wrapper, can strore multiple components, given a submit button is provided. Content inside wrapper cannot be empty.
+ * Form creator.
+ * Given varios props, gives the user a styled and ready to use form.
  *
- * @param {IFormCreatorProps} props
- * @returns
+ * @param {IFormCreatorProps} {
+ *   onSubmit,
+ *   content,
+ *   bottomComponent,
+ *   title,
+ * }
  */
 const FormCreator: React.FC<IFormCreatorProps> = ({
   onSubmit,
@@ -57,26 +64,26 @@ const FormCreator: React.FC<IFormCreatorProps> = ({
 }: IFormCreatorProps) => (
   <FormContainer>
     <FormTitle>{title}</FormTitle>
-    <FormStyled onSubmit={onSubmit}>
-      <FormContainerStyled>
-        <FormInputContainerStyled>{content}</FormInputContainerStyled>
+    <Form onSubmit={onSubmit}>
+      <FormWrapper>
+        <InputsContainer>{content}</InputsContainer>
         {bottomComponent}
-      </FormContainerStyled>
-    </FormStyled>
+      </FormWrapper>
+    </Form>
   </FormContainer>
 );
 
 export default FormCreator;
 
-// Styled-Components
-// Form title
+// Styled-Components.
+// Form title.
 const FormTitle = styled(Title1Styled)`
   width: 100%;
   /* Font */
   text-align: center;
 `;
 
-// Form Container
+// Form Container.
 const FormContainer = styled(MainBGContainerStyled)`
   min-width: 100vw;
   width: auto;
@@ -88,21 +95,21 @@ const FormContainer = styled(MainBGContainerStyled)`
   padding-top: 5em;
 `;
 
-// Form
-const FormStyled = styled.form`
+// Form.
+const Form = styled.form`
   min-width: 100vw;
   height: auto;
   min-height: 10em;
 `;
 
-// Form container
-const FormContainerStyled = styled(ContainerStyled)`
+// Form container.
+const FormWrapper = styled(ContainerStyled)`
   width: 100%;
   height: 100%;
 `;
 
-// Form Input Container
-const FormInputContainerStyled = styled(BorderedContainerStyled)`
+// Form Input Container.
+const InputsContainer = styled(BorderedContainerStyled)`
   width: 30em;
   /* Margin, Padding, Border */
   margin-bottom: 0.5em;

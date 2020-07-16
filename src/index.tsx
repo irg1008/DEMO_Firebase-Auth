@@ -2,13 +2,13 @@ import React from "react";
 import ReactDOM from "react-dom";
 import * as serviceWorker from "./serviceWorker";
 
-// Style
+// Style.
 import "./index.css";
 
-// All providers
+// All providers.
 import ProvidersWrapper from "./context/ProvidersWrapper";
 
-// App
+// App.
 import App from "./components/app";
 
 ReactDOM.render(

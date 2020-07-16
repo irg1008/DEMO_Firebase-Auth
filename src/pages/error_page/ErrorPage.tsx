@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 // Error
-import Error from "./components/Error";
+import { Error } from "./components";
 
 // Styled-Components
 import styled from "styled-components";

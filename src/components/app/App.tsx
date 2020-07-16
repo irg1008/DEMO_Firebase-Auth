@@ -3,65 +3,62 @@ import React, { useLayoutEffect } from "react";
 // Firebase consumer.
 import { useFirebase } from "../../context/firebase";
 
-// FloatingMessage
+// FloatingMessage consumer.
 import FloatingMessage from "../../context/floating_message";
 
-// Loading component
+// Loading component and context.
 import Loading, { useLoading } from "../../context/loading";
 
-// Navigation
+// Navigation.
 import { Navigation } from "../navigation";
 
-// Routes
+// Routes.
 import ProtectedRoutes from "../../routes";
 
 /**
  * App class.
  *
- * @class App
- * @extends {Component<IAppProps>}
+ * @returns
  */
 const App: React.FC = () => {
-  // Firebase
+  // FirebaseContext => authHasLoaded value.
+  // We are waiting for firebase to check auth change on the provider.
   const { authHasLoaded } = useFirebase().state;
 
-  // Loading
-  const changeLoad = useLoading().dispatch;
+  // LoadingContext => Dispatch function to change the state with reducer.
+  const appLoad = useLoading().dispatch;
 
-  /**
-   * On component mount start oading and check for user signed.
-   *
-   * @memberof App
-   */
+  // On component mounted => Set app on loading state until firebase returns API fetch is successful.
+  // VALUES:
+  // - authHasLoaded: Check for auth load changes.
+  // - appLoad: Uses appLoad dispatch.
+  // NOTE: Difference between useLayoutEffect and useEffect hooks is well explained in URL passed but mainly the difference is that the first is called before the screen is updated. We use it in this case to prevent screen flashing before setting the load component to show.
+  // - URL: https://daveceddia.com/useeffect-vs-uselayouteffect/
   useLayoutEffect(() => {
-    // Start loading
-    changeLoad({ type: "SHOW_LOAD" });
+    // Start loading app.
+    appLoad({ type: "SHOW_LOAD" });
 
+    // If auth has loaded on firebase context.
     if (authHasLoaded) {
       // Hide loading message.
-      changeLoad({ type: "HIDE_LOAD" });
+      appLoad({ type: "HIDE_LOAD" });
     }
-  }, [authHasLoaded, changeLoad]);
+  }, [authHasLoaded, appLoad]);
 
-  /**
-   * Render app.
-   *
-   * @returns
-   * @memberof App
-   */
 
+  // RETURN ZONE.
   return (
     <>
-      {/* Loading overlay */}
+      {/* Loading overlay. */}
       <Loading />
-      {/* Load rest of app when auth has loaded */}
+      {/* If auth has loaded => Show app. */}
       {authHasLoaded && (
         <>
-          {/* Floating message shown for user info all over the app */}
+          {/* Floating message. */}
           <FloatingMessage />
-          {/* Navigation */}
+          {/* Navigation. */}
           <Navigation />
-          {/* Routes */}
+          {/* Routes. */}
           <ProtectedRoutes />
         </>
       )}
@@ -69,5 +66,4 @@ const App: React.FC = () => {
   );
 };
 
-// App uploads the user when mounted. May be a problem to access it on other components componentDidMount function.
 export default App;

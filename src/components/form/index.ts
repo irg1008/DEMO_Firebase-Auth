@@ -1,10 +1,10 @@
-// Form Wrapper
+// Form creator.
 import Form from "./Form";
 
-// Form elements
+// Form elements.
 import * as FormElements from "./form_elements";
 
-// Form utils
+// Form utils.
 import formUtils from "./utils";
 
 export default Form;

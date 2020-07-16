@@ -4,6 +4,7 @@ import React from "react";
 import styled from "styled-components";
 import { colors, media } from "../../../style/main_style";
 
+// Social icons
 import InstagramIcon from "@material-ui/icons/Instagram";
 import LinkedInIcon from "@material-ui/icons/LinkedIn";
 import FacebookIcon from "@material-ui/icons/Facebook";
@@ -22,17 +23,17 @@ const links = {
   linkedin: "https://es.linkedin.com/organization-guest/company/silkandrock",
 };
 
+
 /**
- * Building app panel.
+ * Social component.
  *
- * @returns Temporal panel of building app.
  */
-const EnConstruccion = () => (
-  <EnConstruccionContainerStyled>
-    <EnConstruccionWorkStyled>
+const Social = () => (
+  <SocialContainer>
+    <LogoText>
       <p>{textoConstruccion.line1}</p>
-    </EnConstruccionWorkStyled>
-    <EnConstruccionContactStyled>
+    </LogoText>
+    <SocialLinks>
       <p>{textoConstruccion.line2} </p>
       <p>
         <b> {textoConstruccion.line3}</b>
@@ -46,15 +47,15 @@ const EnConstruccion = () => (
       <SocialIcon target="_blank" href={links.linkedin}>
         <LinkedInIcon fontSize="large" />
       </SocialIcon>
-    </EnConstruccionContactStyled>
-  </EnConstruccionContainerStyled>
+    </SocialLinks>
+  </SocialContainer>
 );
 
-export default EnConstruccion;
+export default Social;
 
 /* Styled-Components */
 // Container en construccion
-const EnConstruccionContainerStyled = styled.div`
+const SocialContainer = styled.div`
   width: 70%;
   /* Font */
   color: ${colors.mainBlack};
@@ -62,7 +63,7 @@ const EnConstruccionContainerStyled = styled.div`
 `;
 
 // Work Message
-const EnConstruccionWorkStyled = styled.div`
+const LogoText = styled.div`
   width: 100%;
   /* Margin, Padding, Border */
   margin-top: 2em;
@@ -78,7 +79,7 @@ const EnConstruccionWorkStyled = styled.div`
 `;
 
 // Contact
-const EnConstruccionContactStyled = styled.div`
+const SocialLinks = styled.div`
   width: 100%;
   /* Margin, Padding, Border */
   margin-top: 20em;
@@ -89,5 +90,6 @@ const EnConstruccionContactStyled = styled.div`
 // Social icon
 const SocialIcon = styled.a`
   color: ${colors.mainBlack};
+  /* Margin, Padding, Border */
   margin: 0 0.2em;
 `;

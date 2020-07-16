@@ -8,7 +8,7 @@ import { MainBGContainerStyled, ContainerStyled } from "../../style/main_style";
 import Logo from "../../components/logo";
 
 // En Construccion
-import EnConstruccion from "./components/EnConstruccion";
+import Social from "./components/Social";
 
 /**
  * Landing Page.
@@ -26,7 +26,7 @@ const LandingPage: React.FC = () => {
       <LandingLogoContainerStyled>
         <Logo />
       </LandingLogoContainerStyled>
-      <EnConstruccion />
+      <Social />
     </LandingPageContainerStyled>
   );
 };
