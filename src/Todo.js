@@ -12,6 +12,6 @@
 // TODO: Revisar y comentar.
 // TODO: Convert floating context to a queue of floating messages
 // TODO: Check temp mail are not valids. https://www.email-validator.net/api.html
+// TODO: Change from styled-components to functional css and itcss
 /////////////////////////////////////////////////
 // FIXME: Google sign overrides normal sign and the password is forgotten. Save password or something?? => Solution: fetchSignInMethodsForEmail{}
-// FIXME: Fetch error on email validation

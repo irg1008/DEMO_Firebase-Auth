@@ -153,13 +153,11 @@ class LogInPage extends Component<ILogInProps, ILoginState> {
         }
       })
       .catch((error: any) => {
+        // Stop loading form submit.
+        this.setState({ loading: false });
         // Error handling
         if (error.code === "auth/user-not-found") this.userNotFound();
         else if (error.code === "auth/wrong-password") this.wrongPassword();
-      })
-      .then(() => {
-        // Stop loading form submit.
-        this.setState({ loading: false });
       });
   };
 

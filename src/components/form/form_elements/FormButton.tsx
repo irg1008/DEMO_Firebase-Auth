@@ -42,7 +42,7 @@ const FormButton: React.FC<IButtonProps> = ({
   <FormButtonStyled
     isDisabled={disabled}
     isLoading={loading}
-    type={!disabled ? "submit" : "button"}
+    type={!disabled && !loading ? "submit" : "button"}
   >
     {text}
   </FormButtonStyled>

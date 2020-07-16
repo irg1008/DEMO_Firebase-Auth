@@ -23,171 +23,149 @@ const INITIAL_INPUT_CHECK: InputCheck = {
 };
 
 /**
- * Check username validation.
+ * Input validation class.
+ * Does not extends from any external validators or uses any API for performance concerns.
  *
- * @param {string} username
- * @returns {InputCheck}
+ * @class InputValidation Input class.
  */
-const checkUsername = (username: string): InputCheck => {
-  let usernameCheck = { ...INITIAL_INPUT_CHECK };
+class InputValidation {
+  /**
+   * If input is not valid => Return input with valid false and errorMsg.
+   * Reay to use in form inputs.
+   *
+   * @memberof InputValidation
+   */
+  inputIsNotValid = (errorMsg: string): InputCheck => {
+    const checkValidation: InputCheck = {
+      isValid: false,
+      errorMsg,
+    };
+    return checkValidation;
+  };
 
-  // Checking username is empty.
-  if (username.length === 0) {
-    usernameCheck.isValid = false;
-    usernameCheck.errorMsg = "El nombre no puede estar vacio";
-  }
+  /**
+   * If input is valid => Return initial state of input.
+   *
+   * @memberof InputValidation
+   */
+  inputIsValid = (): InputCheck => INITIAL_INPUT_CHECK;
 
-  // Checking username lenght > 3.
-  else if (username.length < 3) {
-    usernameCheck.isValid = false;
-    usernameCheck.errorMsg = "El nombre tiene que tener mínimo tres caracteres";
-  }
+  /**
+   * Checks username validation.
+   *
+   * @memberof InputValidation
+   */
+  checkUsername = (username: string): InputCheck => {
+    // Checking username is empty.
+    if (username.length === 0)
+      return this.inputIsNotValid("El nombre no puede estar vacio");
+    // Checking username lenght > 3.
+    else if (username.length < 3)
+      return this.inputIsNotValid(
+        "El nombre tiene que tener mínimo tres caracteres"
+      );
+    // Checking username too long.
+    else if (username.length > 40)
+      return this.inputIsNotValid("El usuario es demasiado largo");
+    // Username is correct
+    else return this.inputIsValid();
+  };
 
-  // Checking username too long.
-  else if (username.length < 40) {
-    usernameCheck.isValid = false;
-    usernameCheck.errorMsg = "El usuario es demasiado largo.";
-  }
+  /**
+   * Checks email validation.
+   *
+   * @memberof InputValidation
+   */
+  checkEmail = (email: string): InputCheck => {
+    // Checking email is empty.
+    if (email.length === 0)
+      return this.inputIsNotValid("El email no puede estar vacio");
+    // Checking email format.
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      return this.inputIsNotValid(
+        "El email tiene que tener un formato tipo: email@aqui.com"
+      );
+    // Email is correct.
+    else return this.inputIsValid();
+  };
 
-  return usernameCheck;
-};
-
-/**
- * Checks if passed email is disposable. Async method.
- * Used API: https://open.kickbox.io/#:~:text=Free%2C%20Open%20API%20for%20Detecting,from%20your%20client-side%20code.
- *
- * @param {string} email
- * @returns {boolean}
- */
-const emailIsDisposable = async (email: string): Promise<boolean> => {
-  // API Endpoint.
-  const endpoint = "https://open.kickbox.com/v1/disposable/";
-
-  // Email to pass to API: Email on URI mode.
-  const emailURI = encodeURIComponent(email);
-
-  // Email is disposable
-  let isDisposable = false;
-
-  // Fetch from RESTful API.
-  await fetch(endpoint + emailURI, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      // Set variable to disposable value.
-      isDisposable = data.disposable;
-    })
-    .catch((error) => console.warn(error));
-
-  return isDisposable;
-};
-
-/**
- * Check password validation.
- *
- * @param {string} email
- * @returns {InputCheck}
- */
-const checkEmail = (email: string): InputCheck => {
-  let emailCheck = { ...INITIAL_INPUT_CHECK };
-
-  // Checking email is empty.
-  if (email.length === 0) {
-    emailCheck.isValid = false;
-    emailCheck.errorMsg = "El email no puede estar vacio";
-  }
-
-  // Checking email format.
-  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    emailCheck.isValid = false;
-    emailCheck.errorMsg =
-      "El email tiene que tener un formato tipo: email@example.com";
-  }
-
-  // Checking email is not disposable.
-  // Function returns promise so we use then to return promise value (isDisposable).
-  // NOTE: Need to recheck if calling this on input change is correct.
-  //       Is the same as asking firebase if user exists and s too slow.
-  //       So we need to check if we move this to onSubmit or useEffect of some type.
-  else {
-    // We check the value (isDisposable) of the returned promise.
-    emailIsDisposable(email).then((isDisposable: boolean) => {
-      // If disposable => Email invalid.
-      if (isDisposable) {
-        emailCheck.isValid = false;
-        emailCheck.errorMsg = "El dominio de email no es válido";
+  /**
+   * Checks if passed email is disposable.
+   * Fetch from RESTful API.
+   * Returns promise to use "disposable" json value.
+   * Warns on console if error happens.
+   * Used API: https://open.kickbox.io/#:~:text=Free%2C%20Open%20API%20for%20Detecting,from%20your%20client-side%20code.
+   *
+   * @memberof InputValidation
+   */
+  fetchEmailIsDisposable = (email: string) =>
+    fetch(
+      "https://open.kickbox.com/v1/disposable/" + encodeURIComponent(email),
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
       }
-    });
-  }
+    )
+      .then((response) => response.json())
+      .catch((error) => console.warn(error));
 
-  return emailCheck;
-};
+  /**
+   * Checks password validation.
+   *
+   * @memberof InputValidation
+   */
+  checkFirstPassword = (password: string): InputCheck => {
+    // Checking password is empty.
+    if (password.length === 0)
+      return this.inputIsNotValid("La contraseña no puede estar vacia");
+    // Password requeriments: (+: Implemented, -: Not implemented)
+    // + Min 6 chars.
+    // + Min 1 Number: (?=.*[0-9])
+    // + Min 1 upper letter: (?=.*[A-Z])
+    // + Min 1 lower letter: (?=.*[a-z])
+    // - Min 1 special char: (?=.*[!@#$%^&*])
+    else if (
+      password.length < 6 ||
+      !/(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])/.test(password)
+    )
+      return this.inputIsNotValid(
+        "La contraseña debe tener mínimo 6 caracteres y contener al menos un número, letra mínúcula y una mayúscula"
+      );
+    // Password is correct.
+    else return this.inputIsValid();
+  };
 
-/**
- * Validates the first password.
- *
- * @param {string} passwordOne
- * @returns Password One is valid
- */
-const checkFirstPassword = (passwordOne: string): InputCheck => {
-  let passwordCheck = { ...INITIAL_INPUT_CHECK };
+  /**
+   * Validate a pair of password.
+   * Used mainly on sign up forms.
+   *
+   * @memberof InputValidation
+   */
+  checkConfirmPassword = (
+    password: string,
+    passwordConfirm: string
+  ): InputCheck => {
+    // If first password is empty => Reflex that status on second password.
+    if (password.length === 0)
+      return this.inputIsNotValid("La contraseña está vacia");
+    // If passwords does not match.
+    else if (password !== passwordConfirm)
+      return this.inputIsNotValid("Las contraseñas no coinciden");
+    // If passwords match but first is not valid => Second reflex first password state.
+    else if (
+      password === passwordConfirm &&
+      !this.checkFirstPassword(passwordConfirm).isValid
+    )
+      return this.inputIsNotValid(
+        "La contraseña es inválida. Revisa los requisitos arriba"
+      );
+    // Confirm password is correct.
+    else return this.inputIsValid();
+  };
+}
 
-  // Checking email is empty
-  if (passwordOne.length === 0) {
-    passwordCheck.isValid = false;
-    passwordCheck.errorMsg = "La contraseña no puede estar vacia";
-  }
-  // Min 6 chars
-  // Min 1 Number
-  // Min 1 upper letter
-  // Min 1 lower letter
-  // Min 1 special char
-  else if (
-    passwordOne.length < 6 ||
-    !/(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])/.test(passwordOne)
-  ) {
-    passwordCheck.isValid = false;
-    passwordCheck.errorMsg =
-      "La contraseña debe tener mínimo 6 caracteres y contener un número, letra mínúcula, mayúscula y un caracter especial: !@#$%^&*";
-  }
-
-  return passwordCheck;
-};
-
-/**
- * Validates the second password.
- *
- * @param {string} passwordTwo
- * @returns Password Two is valid
- */
-const checkConfirmPassword = (
-  passwordOne: string,
-  passwordTwo: string
-): InputCheck => {
-  let passwordTwoCheck = { ...INITIAL_INPUT_CHECK };
-
-  // Check password confirmation
-  if (passwordOne.length === 0) {
-    passwordTwoCheck.isValid = false;
-    passwordTwoCheck.errorMsg = "La contraseña está vacia";
-  } else if (passwordOne !== passwordTwo) {
-    passwordTwoCheck.isValid = false;
-    passwordTwoCheck.errorMsg = "Las contraseñas no coinciden";
-  } else if (
-    passwordOne === passwordTwo &&
-    !checkFirstPassword(passwordTwo).isValid
-  ) {
-    passwordTwoCheck.isValid = false;
-    passwordTwoCheck.errorMsg =
-      "La contraseña es inválida. Revisa los requisitos arriba";
-  }
-
-  return passwordTwoCheck;
-};
-
-export { checkUsername, checkEmail, checkFirstPassword, checkConfirmPassword };
+const inputValidation = new InputValidation();
+export default inputValidation;

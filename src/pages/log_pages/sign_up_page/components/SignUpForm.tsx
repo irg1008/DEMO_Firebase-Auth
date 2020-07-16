@@ -132,20 +132,39 @@ class SignUpForm extends Component<ISignUpProps, ISignUpState> {
    * @param {FormEvent} event Form event.
    * @memberof SignUpForm
    */
-  onSubmit = (event: FormEvent): void => {
+  onSubmit = async (event: FormEvent): Promise<void> => {
     // Prevent default behaviour.
     event.preventDefault();
 
-    // Firebase and react history.
-    const { floatingMsgContext, history } = this.props;
-
     // State decostrution.
-    const { username, email, passwordOne } = this.state;
+    const { email } = this.state;
 
     // Loading submit
     this.setState({ loading: true });
 
-    // On submit => create user, reset state and push to landing page.
+    // Email is disposable.
+    const disposableResponse = await inputValidation.fetchEmailIsDisposable(
+      email.value
+    );
+    if (disposableResponse.disposable) {
+      this.emailIsDisposable();
+      this.setState({ loading: false });
+    } else {
+      this.signUpWithFirebase();
+    }
+  };
+
+  /**
+   *
+   *
+   * @memberof SignUpForm
+   */
+  signUpWithFirebase = () => {
+    // Firebase and react history.
+    const { history, floatingMsgContext } = this.props;
+
+    const { username, email, passwordOne } = this.state;
+
     firebase
       .doCreateUserWithEmailAndPassword(email.value, passwordOne.value)
       .then((result: any) => {
@@ -174,13 +193,11 @@ class SignUpForm extends Component<ISignUpProps, ISignUpState> {
         });
       })
       .catch((error: any) => {
+        // Stop loading if error
+        this.setState({ loading: false });
         // Note: This error code returns a 400 error to the console, exposing the app id or api key. This is not convinient but does not expose any data of the users. This happens because we manage the white domains that can access this data. Any other domain won't be able to acces users data even if they have de api key.
         if (error.code === "auth/email-already-in-use")
           this.emailAlreadyInUse();
-      })
-      .then(() => {
-        // Stop loading after sign up.
-        this.setState({ loading: false });
       });
   };
 
@@ -298,6 +315,24 @@ class SignUpForm extends Component<ISignUpProps, ISignUpState> {
 
     // Change password info.
     this.setState({ passwordOne, passwordTwo }, () => this.validateForm());
+  };
+
+  /**
+   * Email is disposable.
+   *
+   * @memberof LogInPage
+   */
+  emailIsDisposable = (): void => {
+    this.setState(
+      {
+        email: {
+          ...this.state.email,
+          isValid: false,
+          errorMsg: "El dominio de email no es válido",
+        },
+      },
+      () => this.validateForm()
+    );
   };
 
   /**
