@@ -1,6 +1,5 @@
 import React, { createContext, useReducer, useContext, useEffect } from "react";
 import firebase from "./firebase";
-import firebase from "firebase";
 
 type IFirebaseState = {
   authUser: firebase.User | null;
@@ -58,24 +57,21 @@ const FirebaseProvider: React.FC = ({ children }: any) => {
 
   useEffect(() => {
     firebase.auth.onAuthStateChanged((user: firebase.User | null) => {
-      if (user && user.emailVerified) {
-        // Recheck if username has been change illegally. i.e Google provider has override displayname.
-        // If so, restore previous username, save in database.
-        firebase
-          .doGetFirestoreUsername()
-          .then((userDoc) => {
-            if (user && userDoc && user.displayName !== userDoc.fullname) {
-              firebase.doUpdateProfile(userDoc.fullname);
-            }
-          })
-          .then(() => {
-            dispatch({ type: "SET_USER", authUser: user });
-          });
-      } else {
-        dispatch({ type: "SET_USER", authUser: null });
-      }
+      const authUser = user && user.emailVerified ? user : null;
 
-      dispatch({ type: "SET_AUTH_LOADED", authHasLoaded: true });
+      // Recheck if username has been change illegally. i.e Google provider has override displayname.
+      // If so, restore previous username, save in database.
+      firebase
+        .doGetFirestoreUsername()
+        .then((userDoc) => {
+          if (user && userDoc && user.displayName !== userDoc.fullname) {
+            firebase.doUpdateProfile(userDoc.fullname);
+          }
+        })
+        .then(() => {
+          dispatch({ type: "SET_USER", authUser });
+          dispatch({ type: "SET_AUTH_LOADED", authHasLoaded: true });
+        });
     });
   }, []);
 
