@@ -13,5 +13,7 @@
 // TODO: Convert floating context to a queue of floating messages
 // TODO: Check temp mail are not valids. https://www.email-validator.net/api.html
 // TODO: Change from styled-components to functional css and itcss
+// TODO: Render forms with objects or any other form with less components.
+// TODO: Cookie banner. See how to use with floating msg correctly.
 /////////////////////////////////////////////////
-// FIXME: Google sign overrides normal sign and the password is forgotten. Save password or something?? => Solution: fetchSignInMethodsForEmail{}
+// FIXME: Clean all firebase thingis and firestore. Also heck if saving uid is neccesary

@@ -1,6 +1,6 @@
 import React from "react";
 
-// Styled-Components
+// Styled-Components.
 import {
   ContainerStyled,
   BorderedContainerStyled,
@@ -10,34 +10,35 @@ import {
 } from "../../../style/main_style";
 import styled from "styled-components";
 
-// SignWithGoogle
-import { SignWithGoogle } from "./";
-
-// Options of component.
+// Props passed to set on the two options.
 type IFormOptionsProps = {
   /**
-   * First option of form. If no first option is given, assumes sign with google.
+   * First option of form.
+   * If empty, use sign with Google.
    *
    * @type {*}
    */
-  firstOption?: any;
+  firstOption: any;
 
   /**
-   * Second option of form. i.e Sign Up passwordless.
+   * Second option of form.
+   * i.e.: Sign up passwordless or sign with Facebook.
    *
    * @type {*}
    */
   secondOption: any;
 };
 
-// Separator text
+// Separator text.
 const separatorText = "o";
 
 /**
- * FormOption component. Gives you two personalized button to put wherever you pass as prop.
+ * Aditional options for your form.
  *
- * @param {IFormOptionsProps} props
- * @returns
+ * @param {IFormOptionsProps} {
+ *   firstOption,
+ *   secondOption,
+ * }
  */
 const FormOptions: React.FC<IFormOptionsProps> = ({
   firstOption,
@@ -52,7 +53,7 @@ const FormOptions: React.FC<IFormOptionsProps> = ({
     </OptionsSeparator>
     {/* Options */}
     <OptionsContainer>
-      <Option>{firstOption || <SignWithGoogle />}</Option>
+      <Option>{firstOption}</Option>
       <Option>{secondOption}</Option>
     </OptionsContainer>
   </FormOptionsContainer>
@@ -60,8 +61,8 @@ const FormOptions: React.FC<IFormOptionsProps> = ({
 
 export default FormOptions;
 
-// Styled-Components
-// Form options container
+/* Styled-Components */
+// Form options container.
 const FormOptionsContainer = styled(ContainerStyled)`
   width: 90%;
   height: auto;
@@ -73,7 +74,7 @@ const FormOptionsContainer = styled(ContainerStyled)`
   }
 `;
 
-// Separator container
+// Separator container.
 const OptionsSeparator = styled(ContainerStyled)`
   width: 100%;
   height: auto;
@@ -92,18 +93,20 @@ const SeparatorLine = styled.div`
   border-bottom: 1px solid ${colors.mainBlack};
 `;
 
-// Separator middle text
+// Separator middle text.
 const SeparatorText = styled.p`
   width: auto;
+  max-width: 20em;
   /* Font */
   text-align: center;
   font-weight: normal;
   font-style: italic;
+  word-wrap: break-word;
   /* Margin, Padding, Border */
   padding: 0 0.8em;
 `;
 
-// Other options of form container
+// Other options of form container.
 const OptionsContainer = styled(ContainerStyled)`
   width: 100%;
   height: 8em;
@@ -119,7 +122,7 @@ const OptionsContainer = styled(ContainerStyled)`
   }
 `;
 
-// Other option
+// Other option.
 const Option = styled(BorderedContainerStyled)`
   width: 100%;
   height: 3.5em;

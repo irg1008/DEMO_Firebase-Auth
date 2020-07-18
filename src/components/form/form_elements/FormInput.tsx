@@ -1,6 +1,6 @@
 import React from "react";
 
-// Styled-Components
+// Styled-Components.
 import {
   ContainerStyled,
   radius,
@@ -12,8 +12,11 @@ import {
 } from "../../../style/main_style";
 import styled, { css } from "styled-components";
 
-// Interface of input used on every form states.
-// TODO: In next version use the prop interface and get all form inputs as json and then render all form with same component with map.
+// Exported state of input.
+// This is the state if a normal input:
+// - value: value of input.
+// ? isValid: input is valid.
+// ? errorMsg: errorMsg if input is not valid.
 export type IInputState = {
   /**
    * Value of input.
@@ -30,7 +33,8 @@ export type IInputState = {
   isValid?: boolean;
 
   /**
-   * Error mesg on input is no valid.
+   * Error message if invalid input.
+   * Type "any" in case we want to include list of errors, links, etc.
    *
    * @type {any}
    */
@@ -42,7 +46,7 @@ export const INITIAL_INPUT_STATE: IInputState = {
   value: "",
 };
 
-// Types of input component props.
+// Form input props.
 type IFormInputProps = {
   /**
    * Label of input.
@@ -52,7 +56,7 @@ type IFormInputProps = {
   label: string;
 
   /**
-   * Name of input.
+   * Name of input. Works as ID.
    *
    * @type {string}
    */
@@ -66,7 +70,7 @@ type IFormInputProps = {
   value: string;
 
   /**
-   * On change event.
+   * On input change event.
    *
    * @type {*}
    */
@@ -87,7 +91,7 @@ type IFormInputProps = {
   placeholder?: string;
 
   /**
-   * Value is valid.
+   * Input is valid.
    *
    * @type {boolean}
    */
@@ -101,14 +105,16 @@ type IFormInputProps = {
   errorMessage?: any;
 
   /**
-   * If type is password, temporal state of hidden/shown.
+   * Show/hide password.
+   * Type must be password.
    *
    * @type {boolean}
    */
   hiddenPass?: boolean;
 
   /**
-   * Input is required => *
+   * Input is required.
+   * Use of "*" to indicate so.
    *
    * @type {boolean}
    */
@@ -116,6 +122,8 @@ type IFormInputProps = {
 
   /**
    * Max length of input.
+   * Do not confuse with input validation.
+   * This is only useful to not let the user type on input, does not alert him of wrong input.
    *
    * @type {number}
    */
@@ -125,8 +133,19 @@ type IFormInputProps = {
 /**
  * Form input component.
  *
- * @param {IFormInputProps} props
- * @returns
+ * @param {IFormInputProps} {
+ *   label,
+ *   name,
+ *   value,
+ *   onChange,
+ *   type,
+ *   placeholder,
+ *   isValid,
+ *   errorMessage,
+ *   hiddenPass,
+ *   required,
+ *   maxLength,
+ * }
  */
 const FormInput: React.FC<IFormInputProps> = ({
   label,
@@ -141,13 +160,13 @@ const FormInput: React.FC<IFormInputProps> = ({
   required,
   maxLength,
 }: IFormInputProps) => (
-  <FormInputStyled>
-    <FormLabelStyled>
+  <InputContainer>
+    <FormLabel>
       {label}
       {required && "*"}
-    </FormLabelStyled>
-    <FormBoxContainerStyled>
-      <FormBoxStyled
+    </FormLabel>
+    <InputBox>
+      <Input
         name={name}
         value={value}
         maxLength={maxLength}
@@ -156,28 +175,26 @@ const FormInput: React.FC<IFormInputProps> = ({
         placeholder={placeholder}
         hasError={isValid === false}
       />
-    </FormBoxContainerStyled>
+    </InputBox>
     {!isValid && (
-      <FormErrorMessageStyled hasError={isValid === false}>
-        {errorMessage}
-      </FormErrorMessageStyled>
+      <InputError hasError={isValid === false}>{errorMessage}</InputError>
     )}
-  </FormInputStyled>
+  </InputContainer>
 );
 
 export default FormInput;
 
 /* Styled-Components */
-// Form Input
-const FormInputStyled = styled(ContainerStyled)`
+// Form Input.
+const InputContainer = styled(ContainerStyled)`
   width: 100%;
   height: auto;
   /* Margin, Padding, Border */
   margin-bottom: 0.8em;
 `;
 
-// Form label
-const FormLabelStyled = styled.label`
+// Form label.
+const FormLabel = styled.label`
   width: 100%;
   /* Font */
   font-size: 0.9em;
@@ -187,14 +204,14 @@ const FormLabelStyled = styled.label`
   margin: 0 0 0.5em 0;
 `;
 
-// Form box container
-const FormBoxContainerStyled = styled.div`
+// Form box container.
+const InputBox = styled.div`
   width: 100%;
   height: auto;
 `;
 
-// Form box
-const FormBoxStyled = styled.input<{ hasError: boolean }>`
+// Form box.
+const Input = styled.input<{ hasError: boolean }>`
   width: inherit;
   height: 3em;
   /* Margin, Padding, Border */
@@ -234,8 +251,8 @@ const FormBoxStyled = styled.input<{ hasError: boolean }>`
   }
 `;
 
-// Error message
-const FormErrorMessageStyled = styled.p<{ hasError: boolean }>`
+// Error message.
+const InputError = styled.p<{ hasError: boolean }>`
   width: 100%;
   /* Font */
   color: ${colors.red};

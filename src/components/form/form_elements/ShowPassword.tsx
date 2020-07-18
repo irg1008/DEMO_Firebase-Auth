@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-// Styled-Components
+// Styled-Components.
 import {
   ContainerStyled,
   colors,
@@ -10,13 +10,13 @@ import {
 } from "../../../style/main_style";
 import styled from "styled-components";
 
-// Password icon
+// Password show/hide icons.
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 
-// Titles. Import of style of title 5, not title5 decorations needed.
-import titles from "../../titles";
+// All ttles.
+import { Title5 } from "../../titles/Titles";
 
-// Interface of props of password toggle.
+// Show/hide password props.
 type IShowPasswordProps = {
   /**
    * Password is hidden.
@@ -33,36 +33,33 @@ type IShowPasswordProps = {
   onClick: any;
 };
 
-// Password message on toggle
-const passwordVisibilityMsg = {
-  hidePassword: "Ocultar Contraseña",
-  showPassword: "Mostrar Contraseña",
-};
-
 /**
- * Toggle for passwords inside form.
+ * Toggle password visibility.
  *
- * @param {IShowPasswordProps} props
+ * @param {IShowPasswordProps} {
+ *   hiddenPass,
+ *   onClick,
+ * }
  * @returns
  */
 const ShowPassword: React.FC<IShowPasswordProps> = ({
   hiddenPass,
   onClick,
 }: IShowPasswordProps) => {
-  // Visibility msg
+  // Visibility msg.
   const visibilityMsg = hiddenPass
-    ? passwordVisibilityMsg.showPassword
-    : passwordVisibilityMsg.hidePassword;
+    ? "Ocultar Contraseña"
+    : "Mostrar Contraseña";
 
-  // Hovering icon
+  // Hovering icon.
   const [isHovering, setIsHovering] = useState(false);
 
   return (
-    <VisibilityWrapperStyled>
-      <VisibilityTitleContainerStyled isHovering={isHovering}>
-        <titles.Title5 title={visibilityMsg} />
-      </VisibilityTitleContainerStyled>
-      <VisibilityContainerStyled
+    <ShowContainer>
+      <TextContainer isHovering={isHovering}>
+        <Title5 title={visibilityMsg} />
+      </TextContainer>
+      <IconContainer
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => {
           setIsHovering(false);
@@ -74,16 +71,16 @@ const ShowPassword: React.FC<IShowPasswordProps> = ({
         ) : (
           <Visibility fontSize="small" />
         )}
-      </VisibilityContainerStyled>
-    </VisibilityWrapperStyled>
+      </IconContainer>
+    </ShowContainer>
   );
 };
 
 export default ShowPassword;
 
-// Styled-Components
-// Visibility wrapper
-const VisibilityWrapperStyled = styled(ContainerStyled)`
+/* Styled-Components */
+// Visibility wrapper.
+const ShowContainer = styled(ContainerStyled)`
   width: 100%;
   height: 2em;
   /* Flexbox */
@@ -93,10 +90,8 @@ const VisibilityWrapperStyled = styled(ContainerStyled)`
   margin-bottom: 0.8em;
 `;
 
-// Visibility title container
-const VisibilityTitleContainerStyled = styled(ContainerStyled)<{
-  isHovering: boolean;
-}>`
+// Visibility title container.
+const TextContainer = styled(ContainerStyled)<{ isHovering: boolean }>`
   height: 100%;
   /* Flexbox */
   flex-direction: row;
@@ -116,8 +111,8 @@ const VisibilityTitleContainerStyled = styled(ContainerStyled)<{
   cursor: ${(props) => !props.isHovering && "default"};
   `;
 
-// Visibility Container
-const VisibilityContainerStyled = styled(ContainerStyled)`
+// Visibility Container.
+const IconContainer = styled(ContainerStyled)`
   height: 100%;
   width: auto;
   /* Position (works like z-index here) */

@@ -21,11 +21,11 @@ type ITitleProps = {
  * @returns
  */
 export const Title1: React.FC<ITitleProps> = ({ title }: ITitleProps) => (
-  <Title1Styled>{title}</Title1Styled>
+  <H1>{title}</H1>
 );
 
 // Title 1
-export const Title1Styled = styled.h1`
+export const H1 = styled.h1`
   /* Font */
   font-size: 3.5em;
   text-transform: uppercase;
@@ -42,11 +42,11 @@ export const Title1Styled = styled.h1`
  * @returns
  */
 export const Title2: React.FC<ITitleProps> = ({ title }: ITitleProps) => (
-  <Title2Styled>{title}</Title2Styled>
+  <H2>{title}</H2>
 );
 
 // Title 2
-export const Title2Styled = styled.h2`
+export const H2 = styled.h2`
   /* Font */
   font-size: 1.5em;
   text-transform: uppercase;
@@ -59,11 +59,11 @@ export const Title2Styled = styled.h2`
  * @returns
  */
 export const Title3: React.FC<ITitleProps> = ({ title }: ITitleProps) => (
-  <Title3Styled>{title}</Title3Styled>
+  <H3>{title}</H3>
 );
 
 // Title 3
-export const Title3Styled = styled.h3`
+export const H3 = styled.h3`
   /* Font */
   font-size: 1em;
   text-transform: uppercase;
@@ -76,11 +76,11 @@ export const Title3Styled = styled.h3`
  * @returns
  */
 export const Title4: React.FC<ITitleProps> = ({ title }: ITitleProps) => (
-  <Title4Styled>{title}</Title4Styled>
+  <H4>{title}</H4>
 );
 
 // Title 4
-export const Title4Styled = styled.h4`
+export const H4 = styled.h4`
   /* Font */
   font-size: 1em;
   text-transform: uppercase;
@@ -95,11 +95,11 @@ export const Title4Styled = styled.h4`
  * @returns
  */
 export const Title5: React.FC<ITitleProps> = ({ title }: ITitleProps) => (
-  <Title5Styled>{title}</Title5Styled>
+  <H5>{title}</H5>
 );
 
 // Title 5
-export const Title5Styled = styled.h5`
+export const H5 = styled.h5`
   /* Font */
   font-size: 0.9em;
   text-transform: uppercase;

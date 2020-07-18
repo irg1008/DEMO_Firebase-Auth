@@ -12,7 +12,7 @@ const SignUpWithEmail: React.FC = () => {
 
   return (
     <EmailSignPage
-      title="únete por correo"
+      title="únete con correo"
       otherOptionText="otras opciones de creación"
       onSubmit={onSubmit}
     />

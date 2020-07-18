@@ -11,6 +11,7 @@ import {
   ShowPassword,
   FormOptions,
   FormLink,
+  SignWithGoogle,
 } from "../../../../components/form/form_elements";
 
 // Sign without password
@@ -167,15 +168,12 @@ class SignUpForm extends Component<ISignUpProps, ISignUpState> {
 
     firebase
       .doCreateUserWithEmailAndPassword(email.value, passwordOne.value)
-      .then((result: any) => {
-        // User
-        const { user } = result;
-
+      .then(() => {
         // Update user username.
-        user.updateProfile({ displayName: username.value });
+        firebase.doCreateProfile(username.value);
 
         // Send verification message.
-        user.sendEmailVerification().then(() => {
+        firebase.doSendEmailVerification().then(() => {
           // Set message
           floatingMsgContext.dispatch({
             type: "SHOW_FLOATING",
@@ -186,7 +184,7 @@ class SignUpForm extends Component<ISignUpProps, ISignUpState> {
           });
         });
 
-        // Force sign out until user sign in from sign in page.
+        // Force sign and route to log in.
         firebase.doSignOut().then(() => {
           // Redirect to log in.
           history.push(ROUTES.LOG_IN.path);
@@ -436,7 +434,8 @@ class SignUpForm extends Component<ISignUpProps, ISignUpState> {
     // Form bottom component
     const formBottomComponent = (
       <FormOptions
-        secondOption={<SignWithoutPassword text="Registro por link" />}
+        firstOption={<SignWithGoogle text="Registro con Google" />}
+        secondOption={<SignWithoutPassword text="Registro con link" />}
       />
     );
 

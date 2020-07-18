@@ -5,7 +5,7 @@ import { useHistory } from "react-router-dom";
 import { firebase } from "../../context/firebase";
 
 // Styled-Components.
-import { ButtonStyled } from "../../style/main_style";
+import { HoverableButton } from "../../style/main_style";
 
 // Routes
 import { ROUTES } from "../../routes";
@@ -32,9 +32,9 @@ const SignOutButton: React.FC = () => {
   const signOutText = "cerrar sesión";
 
   return (
-    <ButtonStyled type="button" onClick={onClick}>
+    <HoverableButton type="button" onClick={onClick}>
       {signOutText}
-    </ButtonStyled>
+    </HoverableButton>
   );
 };
 

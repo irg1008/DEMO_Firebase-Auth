@@ -45,7 +45,6 @@ const App: React.FC = () => {
     }
   }, [authHasLoaded, appLoad]);
 
-
   // RETURN ZONE.
   return (
     <>

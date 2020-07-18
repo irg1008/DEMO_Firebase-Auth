@@ -10,7 +10,7 @@ import {
 } from "../../style/main_style";
 
 // Titles.
-import { Title1Styled } from "../../components/titles/Titles";
+import { H1 } from "../../components/titles/Titles";
 
 // Form props type.
 type IFormCreatorProps = {
@@ -23,7 +23,7 @@ type IFormCreatorProps = {
 
   /**
    * Content of form.
-   * i.e: Two inputs + showPassword component + one button.
+   * i.e.: Two inputs + showPassword component + one button.
    *
    * @type {*}
    */
@@ -31,7 +31,7 @@ type IFormCreatorProps = {
 
   /**
    * Optional bottom component of form.
-   * i.e: Aditional info or alternative forms.
+   * i.e.: Aditional info or alternative forms.
    *
    * @type {*}
    */
@@ -75,9 +75,9 @@ const FormCreator: React.FC<IFormCreatorProps> = ({
 
 export default FormCreator;
 
-// Styled-Components.
+/* Styled-Components */
 // Form title.
-const FormTitle = styled(Title1Styled)`
+const FormTitle = styled(H1)`
   width: 100%;
   /* Font */
   text-align: center;

@@ -13,7 +13,7 @@ const LogInWithEmail: React.FC = () => {
 
   return (
     <EmailSignPage
-      title="inicia por correo"
+      title="inicia con correo"
       otherOptionText="otras opciones de inicio"
       onSubmit={onSubmit}
     />

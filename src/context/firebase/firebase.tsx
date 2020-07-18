@@ -1,7 +1,9 @@
-// Firebase app
-import firebaseApp from "firebase/app";
-// Firebase Authenticator
+// Firebase app.
+import firebaseApp, { firestore } from "firebase/app";
+// Firebase Authenticator.
 import "firebase/auth";
+// Firebase database.
+import "firebase/firestore";
 
 // Config, .env constants.
 const config = {
@@ -27,7 +29,7 @@ class Firebase {
    * @type {*}
    * @memberof Firebase
    */
-  public auth: any;
+  public auth: firebase.auth.Auth;
 
   /**
    * Google provider
@@ -36,7 +38,18 @@ class Firebase {
    * @type {*}
    * @memberof Firebase
    */
-  private provider: any;
+  private googleProvider: firebase.auth.GoogleAuthProvider;
+
+  /**
+   * Firebase firestore.
+   *
+   * @private
+   * @type {firebase.firestore.Firestore}
+   * @memberof Firebase
+   */
+  private firestore: firebase.firestore.Firestore;
+
+  private userCollection: firestore.CollectionReference;
 
   /**
    * Creates an instance of Firebase.
@@ -52,8 +65,30 @@ class Firebase {
     this.auth.useDeviceLanguage();
 
     // Initialices the Google provider
-    this.provider = new firebaseApp.auth.GoogleAuthProvider();
+    this.googleProvider = new firebaseApp.auth.GoogleAuthProvider();
+
+    // Initialices the firebase database and  firestore.
+    this.firestore = firebaseApp.firestore();
+
+    // User collection
+    this.userCollection = this.firestore.collection("users");
   }
+
+  doChangeFirestoreUsername = (fullname: string) => {
+    const user = this.auth.currentUser;
+    if (user)
+      this.userCollection.doc(user.uid).set({
+        fullname,
+      });
+  };
+
+  doGetFirestoreUsername = async () => {
+    const user = this.auth.currentUser;
+    if (user) {
+      const userDoc = await this.userCollection.doc(user.uid).get();
+      return userDoc.data();
+    }
+  };
 
   // Auth API.
   /**
@@ -97,23 +132,38 @@ class Firebase {
    * @param {string} password New password.
    * @memberof Firebase
    */
-  doPasswordUpdate = (password: string) =>
-    this.auth.currentUser.updatePassword(password);
+  doPasswordUpdate = (password: string) => {
+    if (this.auth.currentUser)
+      return this.auth.currentUser.updatePassword(password);
+    return new Promise(() => {});
+  };
 
   /**
    * Send email to user to sign up passwordless.
    *
    * @memberof Firebase
    */
-  doSendSignInLinkToEmail = (email: string) =>
-    this.auth.sendSignInLinkToEmail(email);
+  doSendSignInLinkToEmail = (email: string) => {
+    const actionCodeSettings: firebase.auth.ActionCodeSettings = {
+      ...{ url: "silkandrock.com" },
+    };
+
+    return this.auth.sendSignInLinkToEmail(email, actionCodeSettings);
+  };
+
+  doSendEmailVerification = () => {
+    if (this.auth.currentUser)
+      return this.auth.currentUser.sendEmailVerification();
+    return new Promise(() => {});
+  };
 
   /**
    * Sign with google popup.
    *
    * @memberof Firebase
    */
-  doSignInWithGoogleWithPopup = () => this.auth.signInWithPopup(this.provider);
+  doSignInWithGoogleWithPopup = () =>
+    this.auth.signInWithPopup(this.googleProvider);
 
   /**
    * Sign with google redirect
@@ -121,7 +171,7 @@ class Firebase {
    * @memberof Firebase
    */
   doSignInWithGoogleWithRedirect = () =>
-    this.auth.signInWithRedirect(this.provider);
+    this.auth.signInWithRedirect(this.googleProvider);
 
   /**
    * Gets the data after a redirect.
@@ -135,8 +185,30 @@ class Firebase {
    *
    * @memberof Firebase
    */
-  doUpdateProfile = (displayName: string, photoURL?: string) =>
-    this.auth.currentUser.updateProfile({ displayName, photoURL });
+  doCreateProfile = (displayName: string, photoURL?: string) => {
+    if (this.auth.currentUser) {
+      this.doChangeFirestoreUsername(displayName);
+      this.doUpdateProfile(displayName);
+    }
+
+    return new Promise(() => {});
+  };
+
+  doUpdateProfile = (displayName: string, photoURL?: string) => {
+    if (this.auth.currentUser) {
+      return this.auth.currentUser.updateProfile({ displayName, photoURL });
+    }
+
+    return new Promise(() => {});
+  };
+
+  /**
+   * Fetchs all sign in methods for email.
+   *
+   * @memberof Firebase
+   */
+  doFetchSignInMethodsForEmail = (email: string) =>
+    this.auth.fetchSignInMethodsForEmail(email);
 }
 
 const firebase = new Firebase();

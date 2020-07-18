@@ -11,7 +11,7 @@ import { ROUTES } from "../../../routes";
 // Type of recieved props
 type IErrorProps = {
   /**
-   * Number of error. i.e 404, 400, 200.
+   * Number of error. i.e. 404, 400, 200.
    *
    * @type {number}
    */

@@ -139,7 +139,7 @@ export const MainBGContainerStyled = styled(ContainerStyled)`
 `;
 
 // Button Styled
-export const ButtonStyled = styled.button`
+export const HoverableButton = styled.button`
   width: auto;
   height: 2.5em;
   /* Margin, Padding, Border */
@@ -183,5 +183,31 @@ export const ButtonStyled = styled.button`
     box-shadow: ${shadows.hardShadow};
     /* Transition */
     transition: all 0.3s ease-in-out;
+  }
+`;
+
+// Normal button.
+export const PrimaryButton = styled.button`
+  width: 100%;
+  height: 3em;
+  /* Margin, Padding, Border */
+  margin: 1em 0;
+  border: none;
+  border-radius: ${radius.mainRadius};
+  /* Outline */
+  outline: none;
+  /* Font */
+  font-family: inherit;
+  font-size: 11pt;
+  /* BG */
+  background-color: ${colors.blue};
+  /* Transition */
+  transition: ${mainTransition};
+  /* Hover */
+  &:hover {
+    /* BG */
+    background-color: ${colors.darkerBlue};
+    /* Transition */
+    transition: ${mainTransition};
   }
 `;

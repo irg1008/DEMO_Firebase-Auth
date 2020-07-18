@@ -1,55 +1,61 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-// Styled-Components
+// Styled-Components.
 import styled from "styled-components";
 import { ContainerStyled, colors } from "../../../style/main_style";
 
-// Props interface
+// Form link props.
 type IFormLinkProps = {
   /**
-   * Optional info text.
-   *
-   * @type {string}
-   */
-  text?: string;
-
-  /**
    * Link text.
+   * i.e.: Click here.
    *
    * @type {string}
    */
   linkText: string;
 
   /**
-   * Path to link.
+   * Path to go on click.
    *
    * @type {string}
    */
   to: string;
+
+  /**
+   * Optional info text.
+   * i.e.: Want more info?
+   *
+   * @type {string}
+   */
+  text?: string;
 };
 
 /**
- * Link to form page.
+ * Link to passed path.
  *
- * @returns Link to form passed.
+ * @param {IFormLinkProps} {
+ *   text,
+ *   linkText,
+ *   to,
+ * }
  */
 const FormLink: React.FC<IFormLinkProps> = ({
   text,
   linkText,
   to,
 }: IFormLinkProps) => (
-  <FormLinkContainerStyled>
+  <LinkContainer>
     {text}
-    <FormLinkStyled to={to}>{linkText}</FormLinkStyled>
-  </FormLinkContainerStyled>
+    <LinkStyled to={to}>{linkText}</LinkStyled>
+  </LinkContainer>
 );
 
 export default FormLink;
 
-// Styled-Components
-// Link container
-const FormLinkContainerStyled = styled(ContainerStyled)`
+/* Styled-Components */
+// Link container.
+const LinkContainer = styled(ContainerStyled)`
   width: 100%;
   height: 2em;
   /* Flexbox */
@@ -58,8 +64,8 @@ const FormLinkContainerStyled = styled(ContainerStyled)`
   font-size: 0.8em;
 `;
 
-// Sign Link
-const FormLinkStyled = styled(Link)`
+// Sign Link.
+const LinkStyled = styled(Link)`
   /* Margin, Padding, Border */
   margin-left: 0.2em;
   /* Font */

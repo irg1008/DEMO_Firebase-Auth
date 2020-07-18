@@ -43,10 +43,11 @@ const FloatingMessage: React.FC = () => {
     [hideMessage]
   );
 
+  // <= 0 = infinite.
   useEffect(() => {
     // If show is setted to true
     if (show) {
-      if (!timer) createTimeout(timeoutTime);
+      if (!timer && timeoutTime > 0) createTimeout(timeoutTime);
     } else if (!show) {
       if (timer) clearTimeout(timer);
     }

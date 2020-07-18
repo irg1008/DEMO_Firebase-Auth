@@ -7,6 +7,7 @@ import {
   ShowPassword,
   FormOptions,
   FormLink,
+  SignWithGoogle,
 } from "../../../../components/form/form_elements";
 
 // Sign without password
@@ -21,11 +22,7 @@ import inputValidation from "../../../../components/form/utils";
 import { ROUTES } from "../../../../routes";
 
 // Firebase
-import {
-  withFirebase,
-  IFirebaseContext,
-  firebase,
-} from "../../../../context/firebase";
+import { firebase } from "../../../../context/firebase";
 
 // Input state
 import {
@@ -41,13 +38,6 @@ import {
 
 // Types of of passes props.
 type ILogInProps = {
-  /**
-   * Firebase class.
-   *
-   * @type {Firebase}
-   */
-  firebaseContext: IFirebaseContext;
-
   /**
    * Floating message context.
    *
@@ -150,6 +140,9 @@ class LogInPage extends Component<ILogInProps, ILoginState> {
 
           // Set error message on email.
           this.userNotVerfied(user);
+
+          // Stop loading form submit.
+          this.setState({ loading: false });
         }
       })
       .catch((error: any) => {
@@ -157,7 +150,20 @@ class LogInPage extends Component<ILogInProps, ILoginState> {
         this.setState({ loading: false });
         // Error handling
         if (error.code === "auth/user-not-found") this.userNotFound();
-        else if (error.code === "auth/wrong-password") this.wrongPassword();
+        else if (error.code === "auth/wrong-password") {
+          // If password is incorrect => Check if reason is email is with other provider.
+          firebase
+            .doFetchSignInMethodsForEmail(email.value)
+            .then((methods: any) => {
+              if (methods.includes("password")) {
+                this.wrongPassword();
+              } else if (methods.includes("google.com")) {
+                this.emailExistsWithGoogle();
+              } else {
+                this.emailExistsWithDirectLink();
+              }
+            });
+        }
       });
   };
 
@@ -251,12 +257,31 @@ class LogInPage extends Component<ILogInProps, ILoginState> {
           // We reset the value in case email is wrong, not password.
           ...this.state.password,
           isValid: false,
-          errorMsg:
-            "La contraseña es inválida o no existe. Si te has creado la cuenta con Google, incia abajo y crea una contraseña en tu perfil",
+          errorMsg: "La contraseña no es correcta.",
         },
       },
       () => this.validateForm()
     );
+
+  emailExistsWithGoogle = () =>
+    this.setState({
+      email: {
+        ...this.state.email,
+        isValid: false,
+        errorMsg:
+          "Este correo está conectado a una cuenta de Google. Si quieres create con contraseña, incia abajo y crea una en tu perfil",
+      },
+    });
+
+  emailExistsWithDirectLink = (): void =>
+    this.setState({
+      email: {
+        ...this.state.email,
+        isValid: false,
+        errorMsg:
+          "Esto correo no tiene contraseña, inicia mediante link y crea una en tu perfil",
+      },
+    });
 
   /**
    * User not on submit.
@@ -287,35 +312,38 @@ class LogInPage extends Component<ILogInProps, ILoginState> {
     // Email
     const { email } = this.state;
 
+    // Resend email verification.
+    const resendEmailVerification = (): void => {
+      // Send verification message.
+      user.sendEmailVerification();
+
+      // Set message
+      floatingMsgContext.dispatch({
+        type: "SHOW_FLOATING",
+        message: 'Te hemos reenviado un correo a "' + email.value + '"',
+      });
+
+      // Change state.
+      this.setState(
+        {
+          email: {
+            ...email,
+            isValid: true,
+          },
+        },
+        () => this.validateForm()
+      );
+    };
+
     // Error msg
     const errorMsg = (
       <>
         {"Verifica la cuenta para poder entrar. "}
         <span
           style={{ textDecoration: "underline", cursor: "pointer" }}
-          onClick={() => {
-            // Send verification message.
-            user.sendEmailVerification();
-
-            // Set message
-            floatingMsgContext.dispatch({
-              type: "SHOW_FLOATING",
-              message: 'Te hemos reenviado un correo a "' + email.value + '"',
-            });
-
-            // Change state.
-            this.setState(
-              {
-                email: {
-                  ...email,
-                  isValid: true,
-                },
-              },
-              () => this.validateForm()
-            );
-          }}
+          onClick={resendEmailVerification}
         >
-          {"Reenviar correo"}
+          Reenviar correo
         </span>
       </>
     );
@@ -399,7 +427,8 @@ class LogInPage extends Component<ILogInProps, ILoginState> {
     // Form bottom component
     const formBottomComponent = (
       <FormOptions
-        secondOption={<SignWithoutPassword text="Inicio por link" />}
+        firstOption={<SignWithGoogle text="Inicio con Google" />}
+        secondOption={<SignWithoutPassword text="Inicio con link" />}
       />
     );
 
@@ -415,4 +444,4 @@ class LogInPage extends Component<ILogInProps, ILoginState> {
   }
 }
 
-export default withFloatingMsg(withFirebase(LogInPage));
+export default withFloatingMsg(LogInPage);

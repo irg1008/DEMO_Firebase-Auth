@@ -1,11 +1,18 @@
 import React from "react";
 
-// Styled-Components
-import { radius, colors, mainTransition } from "../../../style/main_style";
+// Styled-Components.
+import { PrimaryButton, colors } from "../../../style/main_style";
 import styled from "styled-components";
 
 // Props of form button.
 type IButtonProps = {
+  /**
+   * Text inside the button.
+   *
+   * @type {string}
+   */
+  text: string;
+
   /**
    * Button is disabled.
    *
@@ -19,71 +26,53 @@ type IButtonProps = {
    * @type {boolean}
    */
   loading?: boolean;
-
-  /**
-   * Text inside the button.
-   *
-   * @type {string}
-   */
-  text: string;
 };
 
 /**
- * Form button. Only submits when enabled
+ * Form button.
+ * Only submits when enabled or is not loading.
  *
- * @param {IButtonProps} props Disabled + text.
- * @returns Form Button.
+ * @param {IButtonProps} {
+ *   disabled,
+ *   loading,
+ *   text,
+ * }
  */
 const FormButton: React.FC<IButtonProps> = ({
   disabled,
   loading,
   text,
 }: IButtonProps) => (
-  <FormButtonStyled
-    isDisabled={disabled}
-    isLoading={loading}
+  <Button
     type={!disabled && !loading ? "submit" : "button"}
+    formProps={{ ...{ disabled, loading } }}
   >
     {text}
-  </FormButtonStyled>
+  </Button>
 );
 
 export default FormButton;
 
 /* Styled-Components */
-// Form button
-const FormButtonStyled = styled.button<{
-  isDisabled?: boolean;
-  isLoading?: boolean;
+// Form button.
+// NOTE: Passing an object to the styled component because otherwise complains of boolean | undefined object.
+const Button = styled(PrimaryButton)<{
+  formProps: { disabled?: boolean; loading?: boolean };
 }>`
-  width: 100%;
-  height: 3em;
-  /* Margin, Padding, Border */
-  margin: 1em 0;
-  border: none;
-  border-radius: ${radius.mainRadius};
-  /* Outline */
-  outline: none;
   /* Cursor */
-  cursor: ${(props) =>
-    props.isDisabled || props.isLoading ? "default" : "pointer"};
+  cursor: ${({ formProps }) =>
+    formProps.disabled || formProps.loading ? "default" : "pointer"};
   /* Font */
-  font-family: inherit;
-  text-transform: ${(props) => !props.isLoading && "capitalize"};
-  font-size: 11pt;
-  color: ${(props) => !props.isDisabled && colors.mainWhite};
+  color: ${({ formProps }) => !formProps.disabled && colors.mainWhite};
+  text-transform: ${({ formProps }) => !formProps.loading && "capitalize"};
   /* BG */
-  background-color: ${(props) => !props.isDisabled && colors.blue};
-  /* Transition */
-  transition: ${mainTransition};
+  background-color: ${({ formProps }) => formProps.disabled && colors.mainGrey};
   /* Opacity */
-  opacity: ${(props) => props.isLoading && "0.5"};
+  opacity: ${({ formProps }) => formProps.loading && "0.5"};
   /* Hover */
   &:hover {
     /* BG */
-    background-color: ${(props) =>
-      !props.isDisabled && !props.isLoading && colors.darkerBlue};
-    /* Transition */
-    transition: ${mainTransition};
+    background-color: ${({ formProps }) =>
+      (formProps.disabled && !formProps.loading) && colors.mainGrey};
   }
 `;
