@@ -1,4 +1,8 @@
 import React, { createContext, useReducer, useContext, useEffect } from "react";
+import { useHistory } from "react-router-dom";
+
+import { ROUTES } from "../../routes";
+
 import firebase from "./firebase";
 
 type IFirebaseState = {
@@ -55,9 +59,18 @@ const withFirebase = (Component: any) => (props: any) => (
 const FirebaseProvider: React.FC = ({ children }: any) => {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
+  const history = useHistory();
+
   useEffect(() => {
     firebase.auth.onAuthStateChanged((user: firebase.User | null) => {
       const authUser = user && user.emailVerified ? user : null;
+
+      // If auth comes from redirect => red to landing.
+      firebase
+        .doGetRedirectResult()
+        .then(
+          (result) => result.credential && history.push(ROUTES.LANDING.path)
+        );
 
       // Recheck if username has been change illegally. i.e Google provider has override displayname.
       // If so, restore previous username, save in database.
@@ -73,7 +86,7 @@ const FirebaseProvider: React.FC = ({ children }: any) => {
           dispatch({ type: "SET_AUTH_LOADED", authHasLoaded: true });
         });
     });
-  }, []);
+  }, [history]);
 
   return (
     <FirebaseContext.Provider value={{ state, dispatch }}>

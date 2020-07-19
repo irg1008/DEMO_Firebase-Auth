@@ -1,9 +1,6 @@
 import React from "react";
 
 // PROVIDERS
-// Router Provider
-import { BrowserRouter as RouterProvider } from "react-router-dom";
-
 // Firebase
 import { FirebaseProvider } from "./firebase";
 
@@ -21,9 +18,7 @@ const ProvidersWrapper: React.FC = ({ children }: any) => (
   <FirebaseProvider>
     <LoadingProvider>
       <AuthProvider>
-        <FloatingMsgProvider>
-          <RouterProvider>{children}</RouterProvider>
-        </FloatingMsgProvider>
+        <FloatingMsgProvider>{children}</FloatingMsgProvider>
       </AuthProvider>
     </LoadingProvider>
   </FirebaseProvider>

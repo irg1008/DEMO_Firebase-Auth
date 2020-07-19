@@ -1,4 +1,5 @@
 import React, { ChangeEvent, FormEvent, Component } from "react";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 
 // Form elements
 import {
@@ -37,7 +38,7 @@ import {
 } from "../../../../context/floating_message";
 
 // Types of of passes props.
-type ILogInProps = {
+type ILogInProps = RouteComponentProps & {
   /**
    * Floating message context.
    *
@@ -123,6 +124,9 @@ class LogInPage extends Component<ILogInProps, ILoginState> {
     // State decostrution.
     const { email, password } = this.state;
 
+    // history
+    const { history } = this.props;
+
     // Loading submit
     this.setState({ loading: true });
 
@@ -143,6 +147,8 @@ class LogInPage extends Component<ILogInProps, ILoginState> {
 
           // Stop loading form submit.
           this.setState({ loading: false });
+        } else {
+          history.push(ROUTES.LANDING.path);
         }
       })
       .catch((error: any) => {
@@ -444,4 +450,4 @@ class LogInPage extends Component<ILogInProps, ILoginState> {
   }
 }
 
-export default withFloatingMsg(LogInPage);
+export default withRouter(withFloatingMsg(LogInPage));

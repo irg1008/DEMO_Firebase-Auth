@@ -1,17 +1,10 @@
 import React, { useEffect } from "react";
-import { Redirect } from "react-router-dom";
 
 // Log in form.
 import { LogInForm, LogInWithEmail } from "./components";
 
 // Auth context consumer.
 import { useAuth } from "../../../context/auth";
-
-// Firebase context
-import { useFirebase } from "../../../context/firebase";
-
-// Routes
-import { ROUTES } from "../../../routes";
 
 /**
  * Log in page.
@@ -24,22 +17,13 @@ const LogInPage: React.FC = () => {
   // Auth state decostruction
   const { authIsPasswordless } = useAuth().state;
 
-  // Firebase context
-  const { authUser } = useFirebase().state;
-
   // We load page when auth finishes.
   useEffect(() => {
     // Change page title if page loads.
-    if (!authUser) document.title = "Silk&Rock - Inicia Sesión";
-  }, [authUser]);
+    document.title = "Silk&Rock - Inicia Sesión";
+  }, []);
 
-  return authUser ? (
-    <Redirect to={ROUTES.LANDING.path} />
-  ) : authIsPasswordless ? (
-    <LogInWithEmail />
-  ) : (
-    <LogInForm />
-  );
+  return authIsPasswordless ? <LogInWithEmail /> : <LogInForm />;
 };
 
 export default LogInPage;

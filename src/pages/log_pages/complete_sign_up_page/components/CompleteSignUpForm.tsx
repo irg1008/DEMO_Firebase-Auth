@@ -205,5 +205,3 @@ class CompleteSignUpForm extends Component<
 }
 
 export default CompleteSignUpForm;
-
-// TODO: Check if we want to add password on this final reg. Only that because we now the email or phone of wich this page is accessed.

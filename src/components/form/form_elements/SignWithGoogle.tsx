@@ -29,8 +29,7 @@ const SignWithGoogle: React.FC<ISignWithGoogleProps> = ({
    * On click => Sign in with google. => Verfies email and overrides unverified accounts.
    *
    */
-  const onClick = () =>
-    firebase.doSignInWithGoogleWithRedirect().then(() => console.log("hola"));
+  const onClick = () => firebase.doSignInWithGoogleWithRedirect();
 
   return (
     <GoogleContainer onClick={onClick}>

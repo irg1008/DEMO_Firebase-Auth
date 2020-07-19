@@ -2,6 +2,9 @@ import React from "react";
 import ReactDOM from "react-dom";
 import * as serviceWorker from "./serviceWorker";
 
+// Router Provider
+import { BrowserRouter as RouterProvider } from "react-router-dom";
+
 // Style.
 import "./index.css";
 
@@ -13,9 +16,11 @@ import App from "./components/app";
 
 ReactDOM.render(
   <React.StrictMode>
-    <ProvidersWrapper>
-      <App />
-    </ProvidersWrapper>
+    <RouterProvider>
+      <ProvidersWrapper>
+        <App />
+      </ProvidersWrapper>
+    </RouterProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

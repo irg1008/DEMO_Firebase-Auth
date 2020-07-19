@@ -33,6 +33,15 @@ export type IPageType = {
   exact?: boolean;
 
   /**
+   * Pages that only shows when the user is not loaded.
+   *
+   * @type {boolean}
+   */
+  formPage?: boolean;
+
+  userIsSignedPage?: boolean;
+
+  /**
    * Component to render in given path.
    *
    * @type {*}
@@ -59,6 +68,7 @@ export const SIGN_UP: IPageType = {
   id: getId(),
   path: "/unete",
   exact: true,
+  formPage: true,
   Component: SignUpPage,
 };
 
@@ -67,6 +77,7 @@ export const LOG_IN: IPageType = {
   id: getId(),
   path: "/inicia",
   exact: true,
+  formPage: true,
   Component: LogInPage,
 };
 
@@ -75,6 +86,7 @@ export const COMPLETE_SIGN: IPageType = {
   id: getId(),
   path: "/completar-cuenta",
   exact: true,
+  formPage: true,
   Component: CompleteSignUpPage,
 };
 

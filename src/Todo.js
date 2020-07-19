@@ -3,7 +3,7 @@
 // TODO: Ver si pasamos los mensajes con las rutas de log y sign y si lo hacemos cambiando las rutas en plan sign => sign/email
 // TODO: Añadir el forgot password y el change username.
 // TODO: Revisar si algún componente se puede convertir a functional y limpiar tipos..
-// TODO: Hide navbar on certain routes. (Importance level 0) => Navigation context setted on page mount? Prefer to use path?
+// TODO: Hide navbar on certain routes. (Importance level 0) => navigation context to show hide with animation
 // TODO: Personalize verify and email log and sign emails and check how to redirect to page directly and html template (Importance level 0)
 // TODO: Add animations like navbar up on phone or floating message out. (Importance level 0)
 // TODO: Finish log in with email link. And send sign or log in email checking if user already exist value in user.
@@ -16,4 +16,4 @@
 // TODO: Render forms with objects or any other form with less components.
 // TODO: Cookie banner. See how to use with floating msg correctly.
 /////////////////////////////////////////////////
-// FIXME: Clean all firebase thingis and firestore. Also heck if saving uid is neccesary
+// FIXME: Clean all functions and repetaed code.

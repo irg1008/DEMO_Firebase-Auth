@@ -63,6 +63,7 @@ class Firebase {
     // Initialices the firebase authentication.
     this.auth = firebaseApp.auth();
     this.auth.useDeviceLanguage();
+    this.auth.setPersistence(firebaseApp.auth.Auth.Persistence.LOCAL);
 
     // Initialices the Google provider
     this.googleProvider = new firebaseApp.auth.GoogleAuthProvider();
@@ -188,7 +189,7 @@ class Firebase {
   doCreateProfile = (displayName: string, photoURL?: string) => {
     if (this.auth.currentUser) {
       this.doChangeFirestoreUsername(displayName);
-      this.doUpdateProfile(displayName);
+      this.doUpdateProfile(displayName, photoURL);
     }
 
     return new Promise(() => {});
