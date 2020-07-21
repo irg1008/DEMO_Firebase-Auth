@@ -97,7 +97,6 @@ const SignUpForm: React.FC = () => {
     );
     if (disposableResponse.disposable) {
       emailIsDisposable();
-      setState({ ...state, isLoading: false });
     } else {
       signUpWithFirebase();
     }
@@ -232,6 +231,7 @@ const SignUpForm: React.FC = () => {
   const emailIsDisposable = (): void =>
     setState({
       ...state,
+      isLoading: false,
       email: validateInput(email, "El dominio de email no es válido"),
     });
 
