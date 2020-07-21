@@ -12,6 +12,16 @@ import {
 // Titles.
 import { H1 } from "../../components/titles/Titles";
 
+export type IGenericFormState = {
+  isLoading: boolean;
+  isValidForm?: boolean;
+};
+
+export const INITIAL_GENERIC_FORM_STATE: IGenericFormState = {
+  isLoading: false,
+  isValidForm: false,
+};
+
 // Form props type.
 type IFormCreatorProps = {
   /**

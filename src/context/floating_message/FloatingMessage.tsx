@@ -43,15 +43,20 @@ const FloatingMessage: React.FC = () => {
     [hideMessage]
   );
 
+  const removeTimeout = useCallback(() => {
+    clearTimeout(timer);
+    setTimer(0);
+  }, [timer]);
+
   // <= 0 = infinite.
   useEffect(() => {
     // If show is setted to true
     if (show) {
-      if (!timer && timeoutTime > 0) createTimeout(timeoutTime);
+      if (timer === 0 && timeoutTime > 0) createTimeout(timeoutTime);
     } else if (!show) {
-      if (timer) clearTimeout(timer);
+      if (timer !== 0) removeTimeout();
     }
-  }, [show, timeoutTime, createTimeout, timer]);
+  }, [show, timeoutTime, createTimeout, removeTimeout, timer]);
 
   return (
     <MessageContainer

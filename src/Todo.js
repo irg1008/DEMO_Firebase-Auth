@@ -10,10 +10,11 @@
 // TODO: Remove all overlays and show every time hidden. i.e loading gif. See this page: https://czaplinski.io/blog/super-easy-animation-with-react-hooks/
 // TODO: Change the forms to a context and reducer.
 // TODO: Revisar y comentar.
-// TODO: Convert floating context to a queue of floating messages
+// TODO: Convert floating context to a queue of floating messages and good timeput, etc
 // TODO: Check temp mail are not valids. https://www.email-validator.net/api.html
-// TODO: Change from styled-components to functional css and itcss
-// TODO: Render forms with objects or any other form with less components.
+// TODO: Change from styled-components to functional css and itcss or css preproccessor
 // TODO: Cookie banner. See how to use with floating msg correctly.
+// TODO: Reduce all form to the maximum
+// TODO: If signed with google and adds password => Link provider with email/password.
 /////////////////////////////////////////////////
 // FIXME: Clean all functions and repetaed code.

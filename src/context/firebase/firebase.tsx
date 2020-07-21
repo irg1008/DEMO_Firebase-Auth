@@ -152,10 +152,11 @@ class Firebase {
     return this.auth.sendSignInLinkToEmail(email, actionCodeSettings);
   };
 
-  doSendEmailVerification = () => {
-    if (this.auth.currentUser)
+  doSendEmailVerification = (user?: firebase.User) => {
+    if (!user && this.auth.currentUser)
       return this.auth.currentUser.sendEmailVerification();
-    return new Promise(() => {});
+    else if (user) return user.sendEmailVerification();
+    else return new Promise(() => {});
   };
 
   /**

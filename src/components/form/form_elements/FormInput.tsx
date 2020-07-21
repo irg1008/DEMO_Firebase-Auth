@@ -17,33 +17,17 @@ import styled, { css } from "styled-components";
 // - value: value of input.
 // ? isValid: input is valid.
 // ? errorMsg: errorMsg if input is not valid.
+export type IInputError = string | JSX.Element | null;
+
 export type IInputState = {
-  /**
-   * Value of input.
-   *
-   * @type {string}
-   */
   value: string;
-
-  /**
-   * Validity of input.
-   *
-   * @type {boolean}
-   */
   isValid?: boolean;
-
-  /**
-   * Error message if invalid input.
-   * Type "any" in case we want to include list of errors, links, etc.
-   *
-   * @type {any}
-   */
-  errorMsg?: any;
+  error: IInputError;
 };
 
-// Initial input state.
 export const INITIAL_INPUT_STATE: IInputState = {
   value: "",
+  error: null,
 };
 
 // Form input props.
@@ -130,6 +114,18 @@ type IFormInputProps = {
   maxLength?: number;
 };
 
+export const validateInput = (
+  input: IInputState,
+  error: IInputError
+): IInputState => {
+  input = {
+    ...input,
+    error,
+    isValid: error === null,
+  };
+  return input;
+};
+
 /**
  * Form input component.
  *
@@ -161,12 +157,13 @@ const FormInput: React.FC<IFormInputProps> = ({
   maxLength,
 }: IFormInputProps) => (
   <InputContainer>
-    <FormLabel>
+    <FormLabel htmlFor={name}>
       {label}
       {required && "*"}
     </FormLabel>
     <InputBox>
       <Input
+        id={name}
         name={name}
         value={value}
         maxLength={maxLength}

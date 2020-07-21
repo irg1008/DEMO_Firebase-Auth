@@ -1,348 +1,207 @@
-import React, { ChangeEvent, FormEvent, Component } from "react";
-import { withRouter, RouteComponentProps } from "react-router-dom";
-
-// Form elements
-import {
-  FormInput,
-  FormButton,
-  ShowPassword,
-  FormOptions,
-  FormLink,
-  SignWithGoogle,
-} from "../../../../components/form/form_elements";
-
-// Sign without password
-import { SignWithoutPassword } from "../../components/email_sign";
-
-// Form Wrapper. Optional, but helps us create a common structure between forms.
-// Validation of form, useful when handling validation of inputs.
-import FormCreator from "../../../../components/form";
 import inputValidation from "../../../../components/form/utils";
-
-// Routes
-import { ROUTES } from "../../../../routes";
-
-// Firebase
-import { firebase } from "../../../../context/firebase";
-
-// Input state
-import {
+import React, {
+  useState,
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useRef,
+} from "react";
+import FormInput, {
   IInputState,
   INITIAL_INPUT_STATE,
+  validateInput,
 } from "../../../../components/form/form_elements/FormInput";
-
-// Floating Message
 import {
-  withFloatingMsg,
-  IFloatingMsgContext,
-} from "../../../../context/floating_message";
+  FormOptions,
+  SignWithGoogle,
+  ShowPassword,
+  FormButton,
+  FormLink,
+} from "../../../../components/form/form_elements";
+import { SignWithoutPassword } from "../../components/email_sign";
+import FormCreator, {
+  IGenericFormState,
+  INITIAL_GENERIC_FORM_STATE,
+} from "../../../../components/form/Form";
+import { firebase } from "../../../../context/firebase";
+import { useHistory } from "react-router-dom";
+import { useFloatingMsg } from "../../../../context/floating_message";
+import { ROUTES } from "../../../../routes";
 
-// Types of of passes props.
-type ILogInProps = RouteComponentProps & {
-  /**
-   * Floating message context.
-   *
-   * @type {{
-   *     setMessage: any;
-   *     showMessage: any;
-   *     hideMessage: any;
-   *   }}
-   */
-  floatingMsgContext: IFloatingMsgContext;
-};
-
-// Types of state.
-type ILoginState = {
-  /**
-   * Email.
-   *
-   * @type {IInputState}
-   */
+type ILogInState = IGenericFormState & {
   email: IInputState;
-
-  /**
-   * PasswordOne.
-   *
-   * @type {IInputState}
-   */
   password: IInputState;
-
-  /**
-   * State of password visibility
-   *
-   * @type {boolean}
-   */
   hiddenPass: boolean;
-
-  /**
-   * Form is valid.
-   *
-   * @type {boolean}
-   */
-  isValid?: boolean;
-
-  /**
-   * Form is signing in and retrieving eny error ocurred.
-   *
-   * @type {boolean}
-   */
-  loading?: boolean;
 };
 
-// Initial state. Valid states only on initial state.
-const INITIAL_STATE: ILoginState = {
-  email: { ...INITIAL_INPUT_STATE },
-  password: { ...INITIAL_INPUT_STATE },
+const INITIAL_LOG_IN_STATE: ILogInState = {
+  ...INITIAL_GENERIC_FORM_STATE,
+  email: INITIAL_INPUT_STATE,
+  password: INITIAL_INPUT_STATE,
   hiddenPass: true,
 };
 
-/**
- * Log in form.
- *
- * @param {*} {
- *   firebase,
- *   authContext,
- * }
- * @returns
- */
-class LogInPage extends Component<ILogInProps, ILoginState> {
-  constructor(props: ILogInProps) {
-    super(props);
-    // Initialices the state.
-    this.state = { ...INITIAL_STATE };
-  }
+const LogInForm: React.FC = () => {
+  const [state, setState] = useState(INITIAL_LOG_IN_STATE);
 
-  /**
-   * On submit form => Set to loading and log in.
-   *
-   * @memberof LogInPage
-   */
-  onSubmit = (event: FormEvent): void => {
-    // Prevent default behaviour.
-    event.preventDefault();
+  const { email, password, hiddenPass, isLoading, isValidForm } = state;
 
-    // State decostrution.
-    const { email, password } = this.state;
+  const history = useHistory();
 
-    // history
-    const { history } = this.props;
+  const floatingMsg = useFloatingMsg();
 
-    // Loading submit
-    this.setState({ loading: true });
+  const firstRender = useRef(true);
 
-    // On submit => log in with email and password.
-    firebase
-      .doSignInWithEmailAndPassword(email.value, password.value)
-      .then((result: any) => {
-        // User
-        const { user } = result;
+  const onChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    e.preventDefault();
 
-        // If user exists but is not verified
-        if (!user.emailVerified) {
-          // Force sign out.
-          firebase.doSignOut();
+    const { name, value } = e.target;
 
-          // Set error message on email.
-          this.userNotVerfied(user);
+    firstRender.current = false;
 
-          // Stop loading form submit.
-          this.setState({ loading: false });
-        } else {
-          history.push(ROUTES.LANDING.path);
-        }
-      })
-      .catch((error: any) => {
-        // Stop loading form submit.
-        this.setState({ loading: false });
-        // Error handling
-        if (error.code === "auth/user-not-found") this.userNotFound();
-        else if (error.code === "auth/wrong-password") {
-          // If password is incorrect => Check if reason is email is with other provider.
-          firebase
-            .doFetchSignInMethodsForEmail(email.value)
-            .then((methods: any) => {
-              if (methods.includes("password")) {
-                this.wrongPassword();
-              } else if (methods.includes("google.com")) {
-                this.emailExistsWithGoogle();
-              } else {
-                this.emailExistsWithDirectLink();
-              }
-            });
-        }
-      });
+    setState({ ...state, [name]: { value } });
   };
 
-  /**
-   * On input change.
-   *
-   * @memberof LogInPage
-   */
-  onChange = (
-    event: ChangeEvent<HTMLInputElement>,
-    callbackValidation: any
-  ): void => {
-    // Prevent default behaviour.
-    event.preventDefault();
+  const togglePasswordVisibility = (): void =>
+    setState({ ...state, hiddenPass: !hiddenPass });
 
-    // Name and value
-    const { name, value } = event.target;
+  const onSubmit = async (e: FormEvent) => {
+    e.preventDefault();
 
-    // Change the value in the state of given input name prop and then validate form.
-    this.setState(
-      {
-        ...this.state,
-        [name]: { value },
-      },
-      () => {
-        callbackValidation();
+    setState({ ...state, isLoading: true });
+
+    try {
+      const signInResult = await firebase.doSignInWithEmailAndPassword(
+        email.value,
+        password.value
+      );
+      const { user } = signInResult;
+
+      if (user && !user.emailVerified) {
+        firebase.doSignOut();
+
+        userNotVerified(user);
+      } else {
+        history.push(ROUTES.LANDING.path);
       }
-    );
-  };
-
-  /**
-   * Validate entire form.
-   *
-   * @memberof LogInPage
-   */
-  validateForm = (): void => {
-    // State.
-    const { email, password } = this.state;
-
-    // Set state.
-    this.setState({
-      isValid: email.isValid && password.isValid,
-    });
-  };
-
-  /**
-   * Validate email.
-   *
-   * @memberof LogInPage
-   */
-  validateEmail = (): void => {
-    // Check email validity.
-    const emailCheck = inputValidation.checkEmail(this.state.email.value);
-    // Email
-    const email = { ...this.state.email, ...emailCheck };
-    // On email change set password valid.
-    if (this.state.password.isValid === false) this.validatePassword();
-    // Change email info.
-    this.setState({ email }, () => this.validateForm());
-  };
-
-  /**
-   * Validate password.
-   *
-   * @memberof LogInPage
-   */
-  validatePassword = (): void => {
-    const password = { ...this.state.password };
-
-    // Only validate empty password.
-    if (password.value.length === 0) {
-      const passwordCheck = inputValidation.checkFirstPassword(password.value);
-      password.isValid = passwordCheck.isValid;
-      password.errorMsg = passwordCheck.errorMsg;
-    } else {
-      password.isValid = true;
+    } catch (error) {
+      setState({ ...state, isLoading: false, isValidForm: false });
+      if (error.code === "auth/user-not-found") {
+        userNotFound();
+      } else if (error.code === "auth/wrong-password") {
+        const signMethods = await firebase.doFetchSignInMethodsForEmail(
+          email.value
+        );
+        if (signMethods.includes("password")) wrongPassword();
+        else if (signMethods.includes("google.com")) emailExistsWithGoogle();
+        else emailExistsWithDirectLink();
+      } else if (error.code === "auth/too-many-requests") {
+        tooManyRequest();
+      }
     }
-    // Change password info.
-    this.setState({ password }, () => this.validateForm());
   };
 
-  /**
-   * Wrong password on submit.
-   *
-   * @memberof LogInPage
-   */
-  wrongPassword = () =>
-    this.setState(
-      {
-        password: {
-          // We reset the value in case email is wrong, not password.
-          ...this.state.password,
-          isValid: false,
-          errorMsg: "La contraseña no es correcta.",
-        },
-      },
-      () => this.validateForm()
-    );
+  useEffect(() => {
+    if (!firstRender.current) {
+      setState((oldState) => {
+        return { ...oldState, isValidForm: email.isValid && password.isValid };
+      });
+    }
+  }, [email.isValid, password.isValid]);
 
-  emailExistsWithGoogle = () =>
-    this.setState({
-      email: {
-        ...this.state.email,
-        isValid: false,
-        errorMsg:
-          "Este correo está conectado a una cuenta de Google. Si quieres create con contraseña, incia abajo y crea una en tu perfil",
-      },
+  useEffect(() => {
+    if (!firstRender.current) {
+      setState((oldState) => {
+        return {
+          ...oldState,
+          email: validateInput(
+            oldState.email,
+            inputValidation.checkEmail(email.value).error
+          ),
+          password:
+            oldState.password.isValid === false
+              ? validateInput(oldState.password, null)
+              : oldState.password,
+        };
+      });
+    }
+  }, [email.value]);
+
+  useEffect(() => {
+    if (!firstRender.current) {
+      setState((oldState) => {
+        return {
+          ...oldState,
+          password:
+            password.value.length === 0
+              ? validateInput(
+                  oldState.password,
+                  inputValidation.checkPassword(password.value).error
+                )
+              : {
+                  ...oldState.password,
+                  isValid: true,
+                },
+        };
+      });
+    }
+  }, [password.value]);
+
+  const wrongPassword = (): void =>
+    setState({
+      ...state,
+      password: validateInput(password, "La contraseña no es correcta"),
     });
 
-  emailExistsWithDirectLink = (): void =>
-    this.setState({
-      email: {
-        ...this.state.email,
-        isValid: false,
-        errorMsg:
-          "Esto correo no tiene contraseña, inicia mediante link y crea una en tu perfil",
-      },
+  const emailExistsWithGoogle = (): void =>
+    setState({
+      ...state,
+      password: validateInput(
+        email,
+        "Este correo está conectado a una cuenta de Google. Si quieres crearte una contraseña, inicia abajo y crea una en tu perfil"
+      ),
     });
 
-  /**
-   * User not on submit.
-   *
-   * @memberof LogInPage
-   */
-  userNotFound = (): void =>
-    this.setState(
-      {
-        email: {
-          ...this.state.email,
-          isValid: false,
-          errorMsg: "Este email no corresponde con ninguna cuenta",
-        },
-      },
-      () => this.validateForm()
-    );
+  const emailExistsWithDirectLink = (): void =>
+    setState({
+      ...state,
+      email: validateInput(
+        email,
+        "Esto correo no tiene contraseña, inicia mediante link y crea una en tu perfil"
+      ),
+    });
 
-  /**
-   * User is not verified.
-   *
-   * @memberof LogInPage
-   */
-  userNotVerfied = (user: any): void => {
-    // Floating context
-    const { floatingMsgContext } = this.props;
+  const userNotFound = (): void =>
+    setState({
+      ...state,
+      email: validateInput(
+        email,
+        "Este email no corresponde con ninguna cuenta"
+      ),
+    });
 
-    // Email
-    const { email } = this.state;
+  const tooManyRequest = (): void =>
+    setState({
+      ...state,
+      email: validateInput(
+        email,
+        "Demasiados intentos con este correo, espera un tiempo para volver a intentarlo"
+      ),
+    });
 
-    // Resend email verification.
+  const userNotVerified = (user: firebase.User): void => {
     const resendEmailVerification = (): void => {
-      // Send verification message.
-      user.sendEmailVerification();
+      firebase.doSendEmailVerification(user);
 
-      // Set message
-      floatingMsgContext.dispatch({
+      floatingMsg.dispatch({
         type: "SHOW_FLOATING",
         message: 'Te hemos reenviado un correo a "' + email.value + '"',
       });
 
-      // Change state.
-      this.setState(
-        {
-          email: {
-            ...email,
-            isValid: true,
-          },
-        },
-        () => this.validateForm()
-      );
+      setState({ ...state, email: validateInput(email, null) });
     };
 
-    // Error msg
-    const errorMsg = (
+    const error = (
       <>
         {"Verifica la cuenta para poder entrar. "}
         <span
@@ -354,100 +213,69 @@ class LogInPage extends Component<ILogInProps, ILoginState> {
       </>
     );
 
-    // Change state.
-    this.setState(
-      {
-        email: {
-          ...email,
-          isValid: false,
-          errorMsg,
-        },
-      },
-      () => this.validateForm()
-    );
+    setState({
+      ...state,
+      email: validateInput(email, error),
+      isLoading: false,
+      isValidForm: false,
+    });
   };
 
-  /**
-   * Toggle password show/hide.
-   *
-   * @memberof LogInPage
-   */
-  togglePasswordVisibility = () =>
-    this.setState({ hiddenPass: !this.state.hiddenPass });
-
-  /**
-   * Render log in form.
-   *
-   * @returns
-   * @memberof LogInPage
-   */
-  render() {
-    // State desconstruction.
-    const { email, password, hiddenPass, isValid, loading } = this.state;
-
-    // Form Content
-    const formContent = (
-      <>
-        <FormInput
-          label="Email"
-          name="email"
-          value={email.value}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            this.onChange(e, this.validateEmail)
-          }
-          type="email"
-          isValid={email.isValid}
-          errorMessage={email.errorMsg}
-          required
-        />
-        <FormInput
-          label="Contraseña"
-          name="password"
-          value={password.value}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            this.onChange(e, this.validatePassword)
-          }
-          type="password"
-          isValid={password.isValid}
-          errorMessage={password.errorMsg}
-          hiddenPass={hiddenPass}
-          required
-        />
-        <ShowPassword
-          hiddenPass={hiddenPass}
-          onClick={this.togglePasswordVisibility}
-        />
-        <FormButton
-          disabled={!isValid}
-          loading={loading}
-          text={loading ? "Comprobando datos..." : "Iniciar sesión"}
-        />
-        <FormLink
-          text="¿No estás registrado?"
-          linkText="Regístrate aquí"
-          to={ROUTES.SIGN_UP.path}
-        />
-      </>
-    );
-
-    // Form bottom component
-    const formBottomComponent = (
-      <FormOptions
-        firstOption={<SignWithGoogle text="Inicio con Google" />}
-        secondOption={<SignWithoutPassword text="Inicio con link" />}
+  const formContent = (
+    <>
+      <FormInput
+        label="Email"
+        name="email"
+        value={email.value}
+        onChange={onChange}
+        type="email"
+        isValid={email.isValid}
+        errorMessage={email.error}
+        required
       />
-    );
-
-    // If user is logged push to landing.
-    return (
-      <FormCreator
-        onSubmit={this.onSubmit}
-        content={formContent}
-        bottomComponent={formBottomComponent}
-        title="inicia sesión"
+      <FormInput
+        label="Contraseña"
+        name="password"
+        value={password.value}
+        onChange={onChange}
+        type="password"
+        isValid={password.isValid}
+        errorMessage={password.error}
+        hiddenPass={hiddenPass}
+        required
       />
-    );
-  }
-}
+      <ShowPassword
+        hiddenPass={hiddenPass}
+        onClick={togglePasswordVisibility}
+      />
+      <FormButton
+        disabled={!isValidForm}
+        loading={isLoading}
+        text={isLoading ? "Comprobando datos..." : "Iniciar sesión"}
+      />
+      <FormLink
+        text="¿No estás registrado?"
+        linkText="Regístrate aquí"
+        to={ROUTES.SIGN_UP.path}
+      />
+    </>
+  );
 
-export default withRouter(withFloatingMsg(LogInPage));
+  // Form bottom component
+  const formBottomComponent = (
+    <FormOptions
+      firstOption={<SignWithGoogle text="Inicio con Google" />}
+      secondOption={<SignWithoutPassword text="Inicio con link" />}
+    />
+  );
+  return (
+    <FormCreator
+      onSubmit={onSubmit}
+      content={formContent}
+      bottomComponent={formBottomComponent}
+      title="inicia sesión"
+    />
+  );
+};
+
+export default LogInForm;

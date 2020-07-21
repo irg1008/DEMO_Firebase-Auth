@@ -1,12 +1,17 @@
-import React, { Component, FormEvent, ChangeEvent } from "react";
-import { withRouter, RouteComponentProps } from "react-router-dom";
+import React, {
+  FormEvent,
+  ChangeEvent,
+  useState,
+  useRef,
+  useEffect,
+} from "react";
+import { useHistory } from "react-router-dom";
 
 // Routes
 import { ROUTES } from "../../../../routes";
 
 // Form elements
 import {
-  FormInput,
   FormButton,
   ShowPassword,
   FormOptions,
@@ -14,118 +19,64 @@ import {
   SignWithGoogle,
 } from "../../../../components/form/form_elements";
 
+import FormInput, {
+  IInputState,
+  INITIAL_INPUT_STATE,
+  validateInput,
+} from "../../../../components/form/form_elements/FormInput";
+
 // Sign without password
 import { SignWithoutPassword } from "../../components/email_sign";
 
 // Floating Message
-import {
-  withFloatingMsg,
-  IFloatingMsgContext,
-} from "../../../../context/floating_message";
-
-// Input state
-import {
-  IInputState,
-  INITIAL_INPUT_STATE,
-} from "../../../../components/form/form_elements/FormInput";
+import { useFloatingMsg } from "../../../../context/floating_message";
 
 // Form Wrapper. Optional, but helps us create a common structure between forms.
 // Validation of form, useful when handling validation of inputs.
-import FormCreator from "../../../../components/form";
+import FormCreator, {
+  IGenericFormState,
+  INITIAL_GENERIC_FORM_STATE,
+} from "../../../../components/form/Form";
 import inputValidation from "../../../../components/form/utils";
 
 // Firebase
 import { firebase } from "../../../../context/firebase";
 
-// Types of passes props.
-type ISignUpProps = RouteComponentProps & {
-  /**
-   * Floating message context.
-   *
-   * @type {{
-   *     setMessage: any;
-   *     showMessage: any;
-   *     hideMessage: any;
-   *   }}
-   */
-  floatingMsgContext: IFloatingMsgContext;
-};
-
-// Types of state.
-
-type ISignUpState = {
-  /**
-   * Username input.
-   *
-   * @type {IInputState}
-   */
+type ISignUpState = IGenericFormState & {
   username: IInputState;
-
-  /**
-   * Email.
-   *
-   * @type {IInputState}
-   */
   email: IInputState;
-
-  /**
-   * PasswordOne.
-   *
-   * @type {IInputState}
-   */
-  passwordOne: IInputState;
-
-  /**
-   * PasswordTwo.
-   *
-   * @type {IInputState}
-   */
-  passwordTwo: IInputState;
-
-  /**
-   * State of password visibility
-   *
-   * @type {boolean}
-   */
+  password: IInputState;
+  confirmPassword: IInputState;
   hiddenPass: boolean;
-
-  /**
-   * Form is valid.
-   *
-   * @type {boolean}
-   */
-  isValid?: boolean;
-
-  /**
-   * Form is signing in and retrieving eny error ocurred.
-   *
-   * @type {boolean}
-   */
-  loading?: boolean;
 };
 
-// Initial state. Valid states only on initial state.
-const INITIAL_STATE: ISignUpState = {
-  username: { ...INITIAL_INPUT_STATE },
-  email: { ...INITIAL_INPUT_STATE },
-  passwordOne: { ...INITIAL_INPUT_STATE },
-  passwordTwo: { ...INITIAL_INPUT_STATE },
-  isValid: false,
+const INITIAL_LOG_IN_STATE: ISignUpState = {
+  ...INITIAL_GENERIC_FORM_STATE,
+  username: INITIAL_INPUT_STATE,
+  email: INITIAL_INPUT_STATE,
+  password: INITIAL_INPUT_STATE,
+  confirmPassword: INITIAL_INPUT_STATE,
   hiddenPass: true,
 };
 
-/**
- * Base sign up form.
- *
- * @class SignUpForm class.
- * @extends {Component<ISignUpProps, ISignUpState>}
- */
-class SignUpForm extends Component<ISignUpProps, ISignUpState> {
-  constructor(props: ISignUpProps) {
-    super(props);
-    // Initialices the state.
-    this.state = { ...INITIAL_STATE };
-  }
+const SignUpForm: React.FC = () => {
+  const [state, setState] = useState(INITIAL_LOG_IN_STATE);
+
+  const {
+    username,
+    email,
+    password,
+    confirmPassword,
+    hiddenPass,
+    isLoading,
+    isValidForm,
+  } = state;
+
+  const history = useHistory();
+
+  const floatingMsgContext = useFloatingMsg();
+
+  const firstRender = useRef(true);
 
   /**
    * On submit form.
@@ -133,25 +84,22 @@ class SignUpForm extends Component<ISignUpProps, ISignUpState> {
    * @param {FormEvent} event Form event.
    * @memberof SignUpForm
    */
-  onSubmit = async (event: FormEvent): Promise<void> => {
+  const onSubmit = async (event: FormEvent): Promise<void> => {
     // Prevent default behaviour.
     event.preventDefault();
 
-    // State decostrution.
-    const { email } = this.state;
-
     // Loading submit
-    this.setState({ loading: true });
+    setState({ ...state, isLoading: true });
 
     // Email is disposable.
     const disposableResponse = await inputValidation.fetchEmailIsDisposable(
       email.value
     );
     if (disposableResponse.disposable) {
-      this.emailIsDisposable();
-      this.setState({ loading: false });
+      emailIsDisposable();
+      setState({ ...state, isLoading: false });
     } else {
-      this.signUpWithFirebase();
+      signUpWithFirebase();
     }
   };
 
@@ -160,14 +108,9 @@ class SignUpForm extends Component<ISignUpProps, ISignUpState> {
    *
    * @memberof SignUpForm
    */
-  signUpWithFirebase = () => {
-    // Firebase and react history.
-    const { history, floatingMsgContext } = this.props;
-
-    const { username, email, passwordOne } = this.state;
-
+  const signUpWithFirebase = () => {
     firebase
-      .doCreateUserWithEmailAndPassword(email.value, passwordOne.value)
+      .doCreateUserWithEmailAndPassword(email.value, confirmPassword.value)
       .then(() => {
         // Update user username.
         firebase.doCreateProfile(username.value);
@@ -192,263 +135,195 @@ class SignUpForm extends Component<ISignUpProps, ISignUpState> {
       })
       .catch((error: any) => {
         // Stop loading if error
-        this.setState({ loading: false });
+        setState({ ...state, isLoading: false });
         // Note: This error code returns a 400 error to the console, exposing the app id or api key. This is not convinient but does not expose any data of the users. This happens because we manage the white domains that can access this data. Any other domain won't be able to acces users data even if they have de api key.
-        if (error.code === "auth/email-already-in-use")
-          this.emailAlreadyInUse();
+        if (error.code === "auth/email-already-in-use") emailAlreadyInUse();
       });
   };
 
-  /**
-   * On input change.
-   *
-   * @param {ChangeEvent} event Input event.
-   * @memberof SignUpForm
-   */
-  onChange = (
-    event: ChangeEvent<HTMLInputElement>,
-    callbackValidation?: any
-  ): void => {
-    // Prevent default behaviour.
-    event.preventDefault();
+  const onChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    e.preventDefault();
 
-    // Name and value
-    const { name, value } = event.target;
+    const { name, value } = e.target;
 
-    // Change the value in the state of given input name prop and then validate form.
-    this.setState(
-      {
-        ...this.state,
-        [name]: { value },
-      },
-      () => {
-        callbackValidation();
-      }
-    );
+    firstRender.current = false;
+
+    setState({ ...state, [name]: { value } });
   };
 
-  /**
-   * Validation of form.
-   *
-   * @memberof SignUpForm
-   */
-  validateForm = (): void => {
-    const { username, email, passwordOne, passwordTwo } = this.state;
+  useEffect(() => {
+    if (!firstRender.current) {
+      setState((oldState) => {
+        return {
+          ...oldState,
+          isValidForm:
+            username.isValid &&
+            email.isValid &&
+            password.isValid &&
+            confirmPassword.isValid,
+        };
+      });
+    }
+  }, [
+    username.isValid,
+    email.isValid,
+    password.isValid,
+    confirmPassword.isValid,
+  ]);
 
-    // Validation.
-    this.setState({
-      isValid:
-        username.isValid &&
-        email.isValid &&
-        passwordOne.isValid &&
-        passwordTwo.isValid,
+  useEffect(() => {
+    if (!firstRender.current) {
+      setState((oldState) => {
+        return {
+          ...oldState,
+          username: validateInput(
+            oldState.username,
+            inputValidation.checkUsername(username.value).error
+          ),
+        };
+      });
+    }
+  }, [username.value]);
+
+  useEffect(() => {
+    if (!firstRender.current) {
+      setState((oldState) => {
+        return {
+          ...oldState,
+          email: validateInput(
+            oldState.email,
+            inputValidation.checkEmail(email.value).error
+          ),
+        };
+      });
+    }
+  }, [email.value]);
+
+  const emailAlreadyInUse = (): void =>
+    setState({
+      ...state,
+      email: validateInput(
+        email,
+        "Este correo ya está en uso, inicia sesión o prueba con otro"
+      ),
     });
-  };
 
-  /**
-   * Validate username and check entire form.
-   *
-   * @memberof SignUpForm
-   */
-  validateUsername = (): void => {
-    // Check username validity.
-    const userCheck = inputValidation.checkUsername(this.state.username.value);
-    // Username
-    const username = { ...this.state.username, ...userCheck };
-    // Change username info.
-    this.setState({ username }, () => this.validateForm());
-  };
+  useEffect(() => {
+    if (!firstRender.current) {
+      setState((oldState) => {
+        return {
+          ...oldState,
+          password: validateInput(
+            oldState.password,
+            inputValidation.checkPassword(password.value).error
+          ),
+          confirmPassword: validateInput(
+            oldState.confirmPassword,
+            inputValidation.checkConfirmPassword(
+              password.value,
+              confirmPassword.value
+            ).error
+          ),
+        };
+      });
+    }
+  }, [password.value, confirmPassword.value]);
 
-  /**
-   * Validate email and check entire form.
-   *
-   * @memberof SignUpForm
-   */
-  validateEmail = (): void => {
-    // Check email validity.
-    const emailCheck = inputValidation.checkEmail(this.state.email.value);
-    // Email
-    const email = { ...this.state.email, ...emailCheck };
-    // Change email info.
-    this.setState({ email }, () => this.validateForm());
-  };
-
-  /**
-   * Email is already in use.
-   *
-   * @memberof SignUpForm
-   */
-  emailAlreadyInUse = (): void =>
-    // Change email info
-    this.setState(
-      {
-        email: {
-          ...this.state.email,
-          isValid: false,
-          errorMsg:
-            "Este correo ya está en uso, inicia sesión o prueba con otro",
-        },
-      },
-      () => this.validateForm()
-    );
-
-  /**
-   * Validate passwords.
-   *
-   * @memberof SignUpForm
-   */
-  validatePasswords = (): void => {
-    // Check password 1
-    const passwordOneCheck = inputValidation.checkFirstPassword(
-      this.state.passwordOne.value
-    );
-    const passwordOne = { ...this.state.passwordOne, ...passwordOneCheck };
-
-    // Check password 2
-    const passwordTwoCheck = inputValidation.checkConfirmPassword(
-      this.state.passwordOne.value,
-      this.state.passwordTwo.value
-    );
-    const passwordTwo = { ...this.state.passwordTwo, ...passwordTwoCheck };
-
-    // Change password info.
-    this.setState({ passwordOne, passwordTwo }, () => this.validateForm());
-  };
-
-  /**
-   * Email is disposable.
-   *
-   * @memberof LogInPage
-   */
-  emailIsDisposable = (): void => {
-    this.setState(
-      {
-        email: {
-          ...this.state.email,
-          isValid: false,
-          errorMsg: "El dominio de email no es válido",
-        },
-      },
-      () => this.validateForm()
-    );
-  };
+  const emailIsDisposable = (): void =>
+    setState({
+      ...state,
+      email: validateInput(email, "El dominio de email no es válido"),
+    });
 
   /**
    * Toggles password visibility.
    *
    * @memberof SignUpForm
    */
-  togglePasswordVisibility = () =>
-    this.setState({ hiddenPass: !this.state.hiddenPass });
+  const togglePasswordVisibility = (): void =>
+    setState({ ...state, hiddenPass: !hiddenPass });
 
-  /**
-   * Sign up form and validation of inputs.
-   *
-   * @returns SignUpForm.
-   * @memberof SignUpForm
-   */
-  render() {
-    // State decostruction.
-    const {
-      username,
-      email,
-      passwordOne,
-      passwordTwo,
-      hiddenPass,
-      isValid,
-      loading,
-    } = this.state;
-
-    // Form Content
-    const formContent = (
-      <>
-        <FormInput
-          label="Nombre"
-          name="username"
-          value={username.value}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            this.onChange(e, this.validateUsername)
-          }
-          type="text"
-          isValid={username.isValid}
-          errorMessage={username.errorMsg}
-          required
-        />
-        <FormInput
-          label="Email"
-          name="email"
-          value={email.value}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            this.onChange(e, this.validateEmail)
-          }
-          type="email"
-          isValid={email.isValid}
-          errorMessage={email.errorMsg}
-          required
-        />
-        <FormInput
-          label="Contraseña"
-          name="passwordOne"
-          value={passwordOne.value}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            this.onChange(e, this.validatePasswords)
-          }
-          type="password"
-          isValid={passwordOne.isValid}
-          errorMessage={passwordOne.errorMsg}
-          hiddenPass={hiddenPass}
-          required
-        />
-        <FormInput
-          label="Repite la contraseña"
-          name="passwordTwo"
-          value={passwordTwo.value}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            this.onChange(e, this.validatePasswords)
-          }
-          type="password"
-          isValid={passwordTwo.isValid}
-          errorMessage={passwordTwo.errorMsg}
-          hiddenPass={hiddenPass}
-          required
-        />
-        <ShowPassword
-          hiddenPass={hiddenPass}
-          onClick={this.togglePasswordVisibility}
-        />
-        <FormButton
-          disabled={!isValid}
-          loading={loading}
-          text={
-            loading ? "Comprobando que todo esté correcto..." : "Crear Cuenta"
-          }
-        />
-        <FormLink
-          text="¿Ya estás registrado?"
-          linkText="Inicia sesión"
-          to={ROUTES.LOG_IN.path}
-        />
-      </>
-    );
-
-    // Form bottom component
-    const formBottomComponent = (
-      <FormOptions
-        firstOption={<SignWithGoogle text="Registro con Google" />}
-        secondOption={<SignWithoutPassword text="Registro con link" />}
+  // Form Content
+  const formContent = (
+    <>
+      <FormInput
+        label="Nombre"
+        name="username"
+        value={username.value}
+        onChange={onChange}
+        type="text"
+        isValid={username.isValid}
+        errorMessage={username.error}
+        required
       />
-    );
-
-    // If user is logged push to landing.
-    return (
-      <FormCreator
-        onSubmit={this.onSubmit}
-        content={formContent}
-        bottomComponent={formBottomComponent}
-        title="únete"
+      <FormInput
+        label="Email"
+        name="email"
+        value={email.value}
+        onChange={onChange}
+        type="email"
+        isValid={email.isValid}
+        errorMessage={email.error}
+        required
       />
-    );
-  }
-}
+      <FormInput
+        label="Contraseña"
+        name="password"
+        value={password.value}
+        onChange={onChange}
+        type="password"
+        isValid={password.isValid}
+        errorMessage={password.error}
+        hiddenPass={hiddenPass}
+        required
+      />
+      <FormInput
+        label="Repite la contraseña"
+        name="confirmPassword"
+        value={confirmPassword.value}
+        onChange={onChange}
+        type="password"
+        isValid={confirmPassword.isValid}
+        errorMessage={confirmPassword.error}
+        hiddenPass={hiddenPass}
+        required
+      />
+      <ShowPassword
+        hiddenPass={hiddenPass}
+        onClick={togglePasswordVisibility}
+      />
+      <FormButton
+        disabled={!isValidForm}
+        loading={isLoading}
+        text={
+          isLoading ? "Comprobando que todo esté correcto..." : "Crear Cuenta"
+        }
+      />
+      <FormLink
+        text="¿Ya estás registrado?"
+        linkText="Inicia sesión"
+        to={ROUTES.LOG_IN.path}
+      />
+    </>
+  );
 
-export default withRouter(withFloatingMsg(SignUpForm));
+  // Form bottom component
+  const formBottomComponent = (
+    <FormOptions
+      firstOption={<SignWithGoogle text="Registro con Google" />}
+      secondOption={<SignWithoutPassword text="Registro con link" />}
+    />
+  );
+
+  // If user is logged push to landing.
+  return (
+    <FormCreator
+      onSubmit={onSubmit}
+      content={formContent}
+      bottomComponent={formBottomComponent}
+      title="únete"
+    />
+  );
+};
+
+export default SignUpForm;

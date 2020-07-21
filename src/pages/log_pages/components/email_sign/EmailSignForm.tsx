@@ -1,4 +1,4 @@
-import React, { ChangeEvent, Component, FormEvent } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 
 // Form creator and input validations
 import FormCreator from "../../../../components/form";
@@ -14,10 +14,11 @@ import {
 import {
   IInputState,
   INITIAL_INPUT_STATE,
+  validateInput,
 } from "../../../../components/form/form_elements/FormInput";
 
 // Auth context
-import { withAuth, IAuthContext } from "../../../../context/auth";
+import { useAuth } from "../../../../context/auth";
 
 // Styled-components
 import styled from "styled-components";
@@ -25,9 +26,13 @@ import { ContainerStyled } from "../../../../style/main_style";
 
 // Arrow icon
 import ArrowIcon from "@material-ui/icons/ArrowBackIos";
+import {
+  IGenericFormState,
+  INITIAL_GENERIC_FORM_STATE,
+} from "../../../../components/form/Form";
 
 // Complete sign props.
-type ICompleteSignProps = {
+type IEmailSignProps = {
   /**
    * On submit, call passed prop.
    *
@@ -48,44 +53,15 @@ type ICompleteSignProps = {
    * @type {string}
    */
   otherOptionText: string;
-
-  /**
-   * AuthContext consumer for classes.
-   *
-   * @type {IAuthContext}
-   */
-  authContext: IAuthContext;
 };
 
-// Types for the state.
-type ICompleteSignState = {
-  /**
-   * Email, to log or sign with email
-   *
-   * @type {IInputState}
-   * @memberof ICompleteSignState
-   */
+type IEmailSignState = IGenericFormState & {
   email: IInputState;
-
-  /**
-   * Form is valid.
-   *
-   * @type {boolean}
-   * @memberof ICompleteSignState
-   */
-  isValid?: boolean;
-
-  /**
-   * Form is loading.
-   *
-   * @type {boolean}
-   */
-  loading?: boolean;
 };
 
-// Initial complete sign up state.
-const INITIAL_STATE: ICompleteSignState = {
-  email: { ...INITIAL_INPUT_STATE },
+const INITIAL_EMAIL_SIGN_STATE: IEmailSignState = {
+  ...INITIAL_GENERIC_FORM_STATE,
+  email: INITIAL_INPUT_STATE,
 };
 
 /**
@@ -94,61 +70,40 @@ const INITIAL_STATE: ICompleteSignState = {
  * @class EmailSignForm
  * @extends {PureComponent<ICompleteSignProps, ICompleteSignState>}
  */
-class EmailSignForm extends Component<ICompleteSignProps, ICompleteSignState> {
-  constructor(props: ICompleteSignProps) {
-    super(props);
-    // Initialices the state.
-    this.state = { ...INITIAL_STATE };
-  }
+const EmailSignForm: React.FC<IEmailSignProps> = ({
+  onSubmit,
+  title,
+  otherOptionText,
+}) => {
+  const authContext = useAuth();
 
-  /**
-   * On component unmount.
-   *
-   * @memberof EmailSignForm
-   */
-  componentWillUnmount = (): void => this.removePasswordlessAuth();
+  const [state, setState] = useState(INITIAL_EMAIL_SIGN_STATE);
 
-  /**
-   * On form submit call parent sbutmit.
-   *
-   * @memberof EmailSignForm
-   */
-  onSubmit = (event: FormEvent): void => {
-    // Firebase
-    // const { firebase } = this.props;
+  const { email, isLoading, isValidForm } = state;
 
-    // Prevent default behaviour.
-    event.preventDefault();
+  const firstRender = useRef(true);
 
-    // Call the submit of father
-    this.props.onSubmit();
-  };
+  useEffect(() => {
+    return () =>
+      authContext.dispatch({
+        type: "SET_AUTH_PASSWORDLESS",
+        authIsPasswordless: false,
+      });
+  }, [authContext]);
 
   /**
    * On input change.
    *
    * @memberof EmailSignForm
    */
-  onChange = (
-    event: ChangeEvent<HTMLInputElement>,
-    callbackValidation: any
-  ) => {
-    // Prevent default behaviour.
-    event.preventDefault();
+  const onChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    e.preventDefault();
 
-    // Name and value
-    const { name, value } = event.target;
+    const { name, value } = e.target;
 
-    // Change the value in the state of given input name prop and then validate form.
-    this.setState(
-      {
-        ...this.state,
-        [name]: { value },
-      },
-      () => {
-        callbackValidation();
-      }
-    );
+    firstRender.current = false;
+
+    setState({ ...state, [name]: { value } });
   };
 
   /**
@@ -156,97 +111,65 @@ class EmailSignForm extends Component<ICompleteSignProps, ICompleteSignState> {
    *
    * @memberof EmailSignForm
    */
-  removePasswordlessAuth = (): void => {
-    // Props desostruction.
-    const { authContext } = this.props;
-
-    // When finished with log in page set the auth to password. Change this if wanted to reset to normal sign type.
+  const removePasswordlessAuth = (): void =>
     authContext.dispatch({
       type: "SET_AUTH_PASSWORDLESS",
       authIsPasswordless: false,
     });
-  };
 
-  /**
-   * Validate entire form.
-   *
-   * @memberof EmailSignForm
-   */
-  validateForm = () => {
-    // State.
-    const { email } = this.state;
+  useEffect(() => {
+    if (!firstRender.current) {
+      setState((oldState) => {
+        return { ...oldState, isValidForm: email.isValid };
+      });
+    }
+  }, [email.isValid]);
 
-    // Validation.
-    this.setState({
-      isValid: email.isValid,
-    });
-  };
+  useEffect(() => {
+    if (!firstRender.current) {
+      setState((oldState) => {
+        return {
+          ...oldState,
+          email: validateInput(
+            oldState.email,
+            inputValidation.checkEmail(email.value).error
+          ),
+        };
+      });
+    }
+  }, [email.value]);
 
-  /**
-   * Validate username.
-   *
-   * @memberof EmailSignForm
-   */
-  validateEmail = (): void => {
-    // Check email validity.
-    const emailCheck = inputValidation.checkEmail(this.state.email.value);
-    // Email
-    const email = { ...this.state.email, ...emailCheck };
-    // Change email info.
-    this.setState({ email }, () => this.validateForm());
-  };
-
-  /**
-   * Render form creator, with content.
-   *
-   * @returns
-   * @memberof EmailSignForm
-   */
-  render() {
-    // State deconstruction.
-    const { email, isValid, loading } = this.state;
-
-    // Props
-    const { title, otherOptionText } = this.props;
-
-    // Form Content
-    const formContent = (
-      <>
-        <FormInput
-          label="Email"
-          name="email"
-          value={email.value}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            this.onChange(e, this.validateEmail)
-          }
-          type="email"
-          isValid={isValid}
-          errorMessage={email.errorMsg}
-          required
-        />
-        <FormButton
-          disabled={!isValid}
-          loading={loading}
-          text={loading ? "Enviando link..." : "Enviar link"}
-        />
-        <OtherOptions onClick={this.removePasswordlessAuth}>
-          <ArrowIcon fontSize="inherit" />
-          <OtheOptionsText>{otherOptionText}</OtheOptionsText>
-        </OtherOptions>
-      </>
-    );
-
-    return (
-      <FormCreator
-        onSubmit={this.onSubmit}
-        content={formContent}
-        title={title}
+  // Form Content
+  const formContent = (
+    <>
+      <FormInput
+        label="Email"
+        name="email"
+        value={email.value}
+        onChange={onChange}
+        type="email"
+        isValid={email.isValid}
+        errorMessage={email.error}
+        required
       />
-    );
-  }
-}
+      <FormButton
+        disabled={!isValidForm}
+        loading={isLoading}
+        text={isLoading ? "Enviando link..." : "Enviar link"}
+      />
+      <OtherOptions onClick={removePasswordlessAuth}>
+        <ArrowIcon fontSize="inherit" />
+        <OtheOptionsText>{otherOptionText}</OtheOptionsText>
+      </OtherOptions>
+    </>
+  );
 
-export default withAuth(EmailSignForm);
+  return (
+    <FormCreator onSubmit={onSubmit} content={formContent} title={title} />
+  );
+};
+
+export default EmailSignForm;
 
 // Styled-Components
 // Other options container
