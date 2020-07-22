@@ -55,6 +55,7 @@ const Navigation: React.FC = () => {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
+      
       const slideToHide = 250;
       const slideToShow = 20;
 
