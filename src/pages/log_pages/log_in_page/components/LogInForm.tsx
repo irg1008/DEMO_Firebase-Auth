@@ -180,14 +180,29 @@ const LogInForm: React.FC = () => {
       ),
     });
 
-  const tooManyRequest = (): void =>
+  const tooManyRequest = (): void => {
+    const tryAgain = (): void =>
+      setState((oldState) => {
+        return { ...oldState, email: validateInput(email, null) };
+      });
+
+    const error = (
+      <>
+        {"Demasiados intentos con este correo, espera un tiempo para "}
+        <span
+          style={{ textDecoration: "underline", cursor: "pointer" }}
+          onClick={tryAgain}
+        >
+          volver a intentarlo
+        </span>
+      </>
+    );
+
     setState({
       ...state,
-      email: validateInput(
-        email,
-        "Demasiados intentos con este correo, espera un tiempo para volver a intentarlo"
-      ),
+      email: validateInput(email, error),
     });
+  };
 
   const userNotVerified = (user: firebase.User): void => {
     const resendEmailVerification = (): void => {
@@ -198,7 +213,9 @@ const LogInForm: React.FC = () => {
         message: 'Te hemos reenviado un correo a "' + email.value + '"',
       });
 
-      setState({ ...state, email: validateInput(email, null) });
+      setState((oldState) => {
+        return { ...oldState, email: validateInput(email, null) };
+      });
     };
 
     const error = (

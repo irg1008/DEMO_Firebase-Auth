@@ -10,19 +10,26 @@
     <!-- META -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#231F20" />
-    <meta
-      name="description"
-      content="Work Uniforms"
-    />
+    <meta name="description" content="Work Uniforms" />
 
     <!-- MANIFEST -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+    <!-- DISABLE REACT DEVELOPER TOOLS -->
+    <script>
+      // before React is loaded
+      if (typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ === "object") {
+        __REACT_DEVTOOLS_GLOBAL_HOOK__.inject = function () {};
+      }
+    </script>
 
     <!-- TITLE -->
     <title>Silk&Rock - Work Uniforms</title>
   </head>
   <body>
-    <noscript>Necesitas tener activado javascript para visitar esta página</noscript>
+    <noscript
+      >Necesitas tener activado javascript para visitar esta página</noscript
+    >
     <div id="root"></div>
   </body>
 </html>

@@ -8,6 +8,7 @@ import {
   shadows,
   media,
   mainTransition,
+  animations,
   noSelect,
 } from "../../style/main_style";
 
@@ -26,6 +27,12 @@ const FloatingMessage: React.FC = () => {
   const [showClose, setShowClose] = useState(false);
 
   const [timer, setTimer] = useState(0);
+
+  const [render, setRender] = useState(false);
+
+  const onAnimationEnd = (): void => {
+    if (!show) setRender(false);
+  };
 
   // Hide message
   const hideMessage = useCallback(() => {
@@ -52,26 +59,28 @@ const FloatingMessage: React.FC = () => {
   useEffect(() => {
     // If show is setted to true
     if (show) {
+      setRender(true);
       if (timer === 0 && timeoutTime > 0) createTimeout(timeoutTime);
     } else if (!show) {
       if (timer !== 0) removeTimeout();
     }
   }, [show, timeoutTime, createTimeout, removeTimeout, timer]);
 
-  return (
+  return render ? (
     <MessageContainer
       onMouseEnter={() => setShowClose(true)}
       onMouseLeave={() => {
         setShowClose(false);
       }}
       show={show}
+      onAnimationEnd={onAnimationEnd}
     >
       <MessageClose show={showClose} onClick={hideMessage}>
         <CloseIcon color="inherit" fontSize="inherit" />
       </MessageClose>
       <MessageText>{message}</MessageText>
     </MessageContainer>
-  );
+  ) : null;
 };
 
 export default FloatingMessage;
@@ -85,10 +94,6 @@ const MessageContainer = styled(ContainerStyled)<{ show: boolean }>`
   min-height: 6em;
   /* Z-index */
   z-index: 1;
-  /* Opacity */
-  opacity: ${(props) => (props.show ? 1 : 0)};
-  /* Transform */
-  transform: ${(props) => (props.show ? "translateY(0)" : "translateY(100%)")};
   /* Position */
   position: fixed;
   bottom: 2em;
@@ -107,8 +112,11 @@ const MessageContainer = styled(ContainerStyled)<{ show: boolean }>`
   -moz-box-shadow: ${shadows.hardShadow};
   -webkit-box-shadow: ${shadows.hardShadow};
   box-shadow: ${shadows.hardShadow};
-  /* Transition */
-  transition: ${mainTransition};
+  /* Animation */
+  animation: ${(props) =>
+    props.show
+      ? animations.bottomToTopAndFadeIn
+      : animations.topToBottomAndFadeOut} 0.2s;
   /* Media medium size */
   @media (max-width: ${media.mediumSize}) {
     min-width: 100%;

@@ -41,7 +41,8 @@ const LandingPageContainerStyled = styled(MainBGContainerStyled)`
   min-height: 100vh;
   height: auto;
   /* Margin, Padding, Border */
-  padding-top: 5em;
+  padding-top: 10em;
+  padding-bottom: 2em;
 `;
 
 // MainPage logo

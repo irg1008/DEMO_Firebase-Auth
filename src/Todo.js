@@ -3,18 +3,17 @@
 // TODO: Ver si pasamos los mensajes con las rutas de log y sign y si lo hacemos cambiando las rutas en plan sign => sign/email
 // TODO: Añadir el forgot password y el change username.
 // TODO: Revisar si algún componente se puede convertir a functional y limpiar tipos..
-// TODO: Hide navbar on certain routes. (Importance level 0) => navigation context to show hide with animation
+// TODO: Hide navbar on certain routes. (Importance level 0) => navigation context to hide/show
 // TODO: Personalize verify and email log and sign emails and check how to redirect to page directly and html template (Importance level 0)
-// TODO: Add animations like navbar up on phone or floating message out. (Importance level 0)
+// TODO: Clean animations on navbar and others.
 // TODO: Finish log in with email link. And send sign or log in email checking if user already exist value in user.
-// TODO: Remove all overlays and show every time hidden. i.e loading gif. See this page: https://czaplinski.io/blog/super-easy-animation-with-react-hooks/
+// TODO: Clean in a better the wayt the hide on elements when finishing animation
 // TODO: Change the forms to a context and reducer.
 // TODO: Revisar y comentar.
 // TODO: Convert floating context to a queue of floating messages and good timeput, etc
-// TODO: Check temp mail are not valids. https://www.email-validator.net/api.html
 // TODO: Change from styled-components to functional css and itcss or css preproccessor
 // TODO: Cookie banner. See how to use with floating msg correctly.
 // TODO: Reduce all form to the maximum
 // TODO: If signed with google and adds password => Link provider with email/password.
 /////////////////////////////////////////////////
-// FIXME: Clean all functions and repetaed code.
+// FIXME: Clean all functions and repeated code. Get all with wrapper ans uses.

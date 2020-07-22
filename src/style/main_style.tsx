@@ -67,6 +67,28 @@ export const animations = {
     }
   `,
 
+  bottomToTopAndFadeIn: keyframes`
+    0% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  `,
+
+  topToBottomAndFadeOut: keyframes`
+    0% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+  `,
+
   shakeAnimation: keyframes`
     30% {transform: rotate(0deg);}
     35% {transform: rotate(1.5deg);}

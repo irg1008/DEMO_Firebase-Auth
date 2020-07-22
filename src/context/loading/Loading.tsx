@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 // Styled-Components
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { ContainerStyled, media, animations } from "../../style/main_style";
 
 // Loading component.
@@ -19,16 +19,33 @@ import Logo from "../../components/logo";
  * @param {*} props
  * @returns
  */
-const Loading: React.FC = () => (
-  <OverlayContainerStyled show={useLoading().state.loading}>
-    <LoadingContainerStyled>
-      <LoadinLogoStyled>
-        <Logo />
-      </LoadinLogoStyled>
-      <LoadingSpinnerStyled />
-    </LoadingContainerStyled>
-  </OverlayContainerStyled>
-);
+const Loading: React.FC = () => {
+  const { loading } = useLoading().state;
+
+  const [render, setRender] = useState(false);
+
+  const onAnimationEnd = (): void => {
+    if (!loading) setRender(false);
+  };
+
+  useEffect(() => {
+    // If show is setted to true
+    if (loading) {
+      setRender(true);
+    }
+  }, [loading]);
+
+  return render ? (
+    <OverlayContainerStyled onAnimationEnd={onAnimationEnd} show={loading}>
+      <LoadingContainerStyled>
+        <LoadinLogoStyled>
+          <Logo />
+        </LoadinLogoStyled>
+        <LoadingSpinnerStyled />
+      </LoadingContainerStyled>
+    </OverlayContainerStyled>
+  ) : null;
+};
 
 export default Loading;
 
@@ -49,8 +66,12 @@ const OverlayContainerStyled = styled(ContainerStyled)<{ show: boolean }>`
   opacity: ${(props) => (props.show ? 1 : 0)};
   /* Pointer-Events */
   pointer-events: ${(props) => (props.show ? "default" : "none")};
-  /* Transition */
-  transition: opacity 0.5s ease-in-out;
+  /* Animation */
+  animation: ${(props) =>
+    !props.show &&
+    css`
+      ${animations.fadeOutAnimation} 0.5s
+    `};
 `;
 
 // LoadingContainer

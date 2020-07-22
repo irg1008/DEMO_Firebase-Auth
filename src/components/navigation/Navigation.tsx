@@ -44,11 +44,41 @@ const Navigation: React.FC = () => {
   // Username
   const { authUser } = useFirebase().state;
 
-  // On username set => Record with.
+  ///
+  const prevScrollY = useRef(window.scrollY);
+
+  const [goingUp, setGoingUp] = useState(true);
+
+  // Ham menu is open.
+  const [isActive, setIsActive] = useState(false);
+
   useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const slideToHide = 250;
+      const slideToShow = 20;
+
+      if (currentScrollY >= prevScrollY.current + slideToHide) {
+        setGoingUp(false);
+        prevScrollY.current = currentScrollY;
+      } else if (currentScrollY <= prevScrollY.current - slideToShow) {
+        setGoingUp(true);
+        prevScrollY.current = currentScrollY;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
     if (usernameRef.current)
       setUserWidth(usernameRef.current.children[0].scrollWidth);
-  }, []);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [goingUp]);
+
+  // Show menu always on ham active
+  useEffect(() => {
+    setGoingUp(true);
+  }, [isActive]);
 
   // Render username.
   const renderUsername = (
@@ -64,9 +94,6 @@ const Navigation: React.FC = () => {
       )}
     </UsernameContainer>
   );
-
-  // Ham menu is open.
-  const [isActive, setIsActive] = useState(false);
 
   // Toggle ham menu.
   const toggleButton = () => setIsActive(!isActive);
@@ -101,7 +128,7 @@ const Navigation: React.FC = () => {
 
   return (
     <NavbarContainer>
-      <Navbar>
+      <Navbar show={goingUp || isActive}>
         {LogoAndHamburger}
         <List isActive={isActive}>
           <ListItem onClick={toggleButton}>
@@ -164,7 +191,7 @@ const NavbarBackground = styled.div<{ isActive: boolean }>`
 `;
 
 // Navbar container.
-const Navbar = styled.nav`
+const Navbar = styled.nav<{ show: boolean }>`
   width: 100%;
   height: auto;
   /* z-index */
@@ -183,6 +210,10 @@ const Navbar = styled.nav`
   -moz-box-shadow: ${shadows.hardShadow};
   -webkit-box-shadow: ${shadows.hardShadow};
   box-shadow: ${shadows.hardShadow};
+  /* Transform */
+  transform: ${(props) => (props.show ? "translateY(0)" : "translateY(-100%)")};
+  /* Transition */
+  transition: transform ease-out 0.5s;
   /* Media medium size */
   @media (max-width: ${media.mediumSize}) {
     /* Flexbox */
