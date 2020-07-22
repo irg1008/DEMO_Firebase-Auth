@@ -55,8 +55,8 @@ const Navigation: React.FC = () => {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
-      const slideToHide = 250;
+
+      const slideToHide = 400;
       const slideToShow = 20;
 
       if (currentScrollY >= prevScrollY.current + slideToHide) {
@@ -211,16 +211,17 @@ const Navbar = styled.nav<{ show: boolean }>`
   -moz-box-shadow: ${shadows.hardShadow};
   -webkit-box-shadow: ${shadows.hardShadow};
   box-shadow: ${shadows.hardShadow};
-  /* Transform */
-  transform: ${(props) => (props.show ? "translateY(0)" : "translateY(-100%)")};
-  /* Transition */
-  transition: transform ease-out 0.5s;
   /* Media medium size */
   @media (max-width: ${media.mediumSize}) {
     /* Flexbox */
     flex-direction: column;
     /* Margin, Padding, Border */
     padding: 0 2em;
+    /* Transform */
+    transform: ${(props) =>
+      props.show ? "translateY(0)" : "translateY(-100%)"};
+    /* Transition */
+    transition: transform ease-out 0.5s;
   }
 `;
 

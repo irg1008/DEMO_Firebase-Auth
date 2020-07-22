@@ -61,6 +61,7 @@ const App: React.FC = () => {
           <ProtectedRoutes />
         </>
       )}
+      <div style={{ height: "5000px" }}></div>
     </>
   );
 };
