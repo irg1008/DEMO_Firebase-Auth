@@ -30,7 +30,7 @@ type IShowPasswordProps = {
    *
    * @type {*}
    */
-  onClick: any;
+  setHidddenPass: (hiddenPass: boolean) => void;
 };
 
 /**
@@ -38,85 +38,115 @@ type IShowPasswordProps = {
  *
  * @param {IShowPasswordProps} {
  *   hiddenPass,
- *   onClick,
+ *   setHidddenPass,
  * }
  * @returns
  */
 const ShowPassword: React.FC<IShowPasswordProps> = ({
   hiddenPass,
-  onClick,
+  setHidddenPass,
 }: IShowPasswordProps) => {
   // Visibility msg.
   const visibilityMsg = hiddenPass
-    ? "Ocultar Contraseña"
-    : "Mostrar Contraseña";
+    ? "Mostrar Contraseña"
+    : "Ocultar Contraseña";
+
+  // User tip.
+  const tip = hiddenPass
+    ? "Pincha en el icono para mostrar la contraseña"
+    : "Pincha en el icono para esconder la contraseña";
 
   // Hovering icon.
   const [isHovering, setIsHovering] = useState(false);
 
+  /**
+   * On mouse enter => Hover is true.
+   *
+   */
+  const onMouseEnter = (): void => setIsHovering(true);
+
+  /**
+   * On mouse leave => Hover is false.
+   *
+   */
+  const onMouseLeave = (): void => setIsHovering(false);
+
+  /**
+   * Function that toggles hiddenPass to update it in parent.
+   *
+   */
+  const togglePassword = () => setHidddenPass(!hiddenPass);
+
+  /**
+   * Visibility icon chooser.
+   *
+   * @returns {JSX.Element}
+   */
+  const visibilityIcon = (): JSX.Element => {
+    const fontSize = "small";
+
+    return hiddenPass ? (
+      <VisibilityOff {...{ fontSize }} />
+    ) : (
+      <Visibility {...{ fontSize }} />
+    );
+  };
+
   return (
-    <ShowContainer>
-      <TextContainer isHovering={isHovering}>
-        <Title5 title={visibilityMsg} />
+    <ShowContainer {...{ onMouseEnter, onMouseLeave }}>
+      <TextContainer title={tip} {...{ isHovering }}>
+        <TextToAnimate {...{ isHovering }}>
+          <Title5 title={visibilityMsg} />
+        </TextToAnimate>
       </TextContainer>
-      <IconContainer
-        onMouseEnter={() => setIsHovering(true)}
-        onMouseLeave={() => {
-          setIsHovering(false);
-        }}
-        onClick={onClick}
-      >
-        {hiddenPass ? (
-          <VisibilityOff fontSize="small" />
-        ) : (
-          <Visibility fontSize="small" />
-        )}
-      </IconContainer>
+      <IconContainer onClick={togglePassword}>{visibilityIcon()}</IconContainer>
     </ShowContainer>
   );
 };
 
 export default ShowPassword;
 
-/* Styled-Components */
 // Visibility wrapper.
 const ShowContainer = styled(ContainerStyled)`
-  width: 100%;
+  width: auto;
   height: 2em;
   /* Flexbox */
   justify-content: flex-end;
   flex-direction: row;
   /* Margin, Padding, Border */
+  margin-left: auto;
   margin-bottom: 0.8em;
 `;
 
 // Visibility title container.
 const TextContainer = styled(ContainerStyled)<{ isHovering: boolean }>`
   height: 100%;
+  /* Overflow */
+  overflow: hidden;
   /* Flexbox */
   flex-direction: row;
-  /* Margin, Padding, Border */
-  margin-right: 0.5em;
+  /* No select */
+  ${(props) => !props.isHovering && noSelect}
+`;
+
+// Title styled.
+const TextToAnimate = styled.div<{ isHovering: boolean }>`
   /* Font */
   color: ${colors.mainBlack};
   /* Transition */
   transition: ${mainTransition};
+  /* Margin, Padding, Border */
+  margin-right: 0.5em;
   /* Opacity */
   opacity: ${(props) => (props.isHovering ? 1 : 0)};
   /* Transform */
   transform: ${(props) => !props.isHovering && "translateX(20%)"};
-  /* No select */
-  ${(props) => !props.isHovering && noSelect}
-  /* Cursor */
-  cursor: ${(props) => !props.isHovering && "default"};
-  `;
+`;
 
 // Visibility Container.
 const IconContainer = styled(ContainerStyled)`
   height: 100%;
   width: auto;
-  /* Position (works like z-index here) */
-  position: relative;
   /* Margin, Padding, Border */
   padding: 0.5em;
   border-radius: ${radius.mainRadius};

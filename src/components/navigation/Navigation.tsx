@@ -14,74 +14,107 @@ import {
 // Sign Out Button.
 import { SignOutButton } from ".";
 
-// Routes
+// Routes.
 import { ROUTES } from "../../routes";
 
-// Logo
+// Logo.
 import Logo from "../logo";
 
-// Authentication
+// Firebase context.
 import { useFirebase } from "../../context/firebase";
 
-// Hamburger
+// Hamburger animated icon.
 import { HamburgerThreeDYReverse as HamburgerIcon } from "react-animated-burgers";
 
 /**
  * Navigation component.
  *
- * @param {INavigationProps} {
- *   authContext,
- * }
  * @returns
  */
 const Navigation: React.FC = () => {
-  // Username width
+  // Username width.
   const [userWidth, setUserWidth] = useState(0);
 
   // Username DOM reference.
   const usernameRef = useRef<HTMLDivElement>(null);
 
-  // Username
+  // Auth user.
   const { authUser } = useFirebase().state;
 
-  ///
+  // Previous vertical scroll position.
   const prevScrollY = useRef(window.scrollY);
 
-  const [goingUp, setGoingUp] = useState(true);
+  // Show navbar.
+  const [showNav, setShowNav] = useState(true);
 
   // Ham menu is open.
   const [isActive, setIsActive] = useState(false);
 
+  // On user scrolls.
   useEffect(() => {
+    /**
+     * When users scrolls => Update setShowNav.
+     *
+     */
     const handleScroll = () => {
+      // Get the current scroll position.
       const currentScrollY = window.scrollY;
 
-      const slideToHide = 400;
+      // Distance for the nav to hide.
+      const slideToHide = 800;
+
+      // Distance for the nav to show.
       const slideToShow = 20;
 
+      // Update previous scroll to current.
+      const updateScroll = () => {
+        prevScrollY.current = currentScrollY;
+      };
+
+      // Current position is greater or equal than previous + the distance to hide => Hide navbar and update scroll position.
       if (currentScrollY >= prevScrollY.current + slideToHide) {
-        setGoingUp(false);
-        prevScrollY.current = currentScrollY;
-      } else if (currentScrollY <= prevScrollY.current - slideToShow) {
-        setGoingUp(true);
-        prevScrollY.current = currentScrollY;
+        // Hide navbar.
+        setShowNav(false);
+
+        // Update scroll position.
+        updateScroll();
+      }
+
+      // Current position is lesser or equal than previous - distance to show => Show navbar and update scroll position.
+      else if (currentScrollY <= prevScrollY.current - slideToShow) {
+        // Show navbar.
+        setShowNav(true);
+
+        // Update scroll position.
+        updateScroll();
       }
     };
 
+    // On mount => Set scroll listener.
     window.addEventListener("scroll", handleScroll, { passive: true });
 
+    // If the username is referenced, set the username width to thw width of the child.
+    // i.e.: Username container has 140px, but child occupies 250px. We save this 250px and compare it later to the 140px to overflow text if needed.
     if (usernameRef.current)
       setUserWidth(usernameRef.current.children[0].scrollWidth);
 
+    // On component dismount => Remove scroll listener.
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [goingUp]);
+  }, [showNav]);
 
-  // Show menu always on ham active
-  useEffect(() => {
-    setGoingUp(true);
-  }, [isActive]);
+  // When menu is open => Always show.
+  useEffect(() => setShowNav(true), [isActive]);
 
-  // Render username.
+  // Toggle ham menu.
+  const toggleButton = () => setIsActive(!isActive);
+
+  /**
+   * Render username.
+   *
+   * @param {string} username
+   * @param {number} userMaxWidth
+   * @param {("px" | "%" | "em")} unit
+   */
   const renderUsername = (
     username: string,
     userMaxWidth: number,
@@ -95,9 +128,6 @@ const Navigation: React.FC = () => {
       )}
     </UsernameContainer>
   );
-
-  // Toggle ham menu.
-  const toggleButton = () => setIsActive(!isActive);
 
   // Logo and hamburger.
   const LogoAndHamburger = (
@@ -115,7 +145,7 @@ const Navigation: React.FC = () => {
     </NavMain>
   );
 
-  // Links
+  // Links.
   const Links = (
     <>
       <ListItem onClick={toggleButton}>
@@ -129,9 +159,9 @@ const Navigation: React.FC = () => {
 
   return (
     <NavbarContainer>
-      <Navbar show={goingUp || isActive}>
+      <Navbar show={showNav || isActive}>
         {LogoAndHamburger}
-        <List isActive={isActive}>
+        <List {...{ isActive }}>
           <ListItem onClick={toggleButton}>
             <NavLink exact to={ROUTES.LANDING.path}>
               Home
@@ -149,26 +179,25 @@ const Navigation: React.FC = () => {
           )}
         </List>
       </Navbar>
-      <NavbarBackground isActive={isActive} onClick={toggleButton} />
+      <NavbarBackground {...{ isActive }} onClick={toggleButton} />
     </NavbarContainer>
   );
 };
 
 export default Navigation;
 
-// Styled-Components
-// Navbar conatiner
+// Navbar conatiner.
 const NavbarContainer = styled.div`
   width: auto;
   height: auto;
+  /* Z-index */
+  z-index: 100;
 `;
 
-// Navbar background
+// Navbar background.
 const NavbarBackground = styled.div<{ isActive: boolean }>`
   width: 100vw;
   height: 100vh;
-  /* z-index */
-  z-index: 1;
   /* Position */
   position: fixed;
   /* Filter */
@@ -225,7 +254,7 @@ const Navbar = styled.nav<{ show: boolean }>`
   }
 `;
 
-// Main navbar space
+// Main navbar space.
 const NavMain = styled(ContainerStyled)`
   min-height: 5em;
   /* Flexbox */
@@ -237,7 +266,7 @@ const NavMain = styled(ContainerStyled)`
   }
 `;
 
-// Logo container
+// Logo container.
 const NavLogo = styled.div`
   width: 15em;
   min-width: 12em;
@@ -249,7 +278,7 @@ const NavLogo = styled.div`
   }
 `;
 
-// Ham icon
+// Ham icon.
 const NavHamIcon = styled(HamburgerIcon)`
   width: auto;
   height: 18px;
@@ -342,12 +371,12 @@ const NavLink = styled(RouterNavLink)`
   }
 `;
 
-// Username container
+// Username container.
 const UsernameContainer = styled.div<{ userMaxWidth: number; unit: string }>`
   max-width: ${({ userMaxWidth, unit }) => `${userMaxWidth}${unit}`};
 `;
 
-// Username
+// Username.
 const Username = styled.div`
   width: 100%;
   /* Overflow */

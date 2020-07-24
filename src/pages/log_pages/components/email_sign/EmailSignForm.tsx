@@ -14,7 +14,7 @@ import {
 import {
   IInputState,
   INITIAL_INPUT_STATE,
-  validateInput,
+  setInput,
 } from "../../../../components/form/form_elements/FormInput";
 
 // Auth context
@@ -130,9 +130,9 @@ const EmailSignForm: React.FC<IEmailSignProps> = ({
       setState((oldState) => {
         return {
           ...oldState,
-          email: validateInput(
+          email: setInput(
             oldState.email,
-            inputValidation.checkEmail(email.value).error
+            inputValidation.errorEmail(email.value)
           ),
         };
       });

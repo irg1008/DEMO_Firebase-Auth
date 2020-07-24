@@ -1,17 +1,18 @@
 import React from "react";
 
-// Styled-Components
+// Styled-Components.
 import { colors } from "../../../style/main_style";
 
-// react-spinners
+// react-spinners.
 // Types: https://www.davidhu.io/react-spinners/
-import Loader from "react-spinners/PuffLoader";
+import Loader from "react-spinners/BarLoader";
 
 /**
  * Loading element.
  *
- * @returns
  */
-const LoadingSpinner: React.FC = () => <Loader color={colors.darkBrown} />;
+const LoadingSpinner: React.FC = () => (
+  <Loader width={"100%"} color={colors.darkBrown} />
+);
 
 export default LoadingSpinner;

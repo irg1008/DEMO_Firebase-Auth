@@ -47,13 +47,12 @@ const FormLink: React.FC<IFormLinkProps> = ({
 }: IFormLinkProps) => (
   <LinkContainer>
     {text}
-    <LinkStyled to={to}>{linkText}</LinkStyled>
+    <LinkStyled {...{ to }}>{linkText}</LinkStyled>
   </LinkContainer>
 );
 
 export default FormLink;
 
-/* Styled-Components */
 // Link container.
 const LinkContainer = styled(ContainerStyled)`
   width: 100%;

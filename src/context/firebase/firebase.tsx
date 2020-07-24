@@ -49,6 +49,13 @@ class Firebase {
    */
   private firestore: firebase.firestore.Firestore;
 
+  /**
+   * Users collection. (Users database table).
+   *
+   * @private
+   * @type {firestore.CollectionReference}
+   * @memberof Firebase
+   */
   private userCollection: firestore.CollectionReference;
 
   /**
@@ -65,38 +72,54 @@ class Firebase {
     this.auth.useDeviceLanguage();
     this.auth.setPersistence(firebaseApp.auth.Auth.Persistence.LOCAL);
 
-    // Initialices the Google provider
+    // Initialices the Google provider.
     this.googleProvider = new firebaseApp.auth.GoogleAuthProvider();
 
-    // Initialices the firebase database and  firestore.
+    // Initialices the firebase database and firestore.
     this.firestore = firebaseApp.firestore();
 
-    // User collection
+    // Gets user collection from firestore.
     this.userCollection = this.firestore.collection("users");
   }
 
+  /**
+   * Change username of user document in users table.
+   *
+   * @memberof Firebase
+   */
   doChangeFirestoreUsername = (fullname: string) => {
+    // Logged user.
     const user = this.auth.currentUser;
-    if (user)
-      this.userCollection.doc(user.uid).set({
-        fullname,
-      });
+
+    // If user exists.
+    if (user) {
+      // Change the document of the user with user.id and update fullName field.
+      return this.userCollection.doc(user.uid).set({ fullname });
+    }
   };
 
+  /**
+   * Get user's username from firestore database.
+   *
+   * @memberof Firebase
+   */
   doGetFirestoreUsername = async () => {
+    // Logged user.
     const user = this.auth.currentUser;
+
+    // If user exists.
     if (user) {
+      // Wait for the user document.
       const userDoc = await this.userCollection.doc(user.uid).get();
+
+      // Return promise data with user document.
       return userDoc.data();
     }
   };
 
-  // Auth API.
   /**
    * Creates a new user with email and password.
    *
-   * @param {string} email Email to create account.
-   * @param {string} password Password to create account.
    * @memberof Firebase
    */
   doCreateUserWithEmailAndPassword = (email: string, password: string) =>
@@ -105,8 +128,6 @@ class Firebase {
   /**
    * Signs In a new user with email and password.
    *
-   * @param {string} email Email to sign in.
-   * @param {string} password Password to sign in.
    * @memberof Firebase
    */
   doSignInWithEmailAndPassword = (email: string, password: string) =>
@@ -122,7 +143,6 @@ class Firebase {
   /**
    * Password reset of given mail.
    *
-   * @param {string} email Email to reset password of.
    * @memberof Firebase
    */
   doPasswordReset = (email: string) => this.auth.sendPasswordResetEmail(email);
@@ -130,13 +150,24 @@ class Firebase {
   /**
    * Update the password of user.
    *
-   * @param {string} password New password.
    * @memberof Firebase
    */
   doPasswordUpdate = (password: string) => {
-    if (this.auth.currentUser)
-      return this.auth.currentUser.updatePassword(password);
-    return new Promise(() => {});
+    return new Promise((resolve, reject) => {
+      // Logged user.
+      const user = this.auth.currentUser;
+
+      // If user exists.
+      if (user) {
+        // Send email verification.
+        resolve(user.updatePassword(password));
+      }
+      // If user does not exist.
+      else {
+        // Return empty promise.
+        reject("No user found for wich we can update the password");
+      }
+    });
   };
 
   /**
@@ -145,18 +176,34 @@ class Firebase {
    * @memberof Firebase
    */
   doSendSignInLinkToEmail = (email: string) => {
+    // Action code settings.
+    // url: URL to redirect on email link click.
     const actionCodeSettings: firebase.auth.ActionCodeSettings = {
       ...{ url: "silkandrock.com" },
     };
 
+    // Send sign email to given email.
     return this.auth.sendSignInLinkToEmail(email, actionCodeSettings);
   };
 
-  doSendEmailVerification = (user?: firebase.User) => {
-    if (!user && this.auth.currentUser)
-      return this.auth.currentUser.sendEmailVerification();
-    else if (user) return user.sendEmailVerification();
-    else return new Promise(() => {});
+  /**
+   * Send email for verification.
+   *
+   * @memberof Firebase
+   */
+  doSendEmailVerification = (user: firebase.User) => {
+    return new Promise((resolve, reject) => {
+      // If user exists.
+      if (user) {
+        // Send email verification.
+        resolve(user.sendEmailVerification());
+      }
+      // If user does not exist.
+      else {
+        // Return empty promise.
+        reject("No user found for wich we can send and email verification");
+      }
+    });
   };
 
   /**
@@ -168,7 +215,7 @@ class Firebase {
     this.auth.signInWithPopup(this.googleProvider);
 
   /**
-   * Sign with google redirect
+   * Sign with google redirect.
    *
    * @memberof Firebase
    */
@@ -188,20 +235,42 @@ class Firebase {
    * @memberof Firebase
    */
   doCreateProfile = (displayName: string, photoURL?: string) => {
-    if (this.auth.currentUser) {
+    // Logged user.
+    const user = this.auth.currentUser;
+
+    // If user exists.
+    if (user) {
+      // Change user username from database.
       this.doChangeFirestoreUsername(displayName);
+
+      // Update the profile with the new displayName and/or photoURL.
       this.doUpdateProfile(displayName, photoURL);
     }
-
-    return new Promise(() => {});
   };
 
+  /**
+   * Update user profile.
+   *
+   * @memberof Firebase
+   */
   doUpdateProfile = (displayName: string, photoURL?: string) => {
-    if (this.auth.currentUser) {
-      return this.auth.currentUser.updateProfile({ displayName, photoURL });
-    }
+    return new Promise((resolve, reject) => {
+      // Logged user.
+      const user = this.auth.currentUser;
 
-    return new Promise(() => {});
+      // If user exists.
+      if (user) {
+        // Send email verification.
+        resolve(user.updateProfile({ displayName, photoURL }));
+      }
+      // If user does not exist.
+      else {
+        // Return empty promise.
+        reject(
+          "There is not user for wich we can change the displayName and/or photoURL"
+        );
+      }
+    });
   };
 
   /**
@@ -213,5 +282,6 @@ class Firebase {
     this.auth.fetchSignInMethodsForEmail(email);
 }
 
+// Firebase initialized class.
 const firebase = new Firebase();
 export default firebase;

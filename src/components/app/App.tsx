@@ -3,7 +3,7 @@ import React, { useLayoutEffect } from "react";
 // Firebase consumer.
 import { useFirebase } from "../../context/firebase";
 
-// FloatingMessage consumer.
+// FloatingMessage component.
 import FloatingMessage from "../../context/floating_message";
 
 // Loading component and context.
@@ -12,27 +12,27 @@ import Loading, { useLoading } from "../../context/loading";
 // Navigation.
 import { Navigation } from "../navigation";
 
-// Routes.
+// Routes to render.
 import ProtectedRoutes from "../../routes";
 
 /**
- * App class.
+ * Main component.
  *
  * @returns
  */
 const App: React.FC = () => {
-  // FirebaseContext => authHasLoaded value.
-  // We are waiting for firebase to check auth change on the provider.
+  // FirebaseContext.
+  // We are waiting for firebase to check if auth ha sloaded on the provider.
   const { authHasLoaded } = useFirebase().state;
 
-  // LoadingContext => Dispatch function to change the state with reducer.
+  // LoadingContext => Dispatch function to change loading state.
   const appLoad = useLoading().dispatch;
 
   // On component mounted => Set app on loading state until firebase returns API fetch is successful.
   // VALUES:
   // - authHasLoaded: Check for auth load changes.
   // - appLoad: Uses appLoad dispatch.
-  // NOTE: Difference between useLayoutEffect and useEffect hooks is well explained in URL passed but mainly the difference is that the first is called before the screen is updated. We use it in this case to prevent screen flashing before setting the load component to show.
+  // NOTE: Difference between useLayoutEffect and useEffect hooks is well explained in URL below but mainly the difference is that the first is called before the screen is updated. We use it in this case to prevent screen flashing before showing the load component.
   // - URL: https://daveceddia.com/useeffect-vs-uselayouteffect/
   useLayoutEffect(() => {
     // Start loading app.
@@ -45,7 +45,6 @@ const App: React.FC = () => {
     }
   }, [authHasLoaded, appLoad]);
 
-  // RETURN ZONE.
   return (
     <>
       {/* Loading overlay. */}
@@ -61,7 +60,6 @@ const App: React.FC = () => {
           <ProtectedRoutes />
         </>
       )}
-      <div style={{ height: "5000px" }}></div>
     </>
   );
 };

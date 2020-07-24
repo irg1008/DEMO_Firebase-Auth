@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 
-// Styled-Components
+// Styled-Components.
 import styled from "styled-components";
 import {
   ContainerStyled,
@@ -12,35 +12,63 @@ import {
   noSelect,
 } from "../../style/main_style";
 
-// Floating message context
+// Floating message context.
 import { useFloatingMsg } from "./";
 
-// CloseIcon
+// Close icon.
 import CloseIcon from "@material-ui/icons/Close";
 
-const FloatingMessage: React.FC = () => {
-  // Floating context
-  const { show, timeoutTime, message } = useFloatingMsg().state;
-  const floatingMsgDispatch = useFloatingMsg().dispatch;
+// Floating Message type.
+import { IFloatingMsg } from "./FloatingMessage.types";
 
-  // Show close button
+/**
+ * Floating message.
+ *
+ * @param {IFloatingMsg} {
+ *   name,
+ *   message,
+ *   timeoutTime,
+ * }
+ * @returns
+ */
+const FloatingMessage: React.FC<IFloatingMsg> = ({
+  name,
+  message,
+  timeoutTime,
+}: IFloatingMsg) => {
+  // Show or hide floating message.
+  // On hide => triggers the removal of the list of messages.
+  const [show, setShow] = useState(true);
+
+  // Show/hide close button.
   const [showClose, setShowClose] = useState(false);
 
-  const [timer, setTimer] = useState(0);
+  // Timer for the floating message to dissapear.
+  // Any numbe ris valid for the initial timer.
+  const INITIAL_TIMER = 0;
+  const [timer, setTimer] = useState(INITIAL_TIMER);
 
-  const [render, setRender] = useState(false);
+  // Floating context dispatch.
+  const floatingMsgDispatch = useFloatingMsg().dispatch;
 
+  /**
+   * On floating message animation is over => Remove floating from array.
+   *
+   */
   const onAnimationEnd = (): void => {
-    if (!show) setRender(false);
+    // If show is set to false => remove floating from floating array.
+    if (!show) floatingMsgDispatch({ type: "REMOVE_FLOATING", name });
   };
 
-  // Hide message
+  // Hide message.
   const hideMessage = useCallback(() => {
-    floatingMsgDispatch({ type: "HIDE_FLOATING" });
-  }, [floatingMsgDispatch]);
+    // Set show to false.
+    setShow(false);
+  }, []);
 
+  // Creates timeout timer for floating message with passed timeoutTime. => Then hides the message.
   const createTimeout = useCallback(
-    (timeoutTime?: number) => {
+    (timeoutTime: number) => {
       setTimer(
         setTimeout(() => {
           hideMessage();
@@ -50,54 +78,49 @@ const FloatingMessage: React.FC = () => {
     [hideMessage]
   );
 
+  // On timer changes => Removes the timeout of the floating message and resets the initial state of timer.
   const removeTimeout = useCallback(() => {
+    // Clear timeout.
     clearTimeout(timer);
-    setTimer(0);
+
+    // Reset to initial value.
+    setTimer(INITIAL_TIMER);
   }, [timer]);
 
-  // <= 0 = infinite.
+  // On show and timer change.
   useEffect(() => {
-    // If show is setted to true
-    if (show) {
-      setRender(true);
-      if (timer === 0 && timeoutTime > 0) createTimeout(timeoutTime);
-    } else if (!show) {
-      if (timer !== 0) removeTimeout();
-    }
-  }, [show, timeoutTime, createTimeout, removeTimeout, timer]);
+    // If show.
+    // If timer is not setted (equals initial value (0)) and the timeout is greater than 0 => Create timeout.
+    // If timeout is less or equal to 0, not timeout will be created and message will show infinite time.
+    if (show && timer === 0 && timeoutTime > 0) createTimeout(timeoutTime);
+    // If floating messgae is hiden and timer is running. => Remove timeout.
+    else if (!show && timer !== 0) removeTimeout();
+  }, [show, timer, timeoutTime, createTimeout, removeTimeout]);
 
-  return render ? (
-    <MessageContainer
-      onMouseEnter={() => setShowClose(true)}
-      onMouseLeave={() => {
-        setShowClose(false);
-      }}
-      show={show}
-      onAnimationEnd={onAnimationEnd}
-    >
+  // On mouse enter => Set the close button to show.
+  const onMouseEnter = () => setShowClose(true);
+
+  // On mouse leave => Set the close button to hide.
+  const onMouseLeave = () => setShowClose(false);
+
+  return (
+    <MessageContainer {...{ onMouseLeave, onMouseEnter, show, onAnimationEnd }}>
       <MessageClose show={showClose} onClick={hideMessage}>
         <CloseIcon color="inherit" fontSize="inherit" />
       </MessageClose>
       <MessageText>{message}</MessageText>
     </MessageContainer>
-  ) : null;
+  );
 };
 
 export default FloatingMessage;
 
-// Styled-Components
-// Message container
+// Message container.
 const MessageContainer = styled(ContainerStyled)<{ show: boolean }>`
-  min-width: 20em;
-  max-width: 25em;
+  width: 25em;
   height: auto;
-  min-height: 6em;
-  /* Z-index */
-  z-index: 1;
   /* Position */
-  position: fixed;
-  bottom: 2em;
-  right: 2em;
+  position: relative;
   /* No select */
   ${(props) => !props.show && noSelect}
   /* Pointer-Events */
@@ -106,6 +129,7 @@ const MessageContainer = styled(ContainerStyled)<{ show: boolean }>`
   background-color: ${colors.blue};
   /* Margin, Padding, Border */
   padding: 2em;
+  margin-top: 1em;
   border: 2px solid ${colors.darkerBlue};
   border-radius: 0.8em;
   /* Shadow */
@@ -119,12 +143,9 @@ const MessageContainer = styled(ContainerStyled)<{ show: boolean }>`
       : animations.topToBottomAndFadeOut} 0.2s;
   /* Media medium size */
   @media (max-width: ${media.mediumSize}) {
-    min-width: 100%;
-    /* Position */
-    bottom: 0;
-    right: 0;
+    width: 100%;
     /* Margin, Padding, Border */
-    border-radius: 1em 1em 0 0;
+    border-radius: 0;
   }
 `;
 
@@ -155,7 +176,7 @@ const MessageClose = styled(ContainerStyled)<{ show: boolean }>`
   }
 `;
 
-// Message text
+// Message text.
 const MessageText = styled.p`
   /* Font */
   text-transform: uppercase;

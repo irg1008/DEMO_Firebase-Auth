@@ -8,7 +8,7 @@ import { ContainerStyled, media } from "../../../style/main_style";
 import { Title5 } from "../../titles/Titles";
 
 // Firebase class object.
-import { firebase } from "../../../context/firebase";
+import firebase from "../../../context/firebase";
 
 // Google logo.
 import { googleIcon } from "../../../assets";
@@ -32,7 +32,7 @@ const SignWithGoogle: React.FC<ISignWithGoogleProps> = ({
   const onClick = () => firebase.doSignInWithGoogleWithRedirect();
 
   return (
-    <GoogleContainer onClick={onClick}>
+    <GoogleContainer {...{ onClick }}>
       <GoogleLogo src={googleIcon} alt="google_icon" />
       <TextContainer>
         <Title5 title={text} />
@@ -44,7 +44,6 @@ const SignWithGoogle: React.FC<ISignWithGoogleProps> = ({
 // Google sign encapsullated with firebase and react for routing and using of firebase functions. Done this way for reusability.
 export default SignWithGoogle;
 
-/* Styled-Components */
 // Google container.
 const GoogleContainer = styled(ContainerStyled)`
   width: 100%;

@@ -22,7 +22,7 @@ import {
 import FormInput, {
   IInputState,
   INITIAL_INPUT_STATE,
-  validateInput,
+  setInput,
 } from "../../../../components/form/form_elements/FormInput";
 
 // Sign without password
@@ -40,7 +40,7 @@ import FormCreator, {
 import inputValidation from "../../../../components/form/utils";
 
 // Firebase
-import { firebase } from "../../../../context/firebase";
+import firebase from "../../../../context/firebase";
 
 type ISignUpState = IGenericFormState & {
   username: IInputState;
@@ -110,21 +110,26 @@ const SignUpForm: React.FC = () => {
   const signUpWithFirebase = () => {
     firebase
       .doCreateUserWithEmailAndPassword(email.value, confirmPassword.value)
-      .then(() => {
+      .then(({ user }: firebase.auth.UserCredential) => {
         // Update user username.
         firebase.doCreateProfile(username.value);
 
         // Send verification message.
-        firebase.doSendEmailVerification().then(() => {
-          // Set message
-          floatingMsgContext.dispatch({
-            type: "SHOW_FLOATING",
-            message:
-              'Te hemos enviado un correo a "' +
-              email.value +
-              '" para confirmar la cuenta y poder iniciar sesión',
+        // If user correct from result.
+        if (user) {
+          firebase.doSendEmailVerification(user).then(() => {
+            // Set message
+            floatingMsgContext.dispatch({
+              type: "ADD_FLOATING",
+              name: "enviarCorreoVerificacion",
+              message:
+                'Te hemos enviado un correo a "' +
+                email.value +
+                '" para confirmar la cuenta y poder iniciar sesión',
+              timeoutTime: "default",
+            });
           });
-        });
+        }
 
         // Force sign and route to log in.
         firebase.doSignOut().then(() => {
@@ -175,9 +180,9 @@ const SignUpForm: React.FC = () => {
       setState((oldState) => {
         return {
           ...oldState,
-          username: validateInput(
+          username: setInput(
             oldState.username,
-            inputValidation.checkUsername(username.value).error
+            inputValidation.errorUsername(username.value)
           ),
         };
       });
@@ -189,9 +194,9 @@ const SignUpForm: React.FC = () => {
       setState((oldState) => {
         return {
           ...oldState,
-          email: validateInput(
+          email: setInput(
             oldState.email,
-            inputValidation.checkEmail(email.value).error
+            inputValidation.errorEmail(email.value)
           ),
         };
       });
@@ -201,7 +206,7 @@ const SignUpForm: React.FC = () => {
   const emailAlreadyInUse = (): void =>
     setState({
       ...state,
-      email: validateInput(
+      email: setInput(
         email,
         "Este correo ya está en uso, inicia sesión o prueba con otro"
       ),
@@ -212,16 +217,16 @@ const SignUpForm: React.FC = () => {
       setState((oldState) => {
         return {
           ...oldState,
-          password: validateInput(
+          password: setInput(
             oldState.password,
-            inputValidation.checkPassword(password.value).error
+            inputValidation.errorPassword(password.value)
           ),
-          confirmPassword: validateInput(
+          confirmPassword: setInput(
             oldState.confirmPassword,
-            inputValidation.checkConfirmPassword(
+            inputValidation.errorPasswordConfirm(
               password.value,
               confirmPassword.value
-            ).error
+            )
           ),
         };
       });
@@ -232,16 +237,11 @@ const SignUpForm: React.FC = () => {
     setState({
       ...state,
       isLoading: false,
-      email: validateInput(email, "El dominio de email no es válido"),
+      email: setInput(email, "El dominio de email no es válido"),
     });
 
-  /**
-   * Toggles password visibility.
-   *
-   * @memberof SignUpForm
-   */
-  const togglePasswordVisibility = (): void =>
-    setState({ ...state, hiddenPass: !hiddenPass });
+  const setHidddenPass = (hiddenPass: boolean) =>
+    setState({ ...state, hiddenPass });
 
   // Form Content
   const formContent = (
@@ -288,16 +288,11 @@ const SignUpForm: React.FC = () => {
         hiddenPass={hiddenPass}
         required
       />
-      <ShowPassword
-        hiddenPass={hiddenPass}
-        onClick={togglePasswordVisibility}
-      />
+      <ShowPassword hiddenPass={hiddenPass} setHidddenPass={setHidddenPass} />
       <FormButton
         disabled={!isValidForm}
         loading={isLoading}
-        text={
-          isLoading ? "Comprobando que todo esté correcto..." : "Crear Cuenta"
-        }
+        text="Crear Cuenta"
       />
       <FormLink
         text="¿Ya estás registrado?"

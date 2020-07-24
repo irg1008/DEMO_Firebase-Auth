@@ -7,7 +7,7 @@ import React, {
 } from "react";
 
 // Firebase consumer
-import { firebase } from "../../../../context/firebase";
+import firebase from "../../../../context/firebase";
 
 // Form creator and input validations
 import FormCreator from "../../../../components/form";
@@ -23,7 +23,7 @@ import {
 import {
   IInputState,
   INITIAL_INPUT_STATE,
-  validateInput,
+  setInput,
 } from "../../../../components/form/form_elements/FormInput";
 import {
   INITIAL_GENERIC_FORM_STATE,
@@ -88,9 +88,9 @@ const CompleteSignUpForm: React.FC = () => {
       setState((oldState) => {
         return {
           ...oldState,
-          email: validateInput(
+          email: setInput(
             oldState.username,
-            inputValidation.checkUsername(username.value).error
+            inputValidation.errorUsername(username.value)
           ),
         };
       });

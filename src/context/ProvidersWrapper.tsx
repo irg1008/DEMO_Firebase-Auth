@@ -1,20 +1,32 @@
 import React from "react";
 
-// PROVIDERS
-// Firebase
+// PROVIDERS.
+// Firebase.
 import { FirebaseProvider } from "./firebase";
 
-// Loading
+// Loading.
 import { LoadingProvider } from "./loading";
 
-// Auth
+// Auth.
 import { AuthProvider } from "./auth";
 
-// Floating Message Provider
+// Floating Message.
 import { FloatingMsgProvider } from "./floating_message";
 
-// Set here all providers of context folder.
-const ProvidersWrapper: React.FC = ({ children }: any) => (
+// Provider props.
+type IProviderProps = {
+  children: React.ReactNode;
+};
+/**
+ * Wrap children with providers of all context => Works like a store of some kind.
+ *
+ * @param {IProviderProps} {
+ *   children,
+ * }
+ */
+const ProvidersWrapper: React.FC<IProviderProps> = ({
+  children,
+}: IProviderProps) => (
   <FirebaseProvider>
     <LoadingProvider>
       <AuthProvider>

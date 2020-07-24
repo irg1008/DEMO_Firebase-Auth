@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
-// Styled-Components
-import styled, { css } from "styled-components";
+// Styled-Components.
+import styled from "styled-components";
 import { ContainerStyled, media, animations } from "../../style/main_style";
 
 // Loading component.
@@ -10,50 +10,59 @@ import { LoadingSpinner } from "../../context/loading/loading_elements";
 // Loading consumer.
 import { useLoading } from ".";
 
-// Silk&Rock logo
+// Silk&Rock logo.
 import Logo from "../../components/logo";
 
 /**
  * Loading component.
  *
- * @param {*} props
  * @returns
  */
 const Loading: React.FC = () => {
+  // Loading context.
   const { loading } = useLoading().state;
 
+  // Render component.
+  // Set to not render at the en dof hide animation.
   const [render, setRender] = useState(false);
 
+  /**
+   * On animation end => Not render component.
+   *
+   */
   const onAnimationEnd = (): void => {
+    // If not loading => Not render.
     if (!loading) setRender(false);
   };
 
+  // On loading change.
   useEffect(() => {
-    // If show is setted to true
+    // If loading => Render.
     if (loading) {
       setRender(true);
     }
   }, [loading]);
 
   return render ? (
-    <OverlayContainerStyled onAnimationEnd={onAnimationEnd} show={loading}>
-      <LoadingContainerStyled>
-        <LoadinLogoStyled>
+    <FullContainer onAnimationEnd={onAnimationEnd} show={loading}>
+      <LoadingContainer>
+        <LoadingSpinner />
+        <LoadingLogo>
           <Logo />
-        </LoadinLogoStyled>
-        <LoadingSpinnerStyled />
-      </LoadingContainerStyled>
-    </OverlayContainerStyled>
+        </LoadingLogo>
+      </LoadingContainer>
+    </FullContainer>
   ) : null;
 };
 
 export default Loading;
 
-// Styled-Components
-// Full display container
-const OverlayContainerStyled = styled(ContainerStyled)<{ show: boolean }>`
+// Full display container.
+const FullContainer = styled(ContainerStyled)<{ show: boolean }>`
   width: 100vw;
   height: 100vh;
+  /* Flexbox */
+  justify-content: flex-start;
   /* z-index. Value of 999, to ensure is first layer */
   z-index: 999;
   /* Position */
@@ -68,35 +77,27 @@ const OverlayContainerStyled = styled(ContainerStyled)<{ show: boolean }>`
   pointer-events: ${(props) => (props.show ? "default" : "none")};
   /* Animation */
   animation: ${(props) =>
-    !props.show &&
-    css`
-      ${animations.fadeOutAnimation} 0.5s
-    `};
+      props.show ? animations.fadeInAnimation : animations.fadeOutAnimation}
+    0.5s;
 `;
 
-// LoadingContainer
-const LoadingContainerStyled = styled(ContainerStyled)`
-  width: 80%;
-  height: 10em;
+// Loading container.
+const LoadingContainer = styled(ContainerStyled)`
+  width: 100%;
+  height: 50%;
   /* Flexbox */
-  justify-content: space-around;
-  /* Font */
-  text-align: center;
+  justify-content: space-between;
 `;
 
-// Loading spinne rstyled
-const LoadingSpinnerStyled = styled(LoadingSpinner)`
-  /* Animation */
-  animation: ${animations.fadeInAnimation} 1s linear;
-`;
-
-// Loading text styled
-const LoadinLogoStyled = styled.div`
-  height: 2em;
-  /* Animation */
-  animation: ${animations.moveBottomFromTopAndFadeInAnimation} 1s ease-out;
-  /* Media */
+// Loading text styled.
+const LoadingLogo = styled.div`
+  width: 40em;
+  /* Media medium size */
   @media (max-width: ${media.mediumSize}) {
-    height: 1.8em;
+    width: 20em;
+  }
+  /* Media small size*/
+  @media (max-width: ${media.smallSize}) {
+    width: 15em;
   }
 `;

@@ -90,10 +90,9 @@ export const animations = {
   `,
 
   shakeAnimation: keyframes`
-    30% {transform: rotate(0deg);}
-    35% {transform: rotate(1.5deg);}
-    45% {transform: rotate(-1.5deg);}
-    50% {transform: rotate(0deg);}
+    30%, 50% {transform: rotate(0deg);}
+    35% {transform: rotate(1deg);}
+    45% {transform: rotate(-1deg);}
   `,
 };
 

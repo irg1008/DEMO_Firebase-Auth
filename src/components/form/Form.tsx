@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FormEvent } from "react";
 
 // Styled-Components.
 import styled from "styled-components";
@@ -12,11 +12,14 @@ import {
 // Titles.
 import { H1 } from "../../components/titles/Titles";
 
+// All forms shared state.
+// Form is loading and is valid.
 export type IGenericFormState = {
   isLoading: boolean;
   isValidForm?: boolean;
 };
 
+// Initial state for shared state across all forms.
 export const INITIAL_GENERIC_FORM_STATE: IGenericFormState = {
   isLoading: false,
   isValidForm: false,
@@ -27,7 +30,7 @@ type IFormCreatorProps = {
   /**
    * Title of form.
    *
-   * @type {string}
+   * @type {JSX.Element}
    */
   title: string;
 
@@ -37,23 +40,24 @@ type IFormCreatorProps = {
    *
    * @type {*}
    */
-  content: any;
+  content: JSX.Element;
 
   /**
    * Optional bottom component of form.
    * i.e.: Aditional info or alternative forms.
    *
-   * @type {*}
+   * @type {JSX.Element}
    */
-  bottomComponent?: any;
+  bottomComponent?: JSX.Element;
 
   /**
    * On submit function.
    *
-   * @type {*}
    */
-  onSubmit: any;
+  onSubmit: (e: FormEvent) => void;
 };
+
+//////////////////////
 
 /**
  * Form creator.
@@ -85,7 +89,9 @@ const FormCreator: React.FC<IFormCreatorProps> = ({
 
 export default FormCreator;
 
+//////////////////////
 /* Styled-Components */
+
 // Form title.
 const FormTitle = styled(H1)`
   width: 100%;

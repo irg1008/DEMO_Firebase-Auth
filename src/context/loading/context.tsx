@@ -1,14 +1,19 @@
 import React, { useContext, createContext, useReducer } from "react";
 
+// Loading state.
 type ILoadingState = {
+  /**
+   * Loading boolean value.
+   *
+   * @type {boolean}
+   */
   loading: boolean;
 };
 
+// Initial state for loading state.
 const INITIAL_STATE: ILoadingState = {
   loading: false,
 };
-
-type Action = { type: "SHOW_LOAD" } | { type: "HIDE_LOAD" };
 
 type ILoadingContext = {
   state: ILoadingState;
@@ -20,6 +25,32 @@ const INTIIAL_LOADING: ILoadingContext = {
   dispatch: () => {},
 };
 
+// Action type and payload values.
+type Action =
+  | {
+      /**
+       * Show loading.
+       *
+       * @type {"SHOW_LOAD"}
+       */
+      type: "SHOW_LOAD";
+    }
+  | {
+      /**
+       * Hide loading.
+       *
+       * @type {"HIDE_LOAD"}
+       */
+      type: "HIDE_LOAD";
+    };
+
+/**
+ * Loading context store.
+ *
+ * @param {ILoadingState} state
+ * @param {Action} action
+ * @returns
+ */
 const reducer = (state: ILoadingState, action: Action) => {
   switch (action.type) {
     case "SHOW_LOAD": {
@@ -34,18 +65,24 @@ const reducer = (state: ILoadingState, action: Action) => {
   }
 };
 
+// CONTEXT.
 const LoadingContext = createContext(INTIIAL_LOADING);
 
+
+// CONSUMER.
+/**
+ * Fucntional consumer.
+ *
+ */
 const useLoading = () => useContext(LoadingContext);
 
-const withLoading = (Component: any) => (props: any) => (
-  <LoadingContext.Consumer>
-    {(loadingContext) => (
-      <Component {...props} loadingContext={loadingContext} />
-    )}
-  </LoadingContext.Consumer>
-);
-
+// PROVIDER.
+/**
+ * Loading provider.
+ *
+ * @param {*} { children }
+ * @returns
+ */
 const LoadingProvider: React.FC = ({ children }: any) => {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
@@ -56,6 +93,4 @@ const LoadingProvider: React.FC = ({ children }: any) => {
   );
 };
 
-export { useLoading, withLoading, LoadingProvider };
-
-export type { ILoadingContext };
+export { useLoading, LoadingProvider };

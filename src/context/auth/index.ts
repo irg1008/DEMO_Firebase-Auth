@@ -1,9 +1,4 @@
 // Import loading consumer and provider.
-import { useAuth, AuthProvider, withAuth } from "./context";
+import { useAuth, AuthProvider } from "./context";
 
-// AuthContext type
-import type { IAuthContext } from "./context";
-
-export { useAuth, AuthProvider, withAuth };
-
-export type { IAuthContext };
+export { useAuth, AuthProvider };

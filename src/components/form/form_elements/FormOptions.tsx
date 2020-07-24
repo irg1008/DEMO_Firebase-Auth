@@ -61,7 +61,6 @@ const FormOptions: React.FC<IFormOptionsProps> = ({
 
 export default FormOptions;
 
-/* Styled-Components */
 // Form options container.
 const FormOptionsContainer = styled(ContainerStyled)`
   width: 90%;

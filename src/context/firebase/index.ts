@@ -1,16 +1,9 @@
 // Firebase consumer and provider
-import {
-  FirebaseProvider,
-  withFirebase,
-  useFirebase,
-} from "./context";
+import { FirebaseProvider, useFirebase } from "./context";
 
 // Import firebase
-import firebase from "./firebase"
+import firebase from "./firebase";
 
-// Type
-import type { IFirebaseContext } from "./context";
+export default firebase;
 
-export { FirebaseProvider, withFirebase, useFirebase, firebase };
-
-export type { IFirebaseContext };
+export { FirebaseProvider, useFirebase };

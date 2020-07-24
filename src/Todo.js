@@ -15,5 +15,8 @@
 // TODO: Cookie banner. See how to use with floating msg correctly.
 // TODO: Reduce all form to the maximum
 // TODO: If signed with google and adds password => Link provider with email/password.
+// TODO: Get the scroll up and down to a separate component useScrollDirection
+// TODO: Change all forms stuff to one useForm component or class.
+// TODO: Set hidde password as a wrapper
 /////////////////////////////////////////////////
 // FIXME: Clean all functions and repeated code. Get all with wrapper ans uses.

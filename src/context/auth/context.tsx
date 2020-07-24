@@ -1,21 +1,33 @@
 import React, { createContext, useReducer, useContext } from "react";
 
-// State types.
+// Auth context state.
 type IAuthState = {
+  /**
+   * Auth is passwordless.
+   *
+   * @type {boolean}
+   */
   authIsPasswordless: boolean;
 };
 
-// Initial state.
+// Initial auth context state.
 const INITIAL_STATE: IAuthState = {
   authIsPasswordless: false,
 };
 
-// Actio type and payload values.
-type Action = { type: "SET_AUTH_PASSWORDLESS"; authIsPasswordless: boolean };
-
 // Context state.
 type IAuthContext = {
+  /**
+   * Auth state.
+   *
+   * @type {IAuthState}
+   */
   state: IAuthState;
+
+  /**
+   * Auth dispatch reducer.
+   *
+   */
   dispatch: (action: Action) => void;
 };
 
@@ -25,8 +37,24 @@ const INITIAL_AUTH: IAuthContext = {
   dispatch: () => {},
 };
 
+// Action type and payload values.
+type Action = {
+  /**
+   * Action to execute.
+   *
+   * @type {"SET_AUTH_PASSWORDLESS"}
+   */
+  type: "SET_AUTH_PASSWORDLESS";
+  /**
+   * Auth with password value on especific action.
+   *
+   * @type {boolean}
+   */
+  authIsPasswordless: boolean;
+};
+
 /**
- * Reducer from useReducer hook.
+ * Reducer for auth actions.
  *
  * @param {IAuthState} state
  * @param {Action} action
@@ -39,32 +67,38 @@ const reducer = (state: IAuthState, action: Action) => {
       return { ...state, authIsPasswordless };
     }
     default:
-      throw new Error();
+      throw new Error("No such action exists on auth context");
   }
 };
 
-// CONTEXT
+// CONTEXT.
 const AuthContext = createContext(INITIAL_AUTH);
 
-// FUNCTIONAL CONSUMER
+// CONSUMER.
+/**
+ * Functional component auth consumer.
+ *
+ */
 const useAuth = () => useContext(AuthContext);
 
-// CLASS CONSUMER
-const withAuth = (Component: any) => (props: any) => (
-  <AuthContext.Consumer>
-    {(authContext) => <Component {...props} authContext={authContext} />}
-  </AuthContext.Consumer>
-);
-
-// PROVIDER
+// PROVIDER.
+// Provider props.
+type IProviderProps = {
+  children: React.ReactNode;
+};
 /**
  * Context provider.
  *
- * @param {*} { children }
+ * @param {IProviderProps} {
+ *   children,
+ * }
  * @returns
  */
-const AuthProvider: React.FC = ({ children }: any) => {
+const AuthProvider: React.FC<IProviderProps> = ({
+  children,
+}: IProviderProps) => {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
+  
   return (
     <AuthContext.Provider value={{ state, dispatch }}>
       {children}
@@ -72,5 +106,4 @@ const AuthProvider: React.FC = ({ children }: any) => {
   );
 };
 
-export { useAuth, AuthProvider, withAuth };
-export type { IAuthContext };
+export { useAuth, AuthProvider };

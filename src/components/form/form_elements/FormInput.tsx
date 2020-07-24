@@ -12,22 +12,34 @@ import {
 } from "../../../style/main_style";
 import styled, { css } from "styled-components";
 
+// Error input types.
+// string: normal error.
+// JSX.Element: i.e.: List of errors or any type of html element to indicate error.
+// null: no error passed.
+type IInputError = string | JSX.Element | null;
+
 // Exported state of input.
-// This is the state if a normal input:
-// - value: value of input.
+// This is the state of a normal input:
+// * value: value of input.
 // ? isValid: input is valid.
 // ? errorMsg: errorMsg if input is not valid.
-export type IInputError = string | JSX.Element | null;
-
-export type IInputState = {
+type IInputState = {
   value: string;
   isValid?: boolean;
   error: IInputError;
 };
 
-export const INITIAL_INPUT_STATE: IInputState = {
+// Initial input state.
+const INITIAL_INPUT_STATE: IInputState = {
   value: "",
   error: null,
+};
+
+//  Set input function.
+// It maintains the value and set the error to error passed.
+// Also isValid is changed depending on error.
+const setInput = (input: IInputState, error: IInputError): IInputState => {
+  return { ...input, error, isValid: error === null };
 };
 
 // Form input props.
@@ -114,18 +126,6 @@ type IFormInputProps = {
   maxLength?: number;
 };
 
-export const validateInput = (
-  input: IInputState,
-  error: IInputError
-): IInputState => {
-  input = {
-    ...input,
-    error,
-    isValid: error === null,
-  };
-  return input;
-};
-
 /**
  * Form input component.
  *
@@ -164,13 +164,9 @@ const FormInput: React.FC<IFormInputProps> = ({
     <InputBox>
       <Input
         id={name}
-        name={name}
-        value={value}
-        maxLength={maxLength}
-        onChange={onChange}
-        type={type === "password" ? (hiddenPass ? "password" : "text") : type}
-        placeholder={placeholder}
+        type={type === "password" ? (hiddenPass ? type : "text") : type}
         hasError={isValid === false}
+        {...{ name, value, maxLength, onChange, placeholder }}
       />
     </InputBox>
     {!isValid && (
@@ -180,8 +176,9 @@ const FormInput: React.FC<IFormInputProps> = ({
 );
 
 export default FormInput;
+export type { IInputState, IInputError };
+export { INITIAL_INPUT_STATE, setInput };
 
-/* Styled-Components */
 // Form Input.
 const InputContainer = styled(ContainerStyled)`
   width: 100%;

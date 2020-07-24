@@ -9,7 +9,7 @@ import React, {
 import FormInput, {
   IInputState,
   INITIAL_INPUT_STATE,
-  validateInput,
+  setInput,
 } from "../../../../components/form/form_elements/FormInput";
 import {
   FormOptions,
@@ -23,7 +23,7 @@ import FormCreator, {
   IGenericFormState,
   INITIAL_GENERIC_FORM_STATE,
 } from "../../../../components/form/Form";
-import { firebase } from "../../../../context/firebase";
+import firebase from "../../../../context/firebase";
 import { useHistory } from "react-router-dom";
 import { useFloatingMsg } from "../../../../context/floating_message";
 import { ROUTES } from "../../../../routes";
@@ -61,9 +61,6 @@ const LogInForm: React.FC = () => {
 
     setState({ ...state, [name]: { value } });
   };
-
-  const togglePasswordVisibility = (): void =>
-    setState({ ...state, hiddenPass: !hiddenPass });
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -114,13 +111,13 @@ const LogInForm: React.FC = () => {
       setState((oldState) => {
         return {
           ...oldState,
-          email: validateInput(
+          email: setInput(
             oldState.email,
-            inputValidation.checkEmail(email.value).error
+            inputValidation.errorEmail(email.value)
           ),
           password:
             oldState.password.isValid === false
-              ? validateInput(oldState.password, null)
+              ? setInput(oldState.password, null)
               : oldState.password,
         };
       });
@@ -134,9 +131,9 @@ const LogInForm: React.FC = () => {
           ...oldState,
           password:
             password.value.length === 0
-              ? validateInput(
+              ? setInput(
                   oldState.password,
-                  inputValidation.checkPassword(password.value).error
+                  inputValidation.errorPassword(password.value)
                 )
               : {
                   ...oldState.password,
@@ -150,13 +147,13 @@ const LogInForm: React.FC = () => {
   const wrongPassword = (): void =>
     setState({
       ...state,
-      password: validateInput(password, "La contraseña no es correcta"),
+      password: setInput(password, "La contraseña no es correcta"),
     });
 
   const emailExistsWithGoogle = (): void =>
     setState({
       ...state,
-      password: validateInput(
+      email: setInput(
         email,
         "Este correo está conectado a una cuenta de Google. Si quieres crearte una contraseña, inicia abajo y crea una en tu perfil"
       ),
@@ -165,7 +162,7 @@ const LogInForm: React.FC = () => {
   const emailExistsWithDirectLink = (): void =>
     setState({
       ...state,
-      email: validateInput(
+      email: setInput(
         email,
         "Esto correo no tiene contraseña, inicia mediante link y crea una en tu perfil"
       ),
@@ -174,16 +171,13 @@ const LogInForm: React.FC = () => {
   const userNotFound = (): void =>
     setState({
       ...state,
-      email: validateInput(
-        email,
-        "Este email no corresponde con ninguna cuenta"
-      ),
+      email: setInput(email, "Este email no corresponde con ninguna cuenta"),
     });
 
   const tooManyRequest = (): void => {
     const tryAgain = (): void =>
       setState((oldState) => {
-        return { ...oldState, email: validateInput(email, null) };
+        return { ...oldState, email: setInput(email, null) };
       });
 
     const error = (
@@ -200,21 +194,34 @@ const LogInForm: React.FC = () => {
 
     setState({
       ...state,
-      email: validateInput(email, error),
+      email: setInput(email, error),
     });
   };
 
-  const userNotVerified = (user: firebase.User): void => {
-    const resendEmailVerification = (): void => {
-      firebase.doSendEmailVerification(user);
-
-      floatingMsg.dispatch({
-        type: "SHOW_FLOATING",
-        message: 'Te hemos reenviado un correo a "' + email.value + '"',
-      });
+  const userNotVerified = (user: firebase.User) => {
+    const resendEmailVerification = async (user: firebase.User) => {
+      try {
+        await firebase.doSendEmailVerification(user);
+        floatingMsg.dispatch({
+          type: "ADD_FLOATING",
+          name: "reenviarCorreo",
+          message: 'Te hemos reenviado un correo a "' + email.value + '"',
+          timeoutTime: "default",
+        });
+      } catch (error) {
+        if (error.code === "auth/too-many-requests") {
+          floatingMsg.dispatch({
+            type: "ADD_FLOATING",
+            name: "demasiadosIntentos",
+            message:
+              "Te acabamos de enviar un correo de verificación. Revisa tu bandeja",
+            timeoutTime: "default",
+          });
+        }
+      }
 
       setState((oldState) => {
-        return { ...oldState, email: validateInput(email, null) };
+        return { ...oldState, email: setInput(email, null) };
       });
     };
 
@@ -223,7 +230,7 @@ const LogInForm: React.FC = () => {
         {"Verifica la cuenta para poder entrar. "}
         <span
           style={{ textDecoration: "underline", cursor: "pointer" }}
-          onClick={resendEmailVerification}
+          onClick={() => resendEmailVerification(user)}
         >
           Reenviar correo
         </span>
@@ -232,11 +239,14 @@ const LogInForm: React.FC = () => {
 
     setState({
       ...state,
-      email: validateInput(email, error),
+      email: setInput(email, error),
       isLoading: false,
       isValidForm: false,
     });
   };
+
+  const setHidddenPass = (hiddenPass: boolean) =>
+    setState({ ...state, hiddenPass });
 
   const formContent = (
     <>
@@ -261,14 +271,11 @@ const LogInForm: React.FC = () => {
         hiddenPass={hiddenPass}
         required
       />
-      <ShowPassword
-        hiddenPass={hiddenPass}
-        onClick={togglePasswordVisibility}
-      />
+      <ShowPassword hiddenPass={hiddenPass} setHidddenPass={setHidddenPass} />
       <FormButton
         disabled={!isValidForm}
         loading={isLoading}
-        text={isLoading ? "Comprobando datos..." : "Iniciar sesión"}
+        text="Iniciar sesión"
       />
       <FormLink
         text="¿No estás registrado?"

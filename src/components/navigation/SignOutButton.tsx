@@ -1,13 +1,13 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 
-// Firebase consumer.
-import { firebase } from "../../context/firebase";
+// Firebase class with firebase methods like sign in or out.
+import firebase from "../../context/firebase";
 
 // Styled-Components.
 import { HoverableButton } from "../../style/main_style";
 
-// Routes
+// Routes.
 import { ROUTES } from "../../routes";
 
 /**
@@ -16,15 +16,15 @@ import { ROUTES } from "../../routes";
  * @returns
  */
 const SignOutButton: React.FC = () => {
-  // History
+  // History.
   const history = useHistory();
 
-  // On sign out button click
+  // On button click => Sign out.
   const onClick = (): void => {
-    // Sign out in firebase.
+    // Sign out of firebase.
     firebase.doSignOut();
 
-    // Push to landing on sign out.
+    // Push to landing.
     history.push(ROUTES.LANDING.path);
   };
 
@@ -32,7 +32,7 @@ const SignOutButton: React.FC = () => {
   const signOutText = "cerrar sesión";
 
   return (
-    <HoverableButton type="button" onClick={onClick}>
+    <HoverableButton type="button" {...{ onClick }}>
       {signOutText}
     </HoverableButton>
   );

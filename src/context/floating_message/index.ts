@@ -1,17 +1,9 @@
-// Floating Message
-import FloatingMessage from "./FloatingMessage";
+// Floating Message list
+import FloatingMsgList from "./FloatingMsgList";
 
 // Import loading context and provider.
-import {
-  withFloatingMsg,
-  useFloatingMsg,
-  FloatingMsgProvider,
-} from "./context";
+import { useFloatingMsg, FloatingMsgProvider } from "./context";
 
-import type { IFloatingMsgContext } from "./context";
+export default FloatingMsgList;
 
-export default FloatingMessage;
-
-export { withFloatingMsg, FloatingMsgProvider, useFloatingMsg };
-
-export type { IFloatingMsgContext };
+export { FloatingMsgProvider, useFloatingMsg };
