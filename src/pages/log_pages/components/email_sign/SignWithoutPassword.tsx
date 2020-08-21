@@ -36,7 +36,7 @@ const SignWithoutPassword: React.FC<ISignWithoutPasswordProps> = ({
   const authContext = useAuth();
 
   // On click on sign with email => Set log without password true.
-  const setPasswordlessAuth = (): void =>
+  const setPasswordlessAuth = () =>
     authContext.dispatch({
       type: "SET_AUTH_PASSWORDLESS",
       authIsPasswordless: true,

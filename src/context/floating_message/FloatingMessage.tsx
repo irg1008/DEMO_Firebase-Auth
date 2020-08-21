@@ -55,7 +55,7 @@ const FloatingMessage: React.FC<IFloatingMsg> = ({
    * On floating message animation is over => Remove floating from array.
    *
    */
-  const onAnimationEnd = (): void => {
+  const onAnimationEnd = () => {
     // If show is set to false => remove floating from floating array.
     if (!show) floatingMsgDispatch({ type: "REMOVE_FLOATING", name });
   };

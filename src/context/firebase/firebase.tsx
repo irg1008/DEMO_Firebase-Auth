@@ -260,14 +260,14 @@ class Firebase {
 
       // If user exists.
       if (user) {
-        // Send email verification.
+        // Update profile.
         resolve(user.updateProfile({ displayName, photoURL }));
       }
       // If user does not exist.
       else {
-        // Return empty promise.
+        // Reject promise..
         reject(
-          "There is not user for wich we can change the displayName and/or photoURL"
+          "There is not user for which we can change the displayName and/or photoURL"
         );
       }
     });

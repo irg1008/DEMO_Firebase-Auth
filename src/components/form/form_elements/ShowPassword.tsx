@@ -63,13 +63,13 @@ const ShowPassword: React.FC<IShowPasswordProps> = ({
    * On mouse enter => Hover is true.
    *
    */
-  const onMouseEnter = (): void => setIsHovering(true);
+  const onMouseEnter = () => setIsHovering(true);
 
   /**
    * On mouse leave => Hover is false.
    *
    */
-  const onMouseLeave = (): void => setIsHovering(false);
+  const onMouseLeave = () => setIsHovering(false);
 
   /**
    * Function that toggles hiddenPass to update it in parent.
@@ -82,7 +82,7 @@ const ShowPassword: React.FC<IShowPasswordProps> = ({
    *
    * @returns {JSX.Element}
    */
-  const visibilityIcon = (): JSX.Element => {
+  const visibilityIcon = () => {
     const fontSize = "small";
 
     return hiddenPass ? (

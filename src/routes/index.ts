@@ -1,10 +1,10 @@
-// Individual routes
+// Individual routes.
 import * as ROUTES from "./routes";
 
-// Protected routes
+// Protected routes.
 import ProtectedRoutes from "./ProtectedRoutes";
 
-// Type
+// Page type.
 import type { IPageType } from "./routes";
 
 export { ROUTES };

@@ -20,7 +20,7 @@ const SignOutButton: React.FC = () => {
   const history = useHistory();
 
   // On button click => Sign out.
-  const onClick = (): void => {
+  const onClick = () => {
     // Sign out of firebase.
     firebase.doSignOut();
 

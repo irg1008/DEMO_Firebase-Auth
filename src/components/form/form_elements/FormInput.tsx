@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ChangeEvent } from "react";
 
 // Styled-Components.
 import {
@@ -68,9 +68,8 @@ type IFormInputProps = {
   /**
    * On input change event.
    *
-   * @type {*}
    */
-  onChange: any;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 
   /**
    * Type of input.
@@ -96,9 +95,9 @@ type IFormInputProps = {
   /**
    * Error on value not valid.
    *
-   * @type {string}
+   * @type {IInputError}
    */
-  errorMessage?: any;
+  errorMessage: IInputError;
 
   /**
    * Show/hide password.
@@ -167,6 +166,7 @@ const FormInput: React.FC<IFormInputProps> = ({
         type={type === "password" ? (hiddenPass ? type : "text") : type}
         hasError={isValid === false}
         {...{ name, value, maxLength, onChange, placeholder }}
+        autoComplete="on"
       />
     </InputBox>
     {!isValid && (
@@ -211,10 +211,10 @@ const Input = styled.input<{ hasError: boolean }>`
   /* Margin, Padding, Border */
   padding: 0 0.6em;
   border-radius: ${radius.mainRadius};
-  border: ${(props: any) =>
+  border: ${(props) =>
     props.hasError ? border.mainBorderError : border.mainBorder};
   /* Outline */
-  outline-color: ${(props: any) => (props.hasError ? colors.red : colors.blue)};
+  outline-color: ${(props) => (props.hasError ? colors.red : colors.blue)};
   /* Font */
   font-family: inherit;
   /* BG */
@@ -224,7 +224,7 @@ const Input = styled.input<{ hasError: boolean }>`
   -webkit-box-shadow: ${shadows.perfectInset};
   box-shadow: ${shadows.perfectInset};
   /* Animation */
-  animation: ${(props: any) =>
+  animation: ${(props) =>
     props.hasError &&
     css`
       ${animations.shakeAnimation} 0.5s;
@@ -234,11 +234,11 @@ const Input = styled.input<{ hasError: boolean }>`
   /* Focus */
   &:focus {
     /* Shadow */
-    -moz-box-shadow: ${(props: any) =>
+    -moz-box-shadow: ${(props) =>
       props.hasError ? shadows.focusInsetError : shadows.focusInset};
-    -webkit-box-shadow: ${(props: any) =>
+    -webkit-box-shadow: ${(props) =>
       props.hasError ? shadows.focusInsetError : shadows.focusInset};
-    box-shadow: ${(props: any) =>
+    box-shadow: ${(props) =>
       props.hasError ? shadows.focusInsetError : shadows.focusInset};
     /* Transition */
     transition: ${mainTransition};

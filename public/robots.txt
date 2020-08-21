@@ -1,0 +1,5 @@
+# Todos los rastreadores.
+    User-agent: * 
+    Allow: /
+
+Sitemap: https://silkandrock.com/sitemap.xml

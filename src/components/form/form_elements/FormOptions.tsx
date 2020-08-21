@@ -16,9 +16,9 @@ type IFormOptionsProps = {
    * First option of form.
    * If empty, use sign with Google.
    *
-   * @type {*}
+   * @type {JSX.Element}
    */
-  firstOption: any;
+  firstOption: JSX.Element;
 
   /**
    * Second option of form.
@@ -26,7 +26,7 @@ type IFormOptionsProps = {
    *
    * @type {*}
    */
-  secondOption: any;
+  secondOption: JSX.Element;
 };
 
 // Separator text.

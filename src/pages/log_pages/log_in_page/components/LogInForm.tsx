@@ -52,7 +52,7 @@ const LogInForm: React.FC = () => {
 
   const firstRender = useRef(true);
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>): void => {
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
 
     const { name, value } = e.target;
@@ -144,13 +144,13 @@ const LogInForm: React.FC = () => {
     }
   }, [password.value]);
 
-  const wrongPassword = (): void =>
+  const wrongPassword = () =>
     setState({
       ...state,
       password: setInput(password, "La contraseña no es correcta"),
     });
 
-  const emailExistsWithGoogle = (): void =>
+  const emailExistsWithGoogle = () =>
     setState({
       ...state,
       email: setInput(
@@ -159,7 +159,7 @@ const LogInForm: React.FC = () => {
       ),
     });
 
-  const emailExistsWithDirectLink = (): void =>
+  const emailExistsWithDirectLink = () =>
     setState({
       ...state,
       email: setInput(
@@ -168,14 +168,14 @@ const LogInForm: React.FC = () => {
       ),
     });
 
-  const userNotFound = (): void =>
+  const userNotFound = () =>
     setState({
       ...state,
       email: setInput(email, "Este email no corresponde con ninguna cuenta"),
     });
 
-  const tooManyRequest = (): void => {
-    const tryAgain = (): void =>
+  const tooManyRequest = () => {
+    const tryAgain = () =>
       setState((oldState) => {
         return { ...oldState, email: setInput(email, null) };
       });
@@ -199,7 +199,7 @@ const LogInForm: React.FC = () => {
   };
 
   const userNotVerified = (user: firebase.User) => {
-    const resendEmailVerification = async (user: firebase.User) => {
+    const resendEmailVerification = async () => {
       try {
         await firebase.doSendEmailVerification(user);
         floatingMsg.dispatch({
@@ -230,7 +230,7 @@ const LogInForm: React.FC = () => {
         {"Verifica la cuenta para poder entrar. "}
         <span
           style={{ textDecoration: "underline", cursor: "pointer" }}
-          onClick={() => resendEmailVerification(user)}
+          onClick={() => resendEmailVerification()}
         >
           Reenviar correo
         </span>

@@ -1,11 +1,15 @@
 import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
 
-// Error
+// Error.
 import { Error } from "./components";
 
-// Styled-Components
+// Styled-Components.
 import styled from "styled-components";
-import { MainBGContainerStyled } from "../../style/main_style";
+import { MainBGContainerStyled, HoverableButton } from "../../style/main_style";
+
+// ROUTES.
+import { ROUTES } from "../../routes";
 
 /**
  * Error page component.
@@ -13,23 +17,32 @@ import { MainBGContainerStyled } from "../../style/main_style";
  * @returns Error page.
  */
 const ErrorPage: React.FC = () => {
-  // On load change title.
+  // On load => Change title.
   useEffect(() => {
     document.title = "Silk&Rock - Error";
   }, []);
 
+  // Error type.
+  const errorType = 404;
+
+  // Error msg.
+  const errorMessage = (
+    <Link to={ROUTES.LANDING.path}>
+      <HoverableButton>Me he perdido</HoverableButton>
+    </Link>
+  );
+
   return (
-    <ErrorPageContainerStyled>
-      <Error errorType={404} errorMessage="Vuelve por donde has venido" />
-    </ErrorPageContainerStyled>
+    <ErrorPageContainer>
+      <Error {...{ errorType, errorMessage }} />
+    </ErrorPageContainer>
   );
 };
 
 export default ErrorPage;
 
-// Styled-Component
-// Error Page Container
-const ErrorPageContainerStyled = styled(MainBGContainerStyled)`
+// Error page container.
+const ErrorPageContainer = styled(MainBGContainerStyled)`
   min-width: 100vw;
   width: auto;
   min-height: 100vh;

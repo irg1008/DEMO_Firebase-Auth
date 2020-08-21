@@ -4,7 +4,7 @@ import React, { FormEvent } from "react";
 import EmailSignPage from "../../components/email_sign";
 
 const SignUpWithEmail: React.FC = () => {
-  const onSubmit = (e: FormEvent): void => {
+  const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     console.log("únete submit");
 

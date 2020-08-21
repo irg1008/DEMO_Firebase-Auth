@@ -68,7 +68,6 @@ const reducer = (state: ILoadingState, action: Action) => {
 // CONTEXT.
 const LoadingContext = createContext(INTIIAL_LOADING);
 
-
 // CONSUMER.
 /**
  * Fucntional consumer.
@@ -77,13 +76,19 @@ const LoadingContext = createContext(INTIIAL_LOADING);
 const useLoading = () => useContext(LoadingContext);
 
 // PROVIDER.
+// Provider props.
+type IProviderProps = {
+  children: React.ReactNode;
+};
 /**
  * Loading provider.
  *
  * @param {*} { children }
  * @returns
  */
-const LoadingProvider: React.FC = ({ children }: any) => {
+const LoadingProvider: React.FC<IProviderProps> = ({
+  children,
+}: IProviderProps) => {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
   return (

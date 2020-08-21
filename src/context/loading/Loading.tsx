@@ -2,16 +2,13 @@ import React, { useEffect, useState } from "react";
 
 // Styled-Components.
 import styled from "styled-components";
-import { ContainerStyled, media, animations } from "../../style/main_style";
+import { ContainerStyled, animations, colors } from "../../style/main_style";
 
 // Loading component.
 import { LoadingSpinner } from "../../context/loading/loading_elements";
 
 // Loading consumer.
 import { useLoading } from ".";
-
-// Silk&Rock logo.
-import Logo from "../../components/logo";
 
 /**
  * Loading component.
@@ -30,7 +27,7 @@ const Loading: React.FC = () => {
    * On animation end => Not render component.
    *
    */
-  const onAnimationEnd = (): void => {
+  const onAnimationEnd = () => {
     // If not loading => Not render.
     if (!loading) setRender(false);
   };
@@ -47,9 +44,6 @@ const Loading: React.FC = () => {
     <FullContainer onAnimationEnd={onAnimationEnd} show={loading}>
       <LoadingContainer>
         <LoadingSpinner />
-        <LoadingLogo>
-          <Logo />
-        </LoadingLogo>
       </LoadingContainer>
     </FullContainer>
   ) : null;
@@ -70,7 +64,7 @@ const FullContainer = styled(ContainerStyled)<{ show: boolean }>`
   top: 0;
   left: 0;
   /* BG */
-  background-color: rgba(255, 255, 255, 1);
+  background-color: ${colors.mainWhite};
   /* Opacity */
   opacity: ${(props) => (props.show ? 1 : 0)};
   /* Pointer-Events */
@@ -87,17 +81,4 @@ const LoadingContainer = styled(ContainerStyled)`
   height: 50%;
   /* Flexbox */
   justify-content: space-between;
-`;
-
-// Loading text styled.
-const LoadingLogo = styled.div`
-  width: 40em;
-  /* Media medium size */
-  @media (max-width: ${media.mediumSize}) {
-    width: 20em;
-  }
-  /* Media small size*/
-  @media (max-width: ${media.smallSize}) {
-    width: 15em;
-  }
 `;

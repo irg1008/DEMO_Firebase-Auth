@@ -1,4 +1,10 @@
-import React, { ChangeEvent, useEffect, useRef, useState } from "react";
+import React, {
+  ChangeEvent,
+  useEffect,
+  useRef,
+  useState,
+  FormEvent,
+} from "react";
 
 // Form creator and input validations
 import FormCreator from "../../../../components/form";
@@ -36,9 +42,8 @@ type IEmailSignProps = {
   /**
    * On submit, call passed prop.
    *
-   * @type {*}
    */
-  onSubmit: any;
+  onSubmit: (e: FormEvent) => void;
 
   /**
    * Set title of sign with email form.
@@ -96,7 +101,7 @@ const EmailSignForm: React.FC<IEmailSignProps> = ({
    *
    * @memberof EmailSignForm
    */
-  const onChange = (e: ChangeEvent<HTMLInputElement>): void => {
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
 
     const { name, value } = e.target;
@@ -111,7 +116,7 @@ const EmailSignForm: React.FC<IEmailSignProps> = ({
    *
    * @memberof EmailSignForm
    */
-  const removePasswordlessAuth = (): void =>
+  const removePasswordlessAuth = () =>
     authContext.dispatch({
       type: "SET_AUTH_PASSWORDLESS",
       authIsPasswordless: false,

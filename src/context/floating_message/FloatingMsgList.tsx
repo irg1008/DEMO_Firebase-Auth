@@ -22,7 +22,7 @@ const FloatingMsgList: React.FC = () => {
   // Floating context array.
   const { floatingMsgArray } = useFloatingMsg().state;
 
-  // Max. numbe rof messages to show.
+  // Max. number of messages to show.
   const numberOfMessages = 3;
 
   // If the array is not empty => Return map sliced to max values.

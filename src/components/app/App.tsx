@@ -38,7 +38,6 @@ const App: React.FC = () => {
     // Start loading app.
     appLoad({ type: "SHOW_LOAD" });
 
-    // If auth has loaded on firebase context.
     if (authHasLoaded) {
       // Hide loading message.
       appLoad({ type: "HIDE_LOAD" });

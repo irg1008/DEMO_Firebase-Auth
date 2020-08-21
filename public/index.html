@@ -1,28 +1,72 @@
 <!DOCTYPE html>
 <html lang="es">
   <head>
-    <!-- CHARSET -->
-    <meta charset="utf-8" />
-
     <!-- FAVICON -->
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-
-    <!-- META -->
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#231F20" />
-    <meta name="description" content="Work Uniforms" />
 
     <!-- MANIFEST -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
 
     <!-- DISABLE REACT DEVELOPER TOOLS -->
     <script>
-      if (typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ === "object")
+      if (typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ === "object" && "%REACT_APP_PROJECT_STATE%" === "PRODUCTION")
         __REACT_DEVTOOLS_GLOBAL_HOOK__.inject = function () {};
     </script>
 
-    <!-- TITLE -->
-    <title>Silk&Rock - Work Uniforms</title>
+    <!-- WEBPAGE SCHEMA: TODO: Improve -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Silk&Rock",
+        "legalName": "Silk&Rock",
+        "url": "%PUBLIC_URL%/",
+        "logo": "%PUBLIC_URL%/logo.svg",
+        "foundingDate": "2019",
+        "founders": [
+          {
+            "@type": "Person",
+            "name": "Carolina Gázquez"
+          },
+          {
+            "@type": "Person",
+            "name": "Sara Calle"
+          }
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "900 Linton Blvd Suite 104",
+          "addressLocality": "Madrid",
+          "addressRegion": "MD",
+          "postalCode": "09000",
+          "addressCountry": "Spain"
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "customer support",
+          "telephone": "[+34-665-666-214]",
+          "email": "info@silkandrock.com"
+        },
+        "sameAs": [
+          "https://www.facebook.com/SilkRock-105507864521145",
+          "https://es.linkedin.com/organization-guest/company/silkandrock",
+          "https://www.instagram.com/silknrock/"
+        ]
+      }
+    </script>
+
+    <!-- FALLBACK TITLE -->
+    <title>Silk&Rock - Work Uniforms - Uniformes Laborales</title>
+
+    <!-- META -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#231F20" />
+    <meta
+      name="description"
+      content="En Silk&Rock nos dedicamos a uniformar a las mejores marcas alrededor de todo el mundo. Uniformes de trabajo que harán brillante la experiencia.
+      Cuidamos hasta los pequeños detalles para que tus clientes sientan la verdadera experiencia."
+    />
   </head>
   <body>
     <noscript

@@ -18,5 +18,6 @@
 // TODO: Get the scroll up and down to a separate component useScrollDirection
 // TODO: Change all forms stuff to one useForm component or class.
 // TODO: Set hidde password as a wrapper
+// TODO: Personalize floatin gmsg with colors, timeout bar, reset ctimeout, warning, error, icons...
 /////////////////////////////////////////////////
 // FIXME: Clean all functions and repeated code. Get all with wrapper ans uses.

@@ -1,7 +1,7 @@
 // Import loading context and provider.
 import { useLoading, LoadingProvider } from "./context";
 
-// Loading class
+// Loading class.
 import Loading from "./Loading";
 
 export default Loading;

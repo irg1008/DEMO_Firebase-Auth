@@ -12,7 +12,7 @@ import ErrorPage from "../pages/error_page";
 // Page information type.
 export type IPageType = {
   /**
-   * Id of room.
+   * Id of page.
    *
    * @type {number}
    */
@@ -21,9 +21,9 @@ export type IPageType = {
   /**
    * Path of page.
    *
-   * @type {(string | any)}
+   * @type {string}
    */
-  path?: string | any;
+  path: string;
 
   /**
    * Path is exact.
@@ -33,29 +33,39 @@ export type IPageType = {
   exact?: boolean;
 
   /**
-   * Pages that only shows when the user is not loaded.
+   * Hide on user is signed.
    *
    * @type {boolean}
    */
-  formPage?: boolean;
-
-  userIsSignedPage?: boolean;
+  hideOnUserSigned?: boolean;
 
   /**
-   * Component to render in given path.
+   * Hide on user is unsigned.
    *
-   * @type {*}
+   * @type {boolean}
    */
-  Component: any;
+  hideOnUserUnsigned?: boolean;
+
+  /**
+   * Component to render in given path. Function or class component.
+   *
+   * @type {(React.FC | React.ComponentClass)}
+   */
+  Component: React.FC | React.ComponentClass;
 };
 
 // Page id increaser on every call.
 let pageId: number = 0;
+/**
+ * Increase the page id on every call.
+ *
+ * @returns
+ */
 const getId = () => {
   return pageId++;
 };
 
-// Loading page
+// Loading page.
 export const LANDING: IPageType = {
   id: getId(),
   path: "/",
@@ -63,39 +73,36 @@ export const LANDING: IPageType = {
   Component: LandingPage,
 };
 
-// Sign Up page
+// Sign Up page.
 export const SIGN_UP: IPageType = {
   id: getId(),
   path: "/unete",
   exact: true,
-  formPage: true,
+  hideOnUserSigned: true,
   Component: SignUpPage,
 };
 
-// Log In page
+// Log In page.
 export const LOG_IN: IPageType = {
   id: getId(),
   path: "/inicia",
   exact: true,
-  formPage: true,
+  hideOnUserSigned: true,
   Component: LogInPage,
 };
 
-// Complete sign up page
+// Complete sign up page.
 export const COMPLETE_SIGN: IPageType = {
   id: getId(),
   path: "/completar-cuenta",
   exact: true,
-  formPage: true,
+  hideOnUserSigned: true,
   Component: CompleteSignUpPage,
 };
 
-// IMPORTANT: Keep this page the last one or will not be displayed.
-//            This happnes because the previous overrides the no path
-//            of the error page.
-
-// Error page
+// Error page not found.
 export const ERROR: IPageType = {
   id: getId(),
+  path: "*", // Change this this to "*" to maintain path.
   Component: ErrorPage,
 };

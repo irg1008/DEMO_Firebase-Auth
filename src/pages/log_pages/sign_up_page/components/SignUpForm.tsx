@@ -84,7 +84,7 @@ const SignUpForm: React.FC = () => {
    * @param {FormEvent} event Form event.
    * @memberof SignUpForm
    */
-  const onSubmit = async (event: FormEvent): Promise<void> => {
+  const onSubmit = async (event: FormEvent) => {
     // Prevent default behaviour.
     event.preventDefault();
 
@@ -137,7 +137,7 @@ const SignUpForm: React.FC = () => {
           history.push(ROUTES.LOG_IN.path);
         });
       })
-      .catch((error: any) => {
+      .catch((error: firebase.auth.Error) => {
         // Stop loading if error
         setState({ ...state, isLoading: false });
         // Note: This error code returns a 400 error to the console, exposing the app id or api key. This is not convinient but does not expose any data of the users. This happens because we manage the white domains that can access this data. Any other domain won't be able to acces users data even if they have de api key.
@@ -145,7 +145,7 @@ const SignUpForm: React.FC = () => {
       });
   };
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>): void => {
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
 
     const { name, value } = e.target;
@@ -203,7 +203,7 @@ const SignUpForm: React.FC = () => {
     }
   }, [email.value]);
 
-  const emailAlreadyInUse = (): void =>
+  const emailAlreadyInUse = () =>
     setState({
       ...state,
       email: setInput(
@@ -233,7 +233,7 @@ const SignUpForm: React.FC = () => {
     }
   }, [password.value, confirmPassword.value]);
 
-  const emailIsDisposable = (): void =>
+  const emailIsDisposable = () =>
     setState({
       ...state,
       isLoading: false,

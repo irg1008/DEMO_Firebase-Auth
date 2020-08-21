@@ -12,7 +12,6 @@ import {
 // Titles.
 import { H1 } from "../../components/titles/Titles";
 
-// All forms shared state.
 // Form is loading and is valid.
 export type IGenericFormState = {
   isLoading: boolean;
@@ -57,8 +56,6 @@ type IFormCreatorProps = {
   onSubmit: (e: FormEvent) => void;
 };
 
-//////////////////////
-
 /**
  * Form creator.
  * Given varios props, gives the user a styled and ready to use form.
@@ -78,7 +75,7 @@ const FormCreator: React.FC<IFormCreatorProps> = ({
 }: IFormCreatorProps) => (
   <FormContainer>
     <FormTitle>{title}</FormTitle>
-    <Form onSubmit={onSubmit}>
+    <Form onSubmit={onSubmit} noValidate>
       <FormWrapper>
         <InputsContainer>{content}</InputsContainer>
         {bottomComponent}
@@ -88,9 +85,6 @@ const FormCreator: React.FC<IFormCreatorProps> = ({
 );
 
 export default FormCreator;
-
-//////////////////////
-/* Styled-Components */
 
 // Form title.
 const FormTitle = styled(H1)`

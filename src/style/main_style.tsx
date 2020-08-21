@@ -1,10 +1,10 @@
 // Styled-Components.
 import styled, { keyframes } from "styled-components";
 
-// Main BG image
+// Main BG image.
 import { mainBG } from "../assets";
 
-// Color constants
+// Color constants.
 export const colors = {
   mainBlack: "#1f1f1f",
   darkBrown: "#231F20",
@@ -17,7 +17,7 @@ export const colors = {
   darkRed: "#d93025",
 };
 
-// Shadow constants
+// Shadow constants.
 export const shadows = {
   perfectInset: "inset 0 1px 2px rgba(27,31,35,.075)",
   focusInset:
@@ -28,20 +28,20 @@ export const shadows = {
   bottomShadow: "0 10px 15px -10px rgba(0, 0, 0, 0.5);",
 };
 
-// Border constants
+// Border constants.
 export const border = {
   mainBorder: `1px solid ${colors.darkGrey}`,
   mainBorderError: `2px solid ${colors.darkRed}`,
 };
 
-// Radius constants
+// Radius constants.
 export const radius = {
   mainRadius: "0.2em",
   mediumRadius: "0.4em",
   fullRadius: "10em",
 };
 
-// Animations
+// Animations.
 export const animations = {
   fadeInAnimation: keyframes`
     0%   {opacity: 0;}
@@ -96,17 +96,17 @@ export const animations = {
   `,
 };
 
-// Media break point
+// Media break point.
 export const media = {
   smallSize: "380px",
   mediumSize: "768px",
   largeSize: "1200px",
 };
 
-// Main transition
+// Main transition.
 export const mainTransition = "all 0.2s ease-in-out";
 
-// No selection
+// No selection.
 export const noSelect = [
   "-webkit-touch-callout: none;" /* iOS Safari */,
   "-webkit-user-select: none;" /* Safari */,
@@ -126,7 +126,7 @@ export const ContainerStyled = styled.div`
   flex-direction: column;
 `;
 
-// Bordered Container
+// Bordered Container.
 export const BorderedContainerStyled = styled(ContainerStyled)`
   width: auto;
   height: auto;
@@ -159,7 +159,7 @@ export const MainBGContainerStyled = styled(ContainerStyled)`
   background-position: center;
 `;
 
-// Button Styled
+// Button Styled.
 export const HoverableButton = styled.button`
   width: auto;
   height: 2.5em;

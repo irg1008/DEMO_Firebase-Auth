@@ -122,8 +122,9 @@ const useFirebase = () => useContext(FirebaseContext);
 type IProviderProps = {
   children: React.ReactNode;
 };
+
 /**
- *
+ * Firebase provider.
  *
  * @param {*} { children }
  * @returns
@@ -138,40 +139,33 @@ const FirebaseProvider: React.FC<IProviderProps> = ({
 
   // On component mount, use history => Get user from firebase.
   useEffect(() => {
-    // On firebase auth state changed.
-    firebase.auth.onAuthStateChanged((user: firebase.User | null) => {
+    // Handler function.
+    const asyncHandler = async (user: firebase.User | null) => {
       // Set the user only if user is valid and the user email is verified.
       const authUser = user && user.emailVerified ? user : null;
 
-      // If the user is fetch from a redirect and the redirect is correct (credential exists) => Push to landing on page load.
-      firebase
-        .doGetRedirectResult()
-        .then(
-          (result) => result.credential && history.push(ROUTES.LANDING.path)
-        );
+      // If the user is fetch from a redirect and the redirect is correct (credential exists).
+      const redirectResult = await firebase.doGetRedirectResult();
+      // Push to landing on page load.
+      redirectResult.credential && history.push(ROUTES.LANDING.path);
 
-      // Recheck if displayName has been changed between providers.
-      // We need to check this because of the scenario where the user signs with email and then does with Google.
-      // In that moment the user displayName will be changed to Google displayName.
-      // (This is default behaviour in case user is not verified).
-      // In case the displayName has been override => We recover previous from users database.
-      firebase
-        .doGetFirestoreUsername()
-        .then((userDoc) => {
-          // If user exists, has a document in "users" table and user displayName has been override.
-          if (user && userDoc && user.displayName !== userDoc.fullname) {
-            // Update displayName with previous name from database.
-            firebase.doUpdateProfile(userDoc.fullname);
-          }
-        })
-        .then(() => {
-          // Set the user of app.
-          dispatch({ type: "SET_USER", authUser });
+      // Get firestore name for user.
+      const userDoc = await firebase.doGetFirestoreUsername();
+      // If user exists, has a document in "users" table and user displayName has been override.
+      if (authUser && userDoc && authUser.displayName !== userDoc.fullname) {
+        // Replace displayName iwth firestore buck up.
+        firebase.doUpdateProfile(userDoc.fullname);
+      }
 
-          // Mark the auth has loaded.
-          dispatch({ type: "SET_AUTH_LOADED", authHasLoaded: true });
-        });
-    });
+      // Set the user.
+      dispatch({ type: "SET_USER", authUser });
+
+      // Mark the auth has loaded.
+      dispatch({ type: "SET_AUTH_LOADED", authHasLoaded: true });
+    };
+
+    // On auth change.
+    firebase.auth.onAuthStateChanged(asyncHandler);
   }, [history]);
 
   return (

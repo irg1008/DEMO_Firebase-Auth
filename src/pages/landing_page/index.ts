@@ -1,4 +1,4 @@
-// Landing Page
+// Landing Page.
 import LandingPage from "./LandingPage";
 
 export default LandingPage;

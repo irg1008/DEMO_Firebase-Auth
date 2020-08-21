@@ -1,4 +1,4 @@
-// Floating Message list
+// Floating Message list.
 import FloatingMsgList from "./FloatingMsgList";
 
 // Import loading context and provider.

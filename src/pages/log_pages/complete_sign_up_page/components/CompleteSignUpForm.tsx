@@ -65,7 +65,7 @@ const CompleteSignUpForm: React.FC = () => {
    *
    * @memberof CompleteSignUpForm
    */
-  const onChange = (e: ChangeEvent<HTMLInputElement>): void => {
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
 
     const { name, value } = e.target;

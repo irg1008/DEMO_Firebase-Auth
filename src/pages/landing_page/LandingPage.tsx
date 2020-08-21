@@ -1,14 +1,14 @@
 import React, { useEffect } from "react";
 
-// Styled-Components
+// Styled-Components.
 import styled from "styled-components";
 import { MainBGContainerStyled, ContainerStyled } from "../../style/main_style";
 
-// Logo
+// Logo.
 import Logo from "../../components/logo";
 
-// En Construccion
-import Social from "./components/Social";
+// Social.
+import Social from "../../components/social";
 
 /**
  * Landing Page.
@@ -22,20 +22,19 @@ const LandingPage: React.FC = () => {
   }, []);
 
   return (
-    <LandingPageContainerStyled>
-      <LandingLogoContainerStyled>
+    <LandingPageContainer>
+      <LandingLogoContainer>
         <Logo />
-      </LandingLogoContainerStyled>
+      </LandingLogoContainer>
       <Social />
-    </LandingPageContainerStyled>
+    </LandingPageContainer>
   );
 };
 
 export default LandingPage;
 
-/* Styled-Components */
-// Landing Page Container, inherits from main container with background.
-const LandingPageContainerStyled = styled(MainBGContainerStyled)`
+// Landing page container.
+const LandingPageContainer = styled(MainBGContainerStyled)`
   min-width: 100vw;
   width: auto;
   min-height: 100vh;
@@ -45,8 +44,8 @@ const LandingPageContainerStyled = styled(MainBGContainerStyled)`
   padding-bottom: 2em;
 `;
 
-// MainPage logo
-const LandingLogoContainerStyled = styled(ContainerStyled)`
+// Logo container.
+const LandingLogoContainer = styled(ContainerStyled)`
   width: 70%;
   max-width: 1000px;
 `;

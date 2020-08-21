@@ -1,8 +1,7 @@
 // SVG assets.
-import logo from "./svg/logo.svg";
 import googleIcon from "./svg/google_icon.svg";
 
 // IMG assets.
-import mainBG from "./img/mainBG.png";
+import mainBG from "./img/mainBG.webp";
 
-export { logo, googleIcon, mainBG };
+export { googleIcon, mainBG };
