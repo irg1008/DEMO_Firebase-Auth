@@ -1,4 +1,3 @@
-import inputValidation from "../../../../components/form/utils";
 import React, {
   useState,
   ChangeEvent,
@@ -6,11 +5,30 @@ import React, {
   useEffect,
   useRef,
 } from "react";
+
+// Firebase object from context.
+import firebase from "../../../../context/firebase";
+
+// History context from react router dom.
+import { useHistory } from "react-router-dom";
+
+// Floating message context, to display aditional info in form on little floating messages.
+import { useFloatingMsg } from "../../../../context/floating_message";
+
+// Routes constant, to acces and navigate between paths.
+import { ROUTES } from "../../../../routes";
+
+// Form input and input types.
 import FormInput, {
   IInputState,
   INITIAL_INPUT_STATE,
   setInput,
 } from "../../../../components/form/form_elements/FormInput";
+
+// Form input validations.
+import inputValidation from "../../../../components/form/utils";
+
+// Form elements.
 import {
   FormOptions,
   SignWithGoogle,
@@ -18,22 +36,41 @@ import {
   FormButton,
   FormLink,
 } from "../../../../components/form/form_elements";
-import { SignWithoutPassword } from "../../components/email_sign";
+
+// Form creator utility and generic form initial state.
 import FormCreator, {
   IGenericFormState,
   INITIAL_GENERIC_FORM_STATE,
 } from "../../../../components/form/Form";
-import firebase from "../../../../context/firebase";
-import { useHistory } from "react-router-dom";
-import { useFloatingMsg } from "../../../../context/floating_message";
-import { ROUTES } from "../../../../routes";
 
+// Swap to passwordless button.
+import { SignWithoutPassword } from "../../components/email_sign";
+
+// Login state = generic state + email + password + hiddenPassword boolean value.
 type ILogInState = IGenericFormState & {
+  /**
+   * Email to log in with.
+   *
+   * @type {IInputState}
+   */
   email: IInputState;
+
+  /**
+   * Password that matches the log in email, to be checked on hash database.
+   *
+   * @type {IInputState}
+   */
   password: IInputState;
+
+  /**
+   * Password is hidden, user interface value to show or hide value on form input.
+   *
+   * @type {boolean}
+   */
   hiddenPass: boolean;
 };
 
+// Initial og in state = initial generic state + initial input state and hiddenPass to true.
 const INITIAL_LOG_IN_STATE: ILogInState = {
   ...INITIAL_GENERIC_FORM_STATE,
   email: INITIAL_INPUT_STATE,
@@ -41,71 +78,137 @@ const INITIAL_LOG_IN_STATE: ILogInState = {
   hiddenPass: true,
 };
 
+/**
+ * Log in form.
+ *
+ * @returns
+ */
 const LogInForm: React.FC = () => {
+  // Log in form state.
   const [state, setState] = useState(INITIAL_LOG_IN_STATE);
 
+  // State decostruction.
   const { email, password, hiddenPass, isLoading, isValidForm } = state;
 
+  // History context.
   const history = useHistory();
 
+  // Floating msg context.
   const floatingMsg = useFloatingMsg();
 
+  // First render is true. Change this on first input change.
   const firstRender = useRef(true);
 
+  /**
+   * On input change, change the value of the changed input and recheck validation.
+   *
+   * @param {ChangeEvent<HTMLInputElement>} e
+   */
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    // Prevent default behaviour.
     e.preventDefault();
 
+    // Get the name of the input and the current value inside it.
     const { name, value } = e.target;
 
+    // Check that the first render is not true.
     firstRender.current = false;
 
+    // Change the state with the new value for the changed input.
     setState({ ...state, [name]: { value } });
   };
 
+  /**
+   * On log in form submit.
+   *
+   * @param {FormEvent} e
+   */
   const onSubmit = async (e: FormEvent) => {
+    // Prevent default behaviour.
     e.preventDefault();
 
+    // Set the form to loading, so it can display some user interface to let the user know.
     setState({ ...state, isLoading: true });
 
+    // Try the log in with firebase and catch any error that could ocurr.
     try {
+      // Await for the firebase sign in function. Pass email and password to check user existance and validate.
       const signInResult = await firebase.doSignInWithEmailAndPassword(
         email.value,
         password.value
       );
+
+      // If the result is successful => Get the user retrieved as response.
       const { user } = signInResult;
 
+      // If the user is not veerified.
       if (user && !user.emailVerified) {
+        // Sign out the user.
         firebase.doSignOut();
 
+        // User is not verfied handler.
         userNotVerified(user);
-      } else {
+      }
+      // If the user is indeed verified.
+      else {
+        // All is good => Redirect to the landing page.
         history.push(ROUTES.LANDING.path);
       }
     } catch (error) {
+      // If any error happens on the try block.
+      // Stop the loading of the form and set the form to invalid.
       setState({ ...state, isLoading: false, isValidForm: false });
-      if (error.code === "auth/user-not-found") {
-        userNotFound();
-      } else if (error.code === "auth/wrong-password") {
-        const signMethods = await firebase.doFetchSignInMethodsForEmail(
-          email.value
-        );
-        if (signMethods.includes("password")) wrongPassword();
-        else if (signMethods.includes("google.com")) emailExistsWithGoogle();
-        else emailExistsWithDirectLink();
-      } else if (error.code === "auth/too-many-requests") {
-        tooManyRequest();
+
+      // Check the different error cases.
+      switch (error.code) {
+        // If the error is "user not found".
+        case "auth/user-not-found": {
+          // User not found handler.
+          userNotFound();
+
+          break;
+        }
+
+        // Else if the error is "password for given user is incorrect".
+        case "auth/wrong-password": {
+          // Check all sign in methods for the given user email.
+          const signMethods = await firebase.doFetchSignInMethodsForEmail(
+            email.value
+          );
+
+          // If the user is to signed with email and password => Wrong password handler.
+          if (signMethods.includes("password")) wrongPassword();
+          // If the user is to signed with google => Email exists with google handler.
+          else if (signMethods.includes("google.com")) emailExistsWithGoogle();
+          // If user is not signed with password and google, must be signed with direct link so we let him know has well.
+          else emailExistsWithDirectLink();
+
+          break;
+        }
+
+        // Else if the error is that too many requests were made.
+        case "auth/too-many-requests": {
+          // Too many request were made handler.
+          tooManyRequest();
+
+          break;
+        }
       }
     }
   };
 
+  // When email or password validation value is changed => Check the entire form validation.
   useEffect(() => {
+    // Only check if not first render.
     if (!firstRender.current) {
+      // Set the form validation to email and password both valid.
       setState((oldState) => {
         return { ...oldState, isValidForm: email.isValid && password.isValid };
       });
     }
   }, [email.isValid, password.isValid]);
 
+  // On email change =>
   useEffect(() => {
     if (!firstRender.current) {
       setState((oldState) => {
@@ -175,27 +278,26 @@ const LogInForm: React.FC = () => {
     });
 
   const tooManyRequest = () => {
-    const tryAgain = () =>
-      setState((oldState) => {
-        return { ...oldState, email: setInput(email, null) };
-      });
-
-    const error = (
+    const message = (
       <>
         {"Demasiados intentos con este correo, espera un tiempo para "}
         <span
           style={{ textDecoration: "underline", cursor: "pointer" }}
-          onClick={tryAgain}
+          onClick={onSubmit}
         >
           volver a intentarlo
         </span>
       </>
     );
 
-    setState({
-      ...state,
-      email: setInput(email, error),
+    floatingMsg.dispatch({
+      type: "ADD_FLOATING",
+      name: "demasiadosIntentos",
+      message,
+      timeoutTime: "default",
     });
+
+    setState({ ...state, isValidForm: true });
   };
 
   const userNotVerified = (user: firebase.User) => {

@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 import { Redirect } from "react-router-dom";
 
-// Complete form
+// Complete form.
 import CompleteSignUpForm from "./components/CompleteSignUpForm";
 
 // Firebase context consumer.
 import { useFirebase } from "../../../context/firebase";
 
-// Routes
+// Routes.
 import { ROUTES } from "../../../routes";
 
 /**

@@ -1,7 +1,7 @@
-// Sign up form
+// Log in form.
 import LogInForm from "./LogInForm";
 
-// Sign with mail.
+// Log with mail.
 import LogInWithEmail from "./LogInWithEmail";
 
 export { LogInForm, LogInWithEmail };

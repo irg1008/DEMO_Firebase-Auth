@@ -21,3 +21,4 @@
 // TODO: Personalize floatin gmsg with colors, timeout bar, reset ctimeout, warning, error, icons...
 /////////////////////////////////////////////////
 // FIXME: Clean all functions and repeated code. Get all with wrapper ans uses.
+// FIXME: Make form validations way more clear and shorter.

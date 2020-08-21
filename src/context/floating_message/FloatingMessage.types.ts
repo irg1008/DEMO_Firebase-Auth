@@ -10,9 +10,9 @@ export type IFloatingMsg = {
   /**
    * Message to show on floating message.
    *
-   * @type {string}
+   * @type {(string | JSX.Element)}
    */
-  message: string;
+  message: string | JSX.Element;
 
   /**
    *Time for the message to disappear.

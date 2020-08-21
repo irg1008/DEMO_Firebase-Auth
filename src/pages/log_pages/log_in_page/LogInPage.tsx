@@ -9,12 +9,11 @@ import { useAuth } from "../../../context/auth";
 /**
  * Log in page.
  *
- * @param {ILogInPageProps} {
- *   authContext,
- * }
+ *
+ * @returns
  */
 const LogInPage: React.FC = () => {
-  // Auth state decostruction
+  // Auth state decostruction.
   const { authIsPasswordless } = useAuth().state;
 
   // We load page when auth finishes.

@@ -45,9 +45,9 @@ type Action =
       /**
        * Message to show.
        *
-       * @type {string}
+       * @type {(string | JSX.Element)}
        */
-      message: string;
+      message: string | JSX.Element;
 
       /**
        * Time for the message to dissapear.

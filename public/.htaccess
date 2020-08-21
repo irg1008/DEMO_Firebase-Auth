@@ -1,3 +1,6 @@
+# Cookies origin. None | Strict.
+Header always edit Set-Cookie (.*) "$1; HTTPOnly; Secure; SameSite=None"
+
 <IfModule mod_rewrite.c>
   # Redirects the server url to client-side.
   RewriteEngine On
@@ -75,6 +78,3 @@ ErrorDocument 403 /
 
 # Default charset.
 AddDefaultCharset UTF-8
-
-# Cookies origin.
-Header always edit Set-Cookie (.*) "$1; SameSite=None; Secure"
