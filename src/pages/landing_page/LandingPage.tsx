@@ -1,7 +1,7 @@
 import React from "react";
 
 // React helment head mannager.
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 // Styled-Components.
 import styled from "styled-components";
@@ -21,7 +21,7 @@ import Social from "../../components/social";
 const LandingPage: React.FC = () => (
   <>
     <Helmet>
-      <title>{"Silk&Rock - Work Uniforms"}</title>
+      <title>{"Silk&Rock - Workwear - Uniformes Laborales"}</title>
       <meta
         name="description"
         content="En Silk&Rock nos dedicamos a uniformar a las mejores marcas alrededor de todo el mundo. Uniformes de trabajo que harán brillante la experiencia.

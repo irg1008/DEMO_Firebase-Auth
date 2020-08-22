@@ -1,7 +1,7 @@
 import React from "react";
 
 // React helment head mannager.
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 // Log in form.
 import { LogInForm, LogInWithEmail } from "./components";

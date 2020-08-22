@@ -19,6 +19,7 @@
 // TODO: Change all forms stuff to one useForm component or class.
 // TODO: Set hidde password as a wrapper
 // TODO: Personalize floatin gmsg with colors, timeout bar, reset ctimeout, warning, error, icons...
+// TODO: Use the data.locale to change the languague of the component.
 /////////////////////////////////////////////////
 // FIXME: Clean all functions and repeated code. Get all with wrapper ans uses.
 // FIXME: Make form validations way more clear and shorter.

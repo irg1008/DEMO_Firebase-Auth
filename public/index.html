@@ -9,7 +9,10 @@
 
     <!-- DISABLE REACT DEVELOPER TOOLS -->
     <script>
-      if (typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ === "object" && "%REACT_APP_PROJECT_STATE%" === "PRODUCTION")
+      if (
+        typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ === "object" &&
+        "%REACT_APP_PROJECT_STATE%" === "PRODUCTION"
+      )
         __REACT_DEVTOOLS_GLOBAL_HOOK__.inject = function () {};
     </script>
 

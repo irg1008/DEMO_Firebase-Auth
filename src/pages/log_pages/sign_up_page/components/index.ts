@@ -1,4 +1,4 @@
-// Sign up form
+// Sign up form.
 import SignUpForm from "./SignUpForm";
 
 // Sign with mail.

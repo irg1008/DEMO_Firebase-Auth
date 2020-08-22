@@ -1,22 +1,41 @@
-import React, { FormEvent } from "react";
+import React from "react";
 
 // Sign with email component.
 import EmailSignPage from "../../components/email_sign";
 
-const SignUpWithEmail: React.FC = () => {
-  const onSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    console.log("únete submit");
+// Firebase.
+import firebase from "../../../../context/firebase";
 
-    // TODO: Comprobar diferentes cosas y enviar por firebase y luego recoger por email.
-    // Floating message.
+// Floating message context, to display aditional info in form on little floating messages.
+//import { useFloatingMsg } from "../../../../context/floating_message";
+
+/**
+ * Sign up with email directly.
+ *
+ * @returns
+ */
+const SignUpWithEmail: React.FC = () => {
+  /**
+   * On sign up with direct link submit.
+   *
+   * @param {FormEvent} e
+   */
+  const onFormSubmit = (email: string) => {
+    // Try send link.
+    try {
+      // Send log in email.
+      firebase.doSendSignInLinkToEmail(email);
+    } catch (error) {
+      // If error.
+      console.error(error);
+    }
   };
 
   return (
     <EmailSignPage
       title="únete con correo"
       otherOptionText="otras opciones de creación"
-      onSubmit={onSubmit}
+      {...{ onFormSubmit }}
     />
   );
 };

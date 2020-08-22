@@ -5,12 +5,30 @@ import React, {
   useRef,
   useEffect,
 } from "react";
+
+// Firebase.
+import firebase from "../../../../context/firebase";
+
+// History context from react router dom.
 import { useHistory } from "react-router-dom";
 
-// Routes
+// Floating message context, to display aditional info in form on little floating messages.
+import { useFloatingMsg } from "../../../../context/floating_message";
+
+// Routes.
 import { ROUTES } from "../../../../routes";
 
-// Form elements
+// Form input.
+import FormInput, {
+  IInputState,
+  INITIAL_INPUT_STATE,
+  setInput,
+} from "../../../../components/form/form_elements/FormInput";
+
+// Form input validations.
+import inputValidation from "../../../../components/form/utils";
+
+// Form elements.
 import {
   FormButton,
   ShowPassword,
@@ -19,37 +37,54 @@ import {
   SignWithGoogle,
 } from "../../../../components/form/form_elements";
 
-import FormInput, {
-  IInputState,
-  INITIAL_INPUT_STATE,
-  setInput,
-} from "../../../../components/form/form_elements/FormInput";
-
-// Sign without password
-import { SignWithoutPassword } from "../../components/email_sign";
-
-// Floating Message
-import { useFloatingMsg } from "../../../../context/floating_message";
-
-// Form Wrapper. Optional, but helps us create a common structure between forms.
-// Validation of form, useful when handling validation of inputs.
+// Form creator utility and generic form initial state.
 import FormCreator, {
   IGenericFormState,
   INITIAL_GENERIC_FORM_STATE,
 } from "../../../../components/form/Form";
-import inputValidation from "../../../../components/form/utils";
 
-// Firebase
-import firebase from "../../../../context/firebase";
+// Sign without password.
+import { SignWithoutPassword } from "../../components/email_sign";
 
+// Sign up state = generic state + email + username + password and hiddenPassword state.
 type ISignUpState = IGenericFormState & {
+  /**
+   * Usernam eto save with new user.
+   *
+   * @type {IInputState}
+   */
   username: IInputState;
+
+  /**
+   * Email to sign up with.
+   *
+   * @type {IInputState}
+   */
   email: IInputState;
+
+  /**
+   * Password to match with the new user.
+   *
+   * @type {IInputState}
+   */
   password: IInputState;
+
+  /**
+   * Password confirmation.
+   *
+   * @type {IInputState}
+   */
   confirmPassword: IInputState;
+
+  /**
+   * Password is hidden, user interface value to show or hide value on form input.
+   *
+   * @type {boolean}
+   */
   hiddenPass: boolean;
 };
 
+// Initial sign up state.
 const INITIAL_LOG_IN_STATE: ISignUpState = {
   ...INITIAL_GENERIC_FORM_STATE,
   username: INITIAL_INPUT_STATE,
@@ -59,9 +94,16 @@ const INITIAL_LOG_IN_STATE: ISignUpState = {
   hiddenPass: true,
 };
 
+/**
+ * Sign up form.
+ *
+ * @returns
+ */
 const SignUpForm: React.FC = () => {
+  // Sign up state.
   const [state, setState] = useState(INITIAL_LOG_IN_STATE);
 
+  // State decostruction.
   const {
     username,
     email,
@@ -72,34 +114,54 @@ const SignUpForm: React.FC = () => {
     isValidForm,
   } = state;
 
+  // History context.
   const history = useHistory();
 
-  const floatingMsgContext = useFloatingMsg();
+  // Floating msg context.
+  const floatingMsg = useFloatingMsg();
 
+  // First render is true. Change this on first input change.
   const firstRender = useRef(true);
 
   /**
-   * On submit form.
+   * On input change, change the value of the changed input and recheck validation.
    *
-   * @param {FormEvent} event Form event.
-   * @memberof SignUpForm
+   * @param {ChangeEvent<HTMLInputElement>} e
    */
-  const onSubmit = async (event: FormEvent) => {
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     // Prevent default behaviour.
-    event.preventDefault();
+    e.preventDefault();
 
-    // Loading submit
+    // Get the name of the input and the current value inside it.
+    const { name, value } = e.target;
+
+    // Check that the first render is not true.
+    firstRender.current = false;
+
+    // Change the state with the new value for the changed input.
+    setState({ ...state, [name]: { value } });
+  };
+
+  /**
+   * On sign up form submit.
+   *
+   * @param {FormEvent} e
+   */
+  const onSubmit = async (e: FormEvent) => {
+    // Prevent default behaviour.
+    e.preventDefault();
+
+    // Set the form to loading, so it can display some user interface to let the user know.
     setState({ ...state, isLoading: true });
 
-    // Email is disposable.
+    // Check if email is disposable.
     const disposableResponse = await inputValidation.fetchEmailIsDisposable(
       email.value
     );
-    if (disposableResponse.disposable) {
-      emailIsDisposable();
-    } else {
-      signUpWithFirebase();
-    }
+
+    // If email is disposable => Call disposable email error handler.
+    // If email is not disposable => Try to sign up with firebase.
+    disposableResponse.disposable ? emailIsDisposable() : signUpWithFirebase();
   };
 
   /**
@@ -107,54 +169,52 @@ const SignUpForm: React.FC = () => {
    *
    * @memberof SignUpForm
    */
-  const signUpWithFirebase = () => {
-    firebase
-      .doCreateUserWithEmailAndPassword(email.value, confirmPassword.value)
-      .then(({ user }: firebase.auth.UserCredential) => {
-        // Update user username.
-        firebase.doCreateProfile(username.value);
+  const signUpWithFirebase = async () => {
+    try {
+      // Try sign up with firebase.
+      const signUpResult = await firebase.doCreateUserWithEmailAndPassword(
+        email.value,
+        password.value
+      );
 
+      // Get the user resulted from the sign up.
+      const { user } = signUpResult;
+
+      // Create user profile.
+      firebase.doCreateProfile(username.value);
+
+      // If user correct from result.
+      if (user) {
         // Send verification message.
-        // If user correct from result.
-        if (user) {
-          firebase.doSendEmailVerification(user).then(() => {
-            // Set message
-            floatingMsgContext.dispatch({
-              type: "ADD_FLOATING",
-              name: "enviarCorreoVerificacion",
-              message:
-                'Te hemos enviado un correo a "' +
-                email.value +
-                '" para confirmar la cuenta y poder iniciar sesión',
-              timeoutTime: "default",
-            });
-          });
-        }
+        await firebase.doSendEmailVerification(user);
 
-        // Force sign and route to log in.
-        firebase.doSignOut().then(() => {
-          // Redirect to log in.
-          history.push(ROUTES.LOG_IN.path);
+        // Set message.
+        floatingMsg.dispatch({
+          type: "ADD_FLOATING",
+          name: "enviarCorreoVerificacion",
+          message:
+            'Te hemos enviado un correo a "' +
+            email.value +
+            '" para confirmar la cuenta y poder iniciar sesión',
+          timeoutTime: "default",
         });
-      })
-      .catch((error: firebase.auth.Error) => {
-        // Stop loading if error
-        setState({ ...state, isLoading: false });
-        // Note: This error code returns a 400 error to the console, exposing the app id or api key. This is not convinient but does not expose any data of the users. This happens because we manage the white domains that can access this data. Any other domain won't be able to acces users data even if they have de api key.
-        if (error.code === "auth/email-already-in-use") emailAlreadyInUse();
-      });
+      }
+
+      // Force sign and route to log in.
+      await firebase.doSignOut();
+      // Redirect to log in.
+      history.push(ROUTES.LOG_IN.path);
+    } catch (error) {
+      // If any error happens.
+      // Stop loading.
+      setState({ ...state, isLoading: false });
+      // Note: This error code returns a 400 error to the console, exposing the app id or api key. This is not convinient but does not expose any data of the users. This happens because we manage the white domains that can access this data. Any other domain won't be able to acces users data even if they have de api key.
+      // Email already in use error handler.
+      if (error.code === "auth/email-already-in-use") emailAlreadyInUse();
+    }
   };
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-
-    const { name, value } = e.target;
-
-    firstRender.current = false;
-
-    setState({ ...state, [name]: { value } });
-  };
-
+  // When username, email, password or confirPassword  validation value is changed => Check the entire form validation.
   useEffect(() => {
     if (!firstRender.current) {
       setState((oldState) => {
@@ -175,6 +235,7 @@ const SignUpForm: React.FC = () => {
     confirmPassword.isValid,
   ]);
 
+  // On username change => Check username validation.
   useEffect(() => {
     if (!firstRender.current) {
       setState((oldState) => {
@@ -189,6 +250,7 @@ const SignUpForm: React.FC = () => {
     }
   }, [username.value]);
 
+  // On email change => Check email validation.
   useEffect(() => {
     if (!firstRender.current) {
       setState((oldState) => {
@@ -203,15 +265,7 @@ const SignUpForm: React.FC = () => {
     }
   }, [email.value]);
 
-  const emailAlreadyInUse = () =>
-    setState({
-      ...state,
-      email: setInput(
-        email,
-        "Este correo ya está en uso, inicia sesión o prueba con otro"
-      ),
-    });
-
+  // On password or confirm password change => Check both validations.
   useEffect(() => {
     if (!firstRender.current) {
       setState((oldState) => {
@@ -233,6 +287,23 @@ const SignUpForm: React.FC = () => {
     }
   }, [password.value, confirmPassword.value]);
 
+  /**
+   * Email is already in use handler.
+   *
+   */
+  const emailAlreadyInUse = () =>
+    setState({
+      ...state,
+      email: setInput(
+        email,
+        "Este correo ya está en uso, inicia sesión o prueba con otro"
+      ),
+    });
+
+  /**
+   * Email is disposable handler.
+   *
+   */
   const emailIsDisposable = () =>
     setState({
       ...state,
@@ -240,11 +311,16 @@ const SignUpForm: React.FC = () => {
       email: setInput(email, "El dominio de email no es válido"),
     });
 
+  /**
+   * Hidden pass toggler.
+   *
+   * @param {boolean} hiddenPass
+   */
   const setHidddenPass = (hiddenPass: boolean) =>
     setState({ ...state, hiddenPass });
 
-  // Form Content
-  const formContent = (
+  // Form content to pass to the form creator.
+  const content = (
     <>
       <FormInput
         label="Nombre"
@@ -302,23 +378,18 @@ const SignUpForm: React.FC = () => {
     </>
   );
 
-  // Form bottom component
-  const formBottomComponent = (
+  // Form bottom component.
+  const bottomComponent = (
     <FormOptions
       firstOption={<SignWithGoogle text="Registro con Google" />}
       secondOption={<SignWithoutPassword text="Registro con link" />}
     />
   );
 
-  // If user is logged push to landing.
-  return (
-    <FormCreator
-      onSubmit={onSubmit}
-      content={formContent}
-      bottomComponent={formBottomComponent}
-      title="únete"
-    />
-  );
+  // Form title.
+  const title = "únete";
+
+  return <FormCreator {...{ onSubmit, content, bottomComponent, title }} />;
 };
 
 export default SignUpForm;

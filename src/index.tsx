@@ -2,8 +2,11 @@ import React from "react";
 import ReactDOM from "react-dom";
 import * as serviceWorker from "./serviceWorker";
 
-// Router Provider
+// Router Provider.
 import { BrowserRouter as RouterProvider } from "react-router-dom";
+
+// Helmet provider, for async functionality.
+import { HelmetProvider } from "react-helmet-async";
 
 // Style.
 import "./index.css";
@@ -17,9 +20,11 @@ import App from "./components/app";
 ReactDOM.render(
   <React.StrictMode>
     <RouterProvider>
-      <ProvidersWrapper>
-        <App />
-      </ProvidersWrapper>
+      <HelmetProvider>
+        <ProvidersWrapper>
+          <App />
+        </ProvidersWrapper>
+      </HelmetProvider>
     </RouterProvider>
   </React.StrictMode>,
   document.getElementById("root")

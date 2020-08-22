@@ -1,16 +1,16 @@
 import React from "react";
 
-// Styled-Components
+// Styled-Components.
 import styled from "styled-components";
 import { media, ContainerStyled, colors } from "../../../../style/main_style";
 
-// Email icon
+// Email icon.
 import EmailIcon from "@material-ui/icons/EmailRounded";
 
-// Titles
+// Titles.
 import titles from "../../../../components/titles";
 
-// Auth context
+// Auth context.
 import { useAuth } from "../../../../context/auth";
 
 // Type of signing without email or google.
@@ -26,16 +26,21 @@ type ISignWithoutPasswordProps = {
 /**
  * Sign without password via email link.
  *
- * @param {ISignWithoutPasswordProps} {*}
+ * @param {ISignWithoutPasswordProps} {
+ *   text,
+ * }
  * @returns
  */
 const SignWithoutPassword: React.FC<ISignWithoutPasswordProps> = ({
   text,
 }: ISignWithoutPasswordProps) => {
-  // Auth context
+  // Auth context.
   const authContext = useAuth();
 
-  // On click on sign with email => Set log without password true.
+  /**
+   * On click on sign with email => Set log without password true.
+   *
+   */
   const setPasswordlessAuth = () =>
     authContext.dispatch({
       type: "SET_AUTH_PASSWORDLESS",
@@ -43,20 +48,19 @@ const SignWithoutPassword: React.FC<ISignWithoutPasswordProps> = ({
     });
 
   return (
-    <SignPasswordlessContainerStyled onClick={setPasswordlessAuth}>
+    <SignPasswordlessContainer onClick={setPasswordlessAuth}>
       <EmailIcon style={{ color: colors.mainBlack, fontSize: "2em" }} />
       <TextContainer>
         <titles.Title5 title={text} />
       </TextContainer>
-    </SignPasswordlessContainerStyled>
+    </SignPasswordlessContainer>
   );
 };
 
 export default SignWithoutPassword;
 
-// Styled-Components
-// Sign passwordless
-const SignPasswordlessContainerStyled = styled(ContainerStyled)`
+// Sign passwordless.
+const SignPasswordlessContainer = styled(ContainerStyled)`
   width: 100%;
   height: 100%;
   /* Font */
@@ -67,7 +71,7 @@ const SignPasswordlessContainerStyled = styled(ContainerStyled)`
   padding: 0 2em;
 `;
 
-// Sign passwordless text
+// Sign passwordless text.
 const TextContainer = styled(ContainerStyled)`
   width: 8em;
   /* Margin, Padding, Border */

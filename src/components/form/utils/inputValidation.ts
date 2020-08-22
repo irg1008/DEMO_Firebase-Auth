@@ -33,7 +33,11 @@ class InputValidation {
     // Checking email is empty.
     if (email.length === 0) return "El email no puede estar vacio";
     // Checking email format.
-    else if (!/^[a-zA-Z0-9]+@(?:[a-zA-Z0-9]+\.)+[A-Za-z]+$/.test(email))
+    else if (
+      !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+        email
+      )
+    )
       return "El email tiene que tener un formato tipo: email@aqui.com";
     // Email is correct.
     else return null;

@@ -6,7 +6,7 @@ import React, {
   FormEvent,
 } from "react";
 
-// Form creator and input validations
+// Form creator and input validations.
 import FormCreator from "../../../../components/form";
 import inputValidation from "../../../../components/form/utils";
 
@@ -23,14 +23,14 @@ import {
   setInput,
 } from "../../../../components/form/form_elements/FormInput";
 
-// Auth context
+// Auth context.
 import { useAuth } from "../../../../context/auth";
 
-// Styled-components
+// Styled-components.
 import styled from "styled-components";
 import { ContainerStyled } from "../../../../style/main_style";
 
-// Arrow icon
+// Arrow icon.
 import ArrowIcon from "@material-ui/icons/ArrowBackIos";
 import {
   IGenericFormState,
@@ -40,10 +40,10 @@ import {
 // Complete sign props.
 type IEmailSignProps = {
   /**
-   * On submit, call passed prop.
+   * On submit, call parent submit and pass email.
    *
    */
-  onSubmit: (e: FormEvent) => void;
+  onFormSubmit: (email: string) => void;
 
   /**
    * Set title of sign with email form.
@@ -60,10 +60,17 @@ type IEmailSignProps = {
   otherOptionText: string;
 };
 
+// State of email sign.
 type IEmailSignState = IGenericFormState & {
+  /**
+   * Email to send link.
+   *
+   * @type {IInputState}
+   */
   email: IInputState;
 };
 
+// Initial state.
 const INITIAL_EMAIL_SIGN_STATE: IEmailSignState = {
   ...INITIAL_GENERIC_FORM_STATE,
   email: INITIAL_INPUT_STATE,
@@ -72,23 +79,66 @@ const INITIAL_EMAIL_SIGN_STATE: IEmailSignState = {
 /**
  * Complete sign up class.
  *
- * @class EmailSignForm
- * @extends {PureComponent<ICompleteSignProps, ICompleteSignState>}
+ * @param {*} {
+ *   onSubmit,
+ *   title,
+ *   otherOptionText,
+ * }
+ * @returns
  */
 const EmailSignForm: React.FC<IEmailSignProps> = ({
-  onSubmit,
+  onFormSubmit,
   title,
   otherOptionText,
 }) => {
-  const authContext = useAuth();
-
+  // State.
   const [state, setState] = useState(INITIAL_EMAIL_SIGN_STATE);
 
+  // State decostruction.
   const { email, isLoading, isValidForm } = state;
 
+  // Auth context.
+  const authContext = useAuth();
+
+  // First render.
   const firstRender = useRef(true);
 
+  /**
+   * On submit, prevent default and call parent submit.
+   *
+   * @param {FormEvent} e
+   */
+  const onSubmit = (e: FormEvent) => {
+    // Prevent default behaviour.
+    e.preventDefault();
+
+    // Call parent on submit.
+    onFormSubmit(email.value);
+  };
+
+  /**
+   * On input change.
+   *
+   *
+   * @param {ChangeEvent<HTMLInputElement>} e
+   */
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    // Prevent default behaviour.
+    e.preventDefault();
+
+    // Get name and value from target input.
+    const { name, value } = e.target;
+
+    // Set the first render to false.
+    firstRender.current = false;
+
+    // Update the state for the target input with the new value.
+    setState({ ...state, [name]: { value } });
+  };
+
+  // On component dismount => Set to normal auth.
   useEffect(() => {
+    // On component dismount.
     return () =>
       authContext.dispatch({
         type: "SET_AUTH_PASSWORDLESS",
@@ -96,33 +146,9 @@ const EmailSignForm: React.FC<IEmailSignProps> = ({
       });
   }, [authContext]);
 
-  /**
-   * On input change.
-   *
-   * @memberof EmailSignForm
-   */
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-
-    const { name, value } = e.target;
-
-    firstRender.current = false;
-
-    setState({ ...state, [name]: { value } });
-  };
-
-  /**
-   * REmove the passwordless auth of auth context.
-   *
-   * @memberof EmailSignForm
-   */
-  const removePasswordlessAuth = () =>
-    authContext.dispatch({
-      type: "SET_AUTH_PASSWORDLESS",
-      authIsPasswordless: false,
-    });
-
+  // On email valid change => Check entire form.
   useEffect(() => {
+    // If not first render.
     if (!firstRender.current) {
       setState((oldState) => {
         return { ...oldState, isValidForm: email.isValid };
@@ -130,7 +156,9 @@ const EmailSignForm: React.FC<IEmailSignProps> = ({
     }
   }, [email.isValid]);
 
+  // On email value change => Check the email validation.
   useEffect(() => {
+    // If not first render.
     if (!firstRender.current) {
       setState((oldState) => {
         return {
@@ -144,8 +172,18 @@ const EmailSignForm: React.FC<IEmailSignProps> = ({
     }
   }, [email.value]);
 
-  // Form Content
-  const formContent = (
+  /**
+   * Set auth method to email + password => Remove direct sign auth.
+   *
+   */
+  const removePasswordlessAuth = () =>
+    authContext.dispatch({
+      type: "SET_AUTH_PASSWORDLESS",
+      authIsPasswordless: false,
+    });
+
+  // Form content.
+  const content = (
     <>
       <FormInput
         label="Email"
@@ -169,15 +207,12 @@ const EmailSignForm: React.FC<IEmailSignProps> = ({
     </>
   );
 
-  return (
-    <FormCreator onSubmit={onSubmit} content={formContent} title={title} />
-  );
+  return <FormCreator {...{ onSubmit, content, title }} />;
 };
 
 export default EmailSignForm;
 
-// Styled-Components
-// Other options container
+// Other options container.
 const OtherOptions = styled(ContainerStyled)`
   /* Flexbox */
   flex-direction: row;
@@ -188,7 +223,7 @@ const OtherOptions = styled(ContainerStyled)`
   cursor: pointer;
 `;
 
-// Other options text
+// Other options text.
 const OtheOptionsText = styled.p`
   /* Margin, Padding, Border */
   padding: 0;

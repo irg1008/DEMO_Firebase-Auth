@@ -179,7 +179,8 @@ class Firebase {
     // Action code settings.
     // url: URL to redirect on email link click.
     const actionCodeSettings: firebase.auth.ActionCodeSettings = {
-      ...{ url: "silkandrock.com" },
+      url: "https://silkandrock.com",
+      handleCodeInApp: true,
     };
 
     // Send sign email to given email.

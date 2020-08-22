@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 // React helment head mannager.
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 // Error.
 import { Error } from "./components";

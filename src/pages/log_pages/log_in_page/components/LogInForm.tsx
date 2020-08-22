@@ -70,7 +70,7 @@ type ILogInState = IGenericFormState & {
   hiddenPass: boolean;
 };
 
-// Initial og in state = initial generic state + initial input state and hiddenPass to true.
+// Initial log in state = initial generic state + initial input state and hiddenPass to true.
 const INITIAL_LOG_IN_STATE: ILogInState = {
   ...INITIAL_GENERIC_FORM_STATE,
   email: INITIAL_INPUT_STATE,
@@ -133,13 +133,13 @@ const LogInForm: React.FC = () => {
     // Try the log in with firebase and catch any error that could ocurr.
     try {
       // Await for the firebase sign in function. Pass email and password to check user existance and validate.
-      const signInResult = await firebase.doSignInWithEmailAndPassword(
+      const logInResult = await firebase.doSignInWithEmailAndPassword(
         email.value,
         password.value
       );
 
       // If the result is successful => Get the user retrieved as response.
-      const { user } = signInResult;
+      const { user } = logInResult;
 
       // If the user is not veerified.
       if (user && !user.emailVerified) {

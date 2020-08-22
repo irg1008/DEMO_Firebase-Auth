@@ -1,7 +1,7 @@
 import React from "react";
 
 // React helment head mannager.
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 // Sign up form.
 import { SignUpForm, SignUpWithEmail } from "./components";
@@ -12,12 +12,11 @@ import { useAuth } from "../../../context/auth";
 /**
  * Sign up page.
  *
- * @param {ILogInPageProps} {
- *   authContext,
- * }
+ *
+ * @returns
  */
 const SignUpPage: React.FC = () => {
-  // Page is loaded
+  // Auth state decostruction.
   const { authIsPasswordless } = useAuth().state;
 
   return (
