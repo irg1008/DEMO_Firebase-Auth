@@ -208,9 +208,12 @@ const LogInForm: React.FC = () => {
     }
   }, [email.isValid, password.isValid]);
 
-  // On email change =>
+  // On email change => Check the email and reset the password.
   useEffect(() => {
+    // Only check if not first render.
     if (!firstRender.current) {
+      // Check errros with email value.
+      // Reset password in the case password is correct and email is not.
       setState((oldState) => {
         return {
           ...oldState,
@@ -227,8 +230,12 @@ const LogInForm: React.FC = () => {
     }
   }, [email.value]);
 
+  // On password change => Check password.
   useEffect(() => {
+    // Only check if not first render.
     if (!firstRender.current) {
+      // Check the validate of password only on password is empty.
+      // We are not interested in this case in any error like length or must use characters.
       setState((oldState) => {
         return {
           ...oldState,
@@ -247,12 +254,20 @@ const LogInForm: React.FC = () => {
     }
   }, [password.value]);
 
+  /**
+   * Submit handler => Wrong password.
+   *
+   */
   const wrongPassword = () =>
     setState({
       ...state,
       password: setInput(password, "La contraseña no es correcta"),
     });
 
+  /**
+   * Submit handler => Email exists with Google.
+   *
+   */
   const emailExistsWithGoogle = () =>
     setState({
       ...state,
@@ -262,6 +277,10 @@ const LogInForm: React.FC = () => {
       ),
     });
 
+  /**
+   * Submit handler => Email exists with direct link.
+   *
+   */
   const emailExistsWithDirectLink = () =>
     setState({
       ...state,
@@ -271,13 +290,22 @@ const LogInForm: React.FC = () => {
       ),
     });
 
+  /**
+   * Submit handler => User with given email is not found.
+   *
+   */
   const userNotFound = () =>
     setState({
       ...state,
       email: setInput(email, "Este email no corresponde con ninguna cuenta"),
     });
 
+  /**
+   * Submit handler => Too many request on log in.
+   *
+   */
   const tooManyRequest = () => {
+    // Message to show on too many request error.
     const message = (
       <>
         {"Demasiados intentos con este correo, espera un tiempo para "}
@@ -290,6 +318,7 @@ const LogInForm: React.FC = () => {
       </>
     );
 
+    // Add floating message to let know the user has tried too many times and needs to wait to try again.
     floatingMsg.dispatch({
       type: "ADD_FLOATING",
       name: "demasiadosIntentos",
@@ -297,13 +326,27 @@ const LogInForm: React.FC = () => {
       timeoutTime: "default",
     });
 
+    // Set the state to valid form. This is mandatory because we set it to non valid on the submit function.
     setState({ ...state, isValidForm: true });
   };
 
+  /**
+   * Submit handler => User is not verified.
+   *
+   * @param {firebase.User} user
+   */
   const userNotVerified = (user: firebase.User) => {
+    /**
+     * Resend user email verification.
+     *
+     */
     const resendEmailVerification = async () => {
+      // Try to resend email verification.
       try {
+        // Resend email verification message.
         await firebase.doSendEmailVerification(user);
+
+        // Floating message to notify successful sent message to email.
         floatingMsg.dispatch({
           type: "ADD_FLOATING",
           name: "reenviarCorreo",
@@ -311,7 +354,9 @@ const LogInForm: React.FC = () => {
           timeoutTime: "default",
         });
       } catch (error) {
+        // If user tries too many times, we dispatch a floating message letting him know he must wait to resend a new email.
         if (error.code === "auth/too-many-requests") {
+          // Floating message to let know the user too many attemps were made.
           floatingMsg.dispatch({
             type: "ADD_FLOATING",
             name: "demasiadosIntentos",
@@ -322,11 +367,13 @@ const LogInForm: React.FC = () => {
         }
       }
 
+      // Set email error to none.
       setState((oldState) => {
         return { ...oldState, email: setInput(email, null) };
       });
     };
 
+    // Error to show on email input error.
     const error = (
       <>
         {"Verifica la cuenta para poder entrar. "}
@@ -339,6 +386,7 @@ const LogInForm: React.FC = () => {
       </>
     );
 
+    // Set the email with the user is not verified error, stop the loading and set the form to non valid.
     setState({
       ...state,
       email: setInput(email, error),
@@ -347,10 +395,16 @@ const LogInForm: React.FC = () => {
     });
   };
 
+  /**
+   * Hidden pass toggler.
+   *
+   * @param {boolean} hiddenPass
+   */
   const setHidddenPass = (hiddenPass: boolean) =>
     setState({ ...state, hiddenPass });
 
-  const formContent = (
+  // Form content to pass to the form creator.
+  const content = (
     <>
       <FormInput
         label="Email"
@@ -387,21 +441,18 @@ const LogInForm: React.FC = () => {
     </>
   );
 
-  // Form bottom component
-  const formBottomComponent = (
+  // Form bottom component.
+  const bottomComponent = (
     <FormOptions
       firstOption={<SignWithGoogle text="Inicio con Google" />}
       secondOption={<SignWithoutPassword text="Inicio con link" />}
     />
   );
-  return (
-    <FormCreator
-      onSubmit={onSubmit}
-      content={formContent}
-      bottomComponent={formBottomComponent}
-      title="inicia sesión"
-    />
-  );
+
+  // Form title.
+  const title = "inicia sesión";
+
+  return <FormCreator {...{ onSubmit, content, bottomComponent, title }} />;
 };
 
 export default LogInForm;

@@ -1,4 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
+
+// React helment head mannager.
+import { Helmet } from "react-helmet";
 
 // Styled-Components.
 import styled from "styled-components";
@@ -15,21 +18,24 @@ import Social from "../../components/social";
  *
  * @returns Main page.
  */
-const LandingPage: React.FC = () => {
-  // On load change title.
-  useEffect(() => {
-    document.title = "Silk&Rock - Work Uniforms";
-  }, []);
-
-  return (
+const LandingPage: React.FC = () => (
+  <>
+    <Helmet>
+      <title>{"Silk&Rock - Work Uniforms"}</title>
+      <meta
+        name="description"
+        content="En Silk&Rock nos dedicamos a uniformar a las mejores marcas alrededor de todo el mundo. Uniformes de trabajo que harán brillante la experiencia.
+      Cuidamos hasta los pequeños detalles para que tus clientes sientan la verdadera experiencia."
+      />
+    </Helmet>
     <LandingPageContainer>
       <LandingLogoContainer>
         <Logo />
       </LandingLogoContainer>
       <Social />
     </LandingPageContainer>
-  );
-};
+  </>
+);
 
 export default LandingPage;
 

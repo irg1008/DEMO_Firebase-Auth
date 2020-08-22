@@ -96,7 +96,7 @@ export const COMPLETE_SIGN: IPageType = {
   id: getId(),
   path: "/completar-cuenta",
   exact: true,
-  hideOnUserSigned: true,
+  hideOnUserUnsigned: true,
   Component: CompleteSignUpPage,
 };
 

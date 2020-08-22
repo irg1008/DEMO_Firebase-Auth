@@ -1,5 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
+
+// React helment head mannager.
+import { Helmet } from "react-helmet";
 
 // Error.
 import { Error } from "./components";
@@ -17,11 +20,6 @@ import { ROUTES } from "../../routes";
  * @returns Error page.
  */
 const ErrorPage: React.FC = () => {
-  // On load => Change title.
-  useEffect(() => {
-    document.title = "Silk&Rock - Error";
-  }, []);
-
   // Error type.
   const errorType = 404;
 
@@ -33,9 +31,14 @@ const ErrorPage: React.FC = () => {
   );
 
   return (
-    <ErrorPageContainer>
-      <Error {...{ errorType, errorMessage }} />
-    </ErrorPageContainer>
+    <>
+      <Helmet>
+        <title>{"Silk&Rock - Error"}</title>
+      </Helmet>
+      <ErrorPageContainer>
+        <Error {...{ errorType, errorMessage }} />
+      </ErrorPageContainer>
+    </>
   );
 };
 

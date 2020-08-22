@@ -22,3 +22,4 @@
 /////////////////////////////////////////////////
 // FIXME: Clean all functions and repeated code. Get all with wrapper ans uses.
 // FIXME: Make form validations way more clear and shorter.
+// FIXME: Change the complete name to dynamic generate on click in register link.
