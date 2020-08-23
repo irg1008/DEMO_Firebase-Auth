@@ -35,16 +35,9 @@ export type IPageType = {
   /**
    * Hide on user is signed.
    *
-   * @type {boolean}
+   * @type {("signed" | "notSigned")}
    */
-  hideOnUserSigned?: boolean;
-
-  /**
-   * Hide on user is unsigned.
-   *
-   * @type {boolean}
-   */
-  hideOnUserUnsigned?: boolean;
+  hideWhen?: "signed" | "notSigned" | "signedAndUsername";
 
   /**
    * Component to render in given path. Function or class component.
@@ -78,7 +71,7 @@ export const SIGN_UP: IPageType = {
   id: getId(),
   path: "/unete",
   exact: true,
-  hideOnUserSigned: true,
+  hideWhen: "signed",
   Component: SignUpPage,
 };
 
@@ -87,7 +80,7 @@ export const LOG_IN: IPageType = {
   id: getId(),
   path: "/inicia",
   exact: true,
-  hideOnUserSigned: true,
+  hideWhen: "signed",
   Component: LogInPage,
 };
 
@@ -96,7 +89,7 @@ export const COMPLETE_SIGN: IPageType = {
   id: getId(),
   path: "/completar-cuenta",
   exact: true,
-  hideOnUserUnsigned: true,
+  hideWhen: "notSigned" || "signedAndUsername",
   Component: CompleteSignUpPage,
 };
 

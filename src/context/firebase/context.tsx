@@ -139,22 +139,54 @@ const FirebaseProvider: React.FC<IProviderProps> = ({
 
   // On component mount, use history => Get user from firebase.
   useEffect(() => {
+    /**
+     * Check if auth comes from redirect.
+     *
+     */
+    const checkIsRedirect = async () => {
+      // If the user is fetch from a redirect and the redirect is correct (credential exists).
+      const redirectResult = await firebase.doGetRedirectResult();
+      // Push to landing on page load.
+      redirectResult.credential && history.push(ROUTES.LANDING.path);
+    };
+
+    /**
+     * Check if auth comes from auth link.
+     *
+     */
+    const checkIsLinkRedirect = async () => {
+      // If no user is logged check if url is email link.
+      const isLinkResult = await firebase.doIsSignInWithEmailLink();
+      // If link result.
+      if (isLinkResult && isLinkResult.user) {
+        // User display name.
+        const displayName = isLinkResult.user.displayName;
+
+        // If user has name => Landing page.
+        // If user has no name => Complete page.
+        history.push(
+          displayName ? ROUTES.LANDING.path : ROUTES.COMPLETE_SIGN.path
+        );
+      }
+    };
+
     // Handler function.
     const asyncHandler = async (user: firebase.User | null) => {
       // Set the user only if user is valid and the user email is verified.
       const authUser = user && user.emailVerified ? user : null;
 
-      // If the user is fetch from a redirect and the redirect is correct (credential exists).
-      const redirectResult = await firebase.doGetRedirectResult();
-      // Push to landing on page load.
-      redirectResult.credential && history.push(ROUTES.LANDING.path);
+      // Check if auth comes from redirect.
+      checkIsRedirect();
+
+      // Check if auth comes from auth link.
+      checkIsLinkRedirect();
 
       // Get firestore name for user.
       const userDoc = await firebase.doGetFirestoreUsername();
       // If user exists, has a document in "users" table and user displayName has been override.
       if (authUser && userDoc && authUser.displayName !== userDoc.fullname) {
         // Replace displayName iwth firestore buck up.
-        firebase.doUpdateProfile(userDoc.fullname);
+        await firebase.doUpdateProfile(userDoc.fullname);
       }
 
       // Set the user.
@@ -164,7 +196,7 @@ const FirebaseProvider: React.FC<IProviderProps> = ({
       dispatch({ type: "SET_AUTH_LOADED", authHasLoaded: true });
     };
 
-    // On auth change.
+    // Wait to check if user sign with email and then  check on auth change.
     firebase.auth.onAuthStateChanged(asyncHandler);
   }, [history]);
 

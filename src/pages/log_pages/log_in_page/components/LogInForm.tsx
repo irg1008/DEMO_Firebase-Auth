@@ -180,8 +180,9 @@ const LogInForm: React.FC = () => {
           if (signMethods.includes("password")) wrongPassword();
           // If the user is to signed with google => Email exists with google handler.
           else if (signMethods.includes("google.com")) emailExistsWithGoogle();
-          // If user is not signed with password and google, must be signed with direct link so we let him know has well.
-          else emailExistsWithDirectLink();
+          // If user is signed with direct link.
+          else if (signMethods.includes("emailLink"))
+            emailExistsWithDirectLink();
 
           break;
         }
@@ -350,7 +351,7 @@ const LogInForm: React.FC = () => {
         floatingMsg.dispatch({
           type: "ADD_FLOATING",
           name: "reenviarCorreo",
-          message: 'Te hemos reenviado un correo a "' + email.value + '"',
+          message: `Te hemos reenviado un correo a "${email.value}"`,
           timeoutTime: "default",
         });
       } catch (error) {
@@ -383,6 +384,13 @@ const LogInForm: React.FC = () => {
         >
           Reenviar correo
         </span>
+        <span
+          style={{ textDecoration: "underline", cursor: "pointer" }}
+          onClick={() => setState({ ...state, isValidForm: true })}
+        >
+          <br />
+          Intentar de nuevo
+        </span>
       </>
     );
 
@@ -410,7 +418,7 @@ const LogInForm: React.FC = () => {
         label="Email"
         name="email"
         value={email.value}
-        onChange={onChange}
+        {...{ onChange }}
         type="email"
         isValid={email.isValid}
         errorMessage={email.error}
@@ -420,14 +428,13 @@ const LogInForm: React.FC = () => {
         label="Contraseña"
         name="password"
         value={password.value}
-        onChange={onChange}
+        {...{ onChange, hiddenPass }}
         type="password"
         isValid={password.isValid}
         errorMessage={password.error}
-        hiddenPass={hiddenPass}
         required
       />
-      <ShowPassword hiddenPass={hiddenPass} setHidddenPass={setHidddenPass} />
+      <ShowPassword {...{ hiddenPass, setHidddenPass }} />
       <FormButton
         disabled={!isValidForm}
         loading={isLoading}

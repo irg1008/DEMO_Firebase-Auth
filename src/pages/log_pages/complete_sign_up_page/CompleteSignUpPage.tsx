@@ -9,12 +9,11 @@ import CompleteSignUpForm from "./components/CompleteSignUpForm";
 /**
  * Complete sign up page.
  *
- * @returns
  */
 const CompleteSignUpPage: React.FC = () => (
   <>
     <Helmet>
-      <title>{"Silk&Rock - Completa Cuenta"}</title>
+      <title>{"Silk&Rock - Completar Cuenta"}</title>
     </Helmet>
     <CompleteSignUpForm />
   </>

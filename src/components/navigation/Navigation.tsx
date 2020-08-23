@@ -157,6 +157,20 @@ const Navigation: React.FC = () => {
     </>
   );
 
+  // User exists.
+  const UserExists = (
+    <>
+      <ListItem>
+        <SignOutButton />
+      </ListItem>
+      {authUser && authUser.displayName ? (
+        renderUsername(authUser.displayName, 140, "px")
+      ) : (
+        <NavLink to={ROUTES.COMPLETE_SIGN.path}>Completar nombre</NavLink>
+      )}
+    </>
+  );
+
   return (
     <NavbarContainer>
       <Navbar show={showNav || isActive}>
@@ -167,16 +181,7 @@ const Navigation: React.FC = () => {
               Home
             </NavLink>
           </ListItem>
-          {authUser && authUser.displayName ? (
-            <>
-              <ListItem>
-                <SignOutButton />
-              </ListItem>
-              {renderUsername(authUser.displayName, 140, "px")}
-            </>
-          ) : (
-            Links
-          )}
+          {authUser ? UserExists : Links}
         </List>
       </Navbar>
       <NavbarBackground {...{ isActive }} onClick={toggleButton} />

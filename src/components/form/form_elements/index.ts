@@ -5,6 +5,7 @@ import FormOptions from "./FormOptions";
 import FormInput from "./FormInput";
 import SignWithGoogle from "./SignWithGoogle";
 import FormLink from "./FormLink";
+import OtherOptions from "./OtherOptions";
 
 export {
   FormButton,
@@ -13,4 +14,5 @@ export {
   FormInput,
   SignWithGoogle,
   FormLink,
+  OtherOptions,
 };

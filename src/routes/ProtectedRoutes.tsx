@@ -19,12 +19,18 @@ const ProtectedRoutes: React.FC = () => {
   // Firebase context.
   const { authUser } = useFirebase().state;
 
-  // Routes if user is or not autehnticated.
+  // 1st filter: Hide route of complete sign when user has name.
+  // 2nd filter:
   // -> If user is signed => Hide user is signed pages.
   // -> If user is not signed => Hide user is unsigned pages.
-  const finalRoutes = authUser
-    ? routesArray.filter((route) => !route.hideOnUserSigned)
-    : routesArray.filter((route) => !route.hideOnUserUnsigned);
+  const finalRoutes = routesArray.filter((route) =>
+    (authUser &&
+      authUser.displayName &&
+      route.hideWhen !== "signedAndUsername") ||
+    authUser
+      ? route.hideWhen !== "signed"
+      : route.hideWhen !== "notSigned"
+  );
 
   return (
     <Switch>

@@ -153,21 +153,14 @@ class Firebase {
    * @memberof Firebase
    */
   doPasswordUpdate = (password: string) => {
-    return new Promise((resolve, reject) => {
-      // Logged user.
-      const user = this.auth.currentUser;
+    // Logged user.
+    const user = this.auth.currentUser;
 
-      // If user exists.
-      if (user) {
-        // Send email verification.
-        resolve(user.updatePassword(password));
-      }
-      // If user does not exist.
-      else {
-        // Return empty promise.
-        reject("No user found for wich we can update the password");
-      }
-    });
+    // If user exists.
+    if (user) {
+      // Send email verification.
+      return user.updatePassword(password);
+    }
   };
 
   /**
@@ -175,16 +168,67 @@ class Firebase {
    *
    * @memberof Firebase
    */
-  doSendSignInLinkToEmail = (email: string) => {
+  doSendSignInLinkToEmail = async (email: string) => {
     // Action code settings.
     // url: URL to redirect on email link click.
+    // - Domain of page.
     const actionCodeSettings: firebase.auth.ActionCodeSettings = {
-      url: "https://silkandrock.com",
+      url: window.location.origin,
       handleCodeInApp: true,
     };
 
     // Send sign email to given email.
-    return this.auth.sendSignInLinkToEmail(email, actionCodeSettings);
+    await this.auth.sendSignInLinkToEmail(email, actionCodeSettings);
+
+    // Save the email locally.
+    window.localStorage.setItem("emailForSignIn", email);
+  };
+
+  /**
+   * Check if url is signed with link url.
+   *
+   * @memberof Firebase
+   */
+  doIsSignInWithEmailLink = async () => {
+    // Check if full url is direct link url.
+    const isSignWithEmailLink = this.auth.isSignInWithEmailLink(
+      window.location.href
+    );
+
+    // If sign in link.
+    if (isSignWithEmailLink) {
+      // Email to storage or promt the user.
+      const email =
+        window.localStorage.getItem("emailForSignIn") ||
+        window.prompt(
+          "Has entrado desde otro dispositivo. Inserta el correo para confirmar que eres tú:"
+        );
+
+      if (email) {
+        try {
+          // Sign with the given email.
+          const signResult = await this.auth.signInWithEmailLink(
+            email,
+            window.location.href
+          );
+
+          // Remove local storage item if exists.
+          window.localStorage.removeItem("emailForSignIn");
+
+          return signResult;
+        } catch (error) {
+          // TODO: Send floating message errors. Maybe with a returned promise.
+          // If sign with emails trhows invalid request error.
+          if (error.code === "auth/invalid-action-code")
+            console.error("This link has already been used.");
+          // If the inserted email in the prompt does not link with the url => Error.
+          else if (error.code === "auth/invalid-email")
+            console.error(
+              `The inserted email "${email}" is not correct. Try again.`
+            );
+        }
+      }
+    }
   };
 
   /**
@@ -193,18 +237,11 @@ class Firebase {
    * @memberof Firebase
    */
   doSendEmailVerification = (user: firebase.User) => {
-    return new Promise((resolve, reject) => {
-      // If user exists.
-      if (user) {
-        // Send email verification.
-        resolve(user.sendEmailVerification());
-      }
-      // If user does not exist.
-      else {
-        // Return empty promise.
-        reject("No user found for wich we can send and email verification");
-      }
-    });
+    // If user exists.
+    if (user) {
+      // Send email verification.
+      return user.sendEmailVerification();
+    }
   };
 
   /**
@@ -255,9 +292,9 @@ class Firebase {
    * @memberof Firebase
    */
   doUpdateProfile = (displayName: string, photoURL?: string) => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       // Logged user.
-      const user = this.auth.currentUser;
+      let user = this.auth.currentUser;
 
       // If user exists.
       if (user) {

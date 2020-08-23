@@ -192,10 +192,7 @@ const SignUpForm: React.FC = () => {
         floatingMsg.dispatch({
           type: "ADD_FLOATING",
           name: "enviarCorreoVerificacion",
-          message:
-            'Te hemos enviado un correo a "' +
-            email.value +
-            '" para confirmar la cuenta y poder iniciar sesión',
+          message: `Te hemos enviado un correo a "${email.value}" para confirmar la cuenta y poder iniciar sesión`,
           timeoutTime: "default",
         });
       }
@@ -205,6 +202,7 @@ const SignUpForm: React.FC = () => {
       // Redirect to log in.
       history.push(ROUTES.LOG_IN.path);
     } catch (error) {
+      console.log(error);
       // If any error happens.
       // Stop loading.
       setState({ ...state, isLoading: false });
@@ -326,7 +324,7 @@ const SignUpForm: React.FC = () => {
         label="Nombre"
         name="username"
         value={username.value}
-        onChange={onChange}
+        {...{ onChange }}
         type="text"
         isValid={username.isValid}
         errorMessage={username.error}
@@ -336,7 +334,7 @@ const SignUpForm: React.FC = () => {
         label="Email"
         name="email"
         value={email.value}
-        onChange={onChange}
+        {...{ onChange }}
         type="email"
         isValid={email.isValid}
         errorMessage={email.error}
@@ -346,25 +344,23 @@ const SignUpForm: React.FC = () => {
         label="Contraseña"
         name="password"
         value={password.value}
-        onChange={onChange}
+        {...{ onChange, hiddenPass }}
         type="password"
         isValid={password.isValid}
         errorMessage={password.error}
-        hiddenPass={hiddenPass}
         required
       />
       <FormInput
         label="Repite la contraseña"
         name="confirmPassword"
         value={confirmPassword.value}
-        onChange={onChange}
+        {...{ onChange, hiddenPass }}
         type="password"
         isValid={confirmPassword.isValid}
         errorMessage={confirmPassword.error}
-        hiddenPass={hiddenPass}
         required
       />
-      <ShowPassword hiddenPass={hiddenPass} setHidddenPass={setHidddenPass} />
+      <ShowPassword {...{ hiddenPass, setHidddenPass }} />
       <FormButton
         disabled={!isValidForm}
         loading={isLoading}

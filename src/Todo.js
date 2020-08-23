@@ -20,7 +20,10 @@
 // TODO: Set hidde password as a wrapper
 // TODO: Personalize floatin gmsg with colors, timeout bar, reset ctimeout, warning, error, icons...
 // TODO: Use the data.locale to change the languague of the component.
+
+// TODO: Create a env variable for the webpage url or get it with a library like router or history or something.
 /////////////////////////////////////////////////
 // FIXME: Clean all functions and repeated code. Get all with wrapper ans uses.
 // FIXME: Make form validations way more clear and shorter.
-// FIXME: Change the complete name to dynamic generate on click in register link.
+
+// FIXME: UI for errors on email sign in with link redirect: see firebase lin 219.
