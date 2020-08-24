@@ -140,46 +140,64 @@ const FirebaseProvider: React.FC<IProviderProps> = ({
   // On component mount, use history => Get user from firebase.
   useEffect(() => {
     /**
-     * Check if auth comes from redirect.
-     *
-     */
-    const checkIsRedirect = async () => {
-      // If the user is fetch from a redirect and the redirect is correct (credential exists).
-      const redirectResult = await firebase.doGetRedirectResult();
-      // Push to landing on page load.
-      redirectResult.credential && history.push(ROUTES.LANDING.path);
-    };
-
-    /**
      * Check if auth comes from auth link.
      *
      */
     const checkIsLinkRedirect = async () => {
-      // If no user is logged check if url is email link.
-      const isLinkResult = await firebase.doIsSignInWithEmailLink();
-      // If link result.
-      if (isLinkResult && isLinkResult.user) {
-        // User display name.
-        const displayName = isLinkResult.user.displayName;
+      // Try sign with link.
+      try {
+        // If no user is logged check if url is email link.
+        const isLinkResult = await firebase.doIsSignInWithEmailLink();
 
-        // If user has name => Landing page.
-        // If user has no name => Complete page.
-        history.push(
-          displayName ? ROUTES.LANDING.path : ROUTES.COMPLETE_SIGN.path
-        );
+        console.log(isLinkResult);
+
+        // If link result.
+        if (isLinkResult && isLinkResult.user) {
+          // User display name.
+          const displayName = isLinkResult.user.displayName;
+
+          // If user has name => Landing page.
+          // If user has no name => Complete page.
+          history.push(
+            displayName ? ROUTES.LANDING.path : ROUTES.COMPLETE_SIGN.path
+          );
+        }
+      } catch (error) {
+        // If sign with emails trhows invalid request error.
+        if (error.code === "auth/invalid-action-code") {
+          alert("Este link ya ha sido usado.");
+        }
+        // If the inserted email in the prompt does not link with the url => Error.
+        else if (error.code === "auth/invalid-email") {
+          alert(`El email no es correcto. Vuelve a intentarlo`);
+
+          // Try again until good email is passed.
+          checkIsLinkRedirect();
+        }
+
+        // Push to landing in sign finally.
+        history.push(ROUTES.LANDING.path);
       }
     };
 
     // Handler function.
-    const asyncHandler = async (user: firebase.User | null) => {
+    const setUser = async (user: firebase.User | null) => {
+      /**
+       * Check if auth comes from redirect.
+       *
+       */
+      const checkIsRedirect = async () => {
+        // If the user is fetch from a redirect and the redirect is correct (credential exists).
+        const redirectResult = await firebase.doGetRedirectResult();
+        // Push to landing on page load.
+        redirectResult.credential && history.push(ROUTES.LANDING.path);
+      };
+
       // Set the user only if user is valid and the user email is verified.
       const authUser = user && user.emailVerified ? user : null;
 
       // Check if auth comes from redirect.
-      checkIsRedirect();
-
-      // Check if auth comes from auth link.
-      checkIsLinkRedirect();
+      await checkIsRedirect();
 
       // Get firestore name for user.
       const userDoc = await firebase.doGetFirestoreUsername();
@@ -196,8 +214,20 @@ const FirebaseProvider: React.FC<IProviderProps> = ({
       dispatch({ type: "SET_AUTH_LOADED", authHasLoaded: true });
     };
 
-    // Wait to check if user sign with email and then  check on auth change.
-    firebase.auth.onAuthStateChanged(asyncHandler);
+    /**
+     * Async useEffect handler.
+     *
+     */
+    const asyncHandler = async () => {
+      // Check if auth comes from auth link.
+      await checkIsLinkRedirect();
+
+      // Wait to check if user sign with email and then  check on auth change.
+      firebase.auth.onAuthStateChanged(setUser);
+    };
+
+    // Call async handler.
+    asyncHandler();
   }, [history]);
 
   return (

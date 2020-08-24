@@ -205,28 +205,19 @@ class Firebase {
         );
 
       if (email) {
-        try {
-          // Sign with the given email.
-          const signResult = await this.auth.signInWithEmailLink(
-            email,
-            window.location.href
-          );
+        // Sign with the given email.
+        const signResponse = await this.auth.signInWithEmailLink(
+          email,
+          window.location.href
+        );
 
-          // Remove local storage item if exists.
-          window.localStorage.removeItem("emailForSignIn");
+        // Remove local storage item if exists.
+        window.localStorage.removeItem("emailForSignIn");
 
-          return signResult;
-        } catch (error) {
-          // TODO: Send floating message errors. Maybe with a returned promise.
-          // If sign with emails trhows invalid request error.
-          if (error.code === "auth/invalid-action-code")
-            console.error("This link has already been used.");
-          // If the inserted email in the prompt does not link with the url => Error.
-          else if (error.code === "auth/invalid-email")
-            console.error(
-              `The inserted email "${email}" is not correct. Try again.`
-            );
-        }
+        return signResponse;
+      } else {
+        // Throw invalid email error.
+        throw new Error("Prompt closed");
       }
     }
   };
@@ -292,23 +283,14 @@ class Firebase {
    * @memberof Firebase
    */
   doUpdateProfile = (displayName: string, photoURL?: string) => {
-    return new Promise(async (resolve, reject) => {
-      // Logged user.
-      let user = this.auth.currentUser;
+    // Logged user.
+    let user = this.auth.currentUser;
 
-      // If user exists.
-      if (user) {
-        // Update profile.
-        resolve(user.updateProfile({ displayName, photoURL }));
-      }
-      // If user does not exist.
-      else {
-        // Reject promise..
-        reject(
-          "There is not user for which we can change the displayName and/or photoURL"
-        );
-      }
-    });
+    // If user exists.
+    if (user) {
+      // Update profile.
+      return user.updateProfile({ displayName, photoURL });
+    }
   };
 
   /**
