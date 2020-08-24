@@ -1,6 +1,6 @@
 // => TODO & FIXME LIST
 /////////////////////////////////////////////////
-// TODO: Añadir el forgot password y el change username.
+// TODO: Añadir el forgot password.
 // TODO: (LOW) Hide navbar on certain routes. (Importance level 0) => navigation context to hide/show
 // TODO: (LOW) Personalize verify and email log and sign emails and check how to redirect to page directly and html template.
 // TODO: Clean animations on navbar and others.
@@ -12,6 +12,7 @@
 // TODO: Set hidde password as a wrapper
 // TODO: Personalize floatin gmsg with colors, timeout bar, reset ctimeout, warning, error, icons...
 // TODO: Use the data.locale to change the languague of the component.
+// TODO: Handle the direct link sign in same page when opening in other devices.
 /////////////////////////////////////////////////
 // FIXME: Clean all functions and repeated code. Get all with wrapper ans uses.
 // FIXME: Make form validations way more clear and shorter. Repasar TODO paara limpiarlo. Pero de momento podemos pasar a los otros todos y lo siguiente
