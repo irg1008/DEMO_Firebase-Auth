@@ -1,19 +1,19 @@
 import React, { useLayoutEffect } from "react";
 
 // Firebase consumer.
-import { useFirebase } from "../../context/firebase";
+import { useFirebase } from "context/firebase";
 
 // FloatingMessage component.
-import FloatingMessage from "../../context/floating_message";
+import FloatingMessage from "context/floating_message";
 
 // Loading component and context.
-import Loading, { useLoading } from "../../context/loading";
+import Loading, { useLoading } from "context/loading";
 
 // Navigation.
-import { Navigation } from "../navigation";
+import { Navigation } from "components/navigation";
 
 // Routes to render.
-import ProtectedRoutes from "../../routes";
+import ProtectedRoutes from "routes";
 
 /**
  * Main component.
