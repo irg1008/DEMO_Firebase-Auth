@@ -8,7 +8,7 @@
 // TODO: (LOW) Change from styled-components to functional css and itcss or css preproccessor
 // TODO: Cookie banner. See how to use with floating msg correctly.
 // TODO: If signed with google and adds password => Link provider with email/password.
-// TODO: Get the scroll up and down to a separate component useScrollDirection o parecido.
+// TODO: (LOW) Get the scroll up and down to a separate component useScrollDirection o parecido.
 // TODO: Set hidde password as a wrapper
 // TODO: Personalize floatin gmsg with colors, timeout bar, reset ctimeout, warning, error, icons...
 // TODO: Use the data.locale to change the languague of the component.

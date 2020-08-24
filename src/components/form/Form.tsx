@@ -75,7 +75,7 @@ const FormCreator: React.FC<IFormCreatorProps> = ({
 }: IFormCreatorProps) => (
   <FormContainer>
     <FormTitle>{title}</FormTitle>
-    <Form onSubmit={onSubmit} noValidate>
+    <Form {...{ onSubmit }} noValidate>
       <FormWrapper>
         <InputsContainer>{content}</InputsContainer>
         {bottomComponent}
@@ -91,6 +91,8 @@ const FormTitle = styled(H1)`
   width: 100%;
   /* Font */
   text-align: center;
+  /* Margin, Padding, Border */
+  padding: 0 1em;
 `;
 
 // Form Container.

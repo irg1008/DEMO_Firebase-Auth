@@ -285,17 +285,19 @@ const NavLogo = styled.div`
 
 // Ham icon.
 const NavHamIcon = styled(HamburgerIcon)`
-  width: auto;
-  height: 18px;
-  /* Outline */
-  outline: none;
-  /* Margin, Padding, Border */
-  margin: 0;
-  padding: 0;
+  /* Display */
+  display: none;
   /* Media medium size */
-  @media (min-width: ${media.mediumSize}) {
+  @media (max-width: ${media.mediumSize}) {
+    width: auto;
+    height: 18px;
     /* Display */
-    display: none;
+    display: block;
+    /* Outline */
+    outline: none;
+    /* Margin, Padding, Border */
+    margin: 0;
+    padding: 0;
   }
 `;
 

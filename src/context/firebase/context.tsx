@@ -149,8 +149,6 @@ const FirebaseProvider: React.FC<IProviderProps> = ({
         // If no user is logged check if url is email link.
         const isLinkResult = await firebase.doIsSignInWithEmailLink();
 
-        console.log(isLinkResult);
-
         // If link result.
         if (isLinkResult && isLinkResult.user) {
           // User display name.

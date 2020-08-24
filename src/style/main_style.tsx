@@ -2,7 +2,11 @@
 import styled, { keyframes } from "styled-components";
 
 // Main BG image.
-import { mainBG } from "../assets";
+import { mainBG, mainBGFallback } from "../assets";
+
+// WepP support check = not working on ios 13, ie and safari.
+import { isIOS13, isIE, isSafari } from "react-device-detect";
+const webPIsSupported = !isIOS13 && !isIE && !isSafari;
 
 // Color constants.
 export const colors = {
@@ -155,7 +159,7 @@ export const MainBGContainerStyled = styled(ContainerStyled)`
       rgba(255, 255, 255, 0.6) 50%,
       rgba(255, 255, 255, 0.8) 100%
     ),
-    url(${mainBG});
+    url(${webPIsSupported ? mainBG : mainBGFallback});
   background-position: center;
 `;
 
