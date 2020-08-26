@@ -2,7 +2,7 @@ import React from "react";
 
 // Styled-Components.
 import styled from "styled-components";
-import { ContainerStyled, media } from "../../../style/main_style";
+import { FlexContainer, media } from "../../../style/main_style";
 
 // Title.
 import { Title5 } from "../../titles/Titles";
@@ -45,7 +45,7 @@ const SignWithGoogle: React.FC<ISignWithGoogleProps> = ({
 export default SignWithGoogle;
 
 // Google container.
-const GoogleContainer = styled(ContainerStyled)`
+const GoogleContainer = styled(FlexContainer)`
   width: 100%;
   height: 100%;
   /* Font */
@@ -62,7 +62,7 @@ const GoogleLogo = styled.img`
 `;
 
 // Google text.
-const TextContainer = styled(ContainerStyled)`
+const TextContainer = styled(FlexContainer)`
   width: 8em;
   /* Margin, Padding, Border */
   margin-left: 0.5em;

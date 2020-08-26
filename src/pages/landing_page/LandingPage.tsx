@@ -5,7 +5,7 @@ import { Helmet } from "react-helmet-async";
 
 // Styled-Components.
 import styled from "styled-components";
-import { MainBGContainerStyled, ContainerStyled } from "../../style/main_style";
+import { MainBGContainer, FlexContainer } from "../../style/main_style";
 
 // Logo.
 import Logo from "../../components/logo";
@@ -40,7 +40,7 @@ const LandingPage: React.FC = () => (
 export default LandingPage;
 
 // Landing page container.
-const LandingPageContainer = styled(MainBGContainerStyled)`
+const LandingPageContainer = styled(MainBGContainer)`
   min-width: 100vw;
   width: auto;
   min-height: 100vh;
@@ -51,7 +51,7 @@ const LandingPageContainer = styled(MainBGContainerStyled)`
 `;
 
 // Logo container.
-const LandingLogoContainer = styled(ContainerStyled)`
+const LandingLogoContainer = styled(FlexContainer)`
   width: 70%;
   max-width: 1000px;
 `;

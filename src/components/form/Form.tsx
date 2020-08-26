@@ -3,9 +3,8 @@ import React, { FormEvent } from "react";
 // Styled-Components.
 import styled from "styled-components";
 import {
-  ContainerStyled,
-  BorderedContainerStyled,
-  MainBGContainerStyled,
+  BorderedContainer,
+  MainBGContainer,
   media,
 } from "../../style/main_style";
 
@@ -76,10 +75,8 @@ const FormCreator: React.FC<IFormCreatorProps> = ({
   <FormContainer>
     <FormTitle>{title}</FormTitle>
     <Form {...{ onSubmit }} noValidate>
-      <FormWrapper>
-        <InputsContainer>{content}</InputsContainer>
-        {bottomComponent}
-      </FormWrapper>
+      <InputsContainer>{content}</InputsContainer>
+      {bottomComponent}
     </Form>
   </FormContainer>
 );
@@ -88,7 +85,6 @@ export default FormCreator;
 
 // Form title.
 const FormTitle = styled(H1)`
-  width: 100%;
   /* Font */
   text-align: center;
   /* Margin, Padding, Border */
@@ -96,9 +92,8 @@ const FormTitle = styled(H1)`
 `;
 
 // Form Container.
-const FormContainer = styled(MainBGContainerStyled)`
-  min-width: 100vw;
-  width: auto;
+const FormContainer = styled(MainBGContainer)`
+  width: 100vw;
   min-height: 100vh;
   height: auto;
   /* Flexbox */
@@ -109,24 +104,17 @@ const FormContainer = styled(MainBGContainerStyled)`
 
 // Form.
 const Form = styled.form`
-  min-width: 100vw;
-  height: auto;
-  min-height: 10em;
-`;
-
-// Form container.
-const FormWrapper = styled(ContainerStyled)`
-  width: 100%;
-  height: 100%;
-`;
-
-// Form Input Container.
-const InputsContainer = styled(BorderedContainerStyled)`
   width: 30em;
-  /* Margin, Padding, Border */
-  margin-bottom: 0.5em;
+  min-height: 10em;
+  height: auto;
   /* Media medium size */
   @media (max-width: ${media.mediumSize}) {
     width: 90%;
   }
+`;
+
+// Form Input Container.
+const InputsContainer = styled(BorderedContainer)`
+  /* Margin, Padding, Border */
+  margin-bottom: 0.5em;
 `;

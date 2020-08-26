@@ -2,7 +2,7 @@ import React from "react";
 
 // Styled-Components.
 import styled from "styled-components";
-import { ContainerStyled, colors, media } from "../../style/main_style";
+import { FlexContainer, colors, media } from "../../style/main_style";
 
 // Type of title.
 type ITitle = {
@@ -94,7 +94,7 @@ export const Separator: React.FC<ISeparator> = ({ width }: ISeparator) => (
 );
 
 // Separator.
-const SeparatorContainerStyled = styled(ContainerStyled)`
+const SeparatorContainerStyled = styled(FlexContainer)`
   width: 100%;
   height: auto;
 `;

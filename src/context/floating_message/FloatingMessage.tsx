@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 // Styled-Components.
 import styled from "styled-components";
 import {
-  ContainerStyled,
+  FlexContainer,
   colors,
   shadows,
   media,
@@ -116,7 +116,7 @@ const FloatingMessage: React.FC<IFloatingMsg> = ({
 export default FloatingMessage;
 
 // Message container.
-const MessageContainer = styled(ContainerStyled)<{ show: boolean }>`
+const MessageContainer = styled(FlexContainer)<{ show: boolean }>`
   width: 25em;
   height: auto;
   /* Position */
@@ -150,7 +150,7 @@ const MessageContainer = styled(ContainerStyled)<{ show: boolean }>`
 `;
 
 // Close message container.
-const MessageClose = styled(ContainerStyled)<{ show: boolean }>`
+const MessageClose = styled(FlexContainer)<{ show: boolean }>`
   /* Font */
   font-size: 1.6em;
   color: ${colors.mainWhite};

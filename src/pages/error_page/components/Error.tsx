@@ -2,7 +2,7 @@ import React from "react";
 
 // Styled-Components.
 import styled from "styled-components";
-import { colors, ContainerStyled, media } from "../../../style/main_style";
+import { colors, FlexContainer, media } from "../../../style/main_style";
 
 // Type of recieved props.
 type IErrorProps = {
@@ -44,7 +44,7 @@ const Error: React.FC<IErrorProps> = ({
 export default Error;
 
 // Error page container.
-const ErrorContainer = styled(ContainerStyled)`
+const ErrorContainer = styled(FlexContainer)`
   width: 100%;
   height: 30em;
   /* Flexbox */

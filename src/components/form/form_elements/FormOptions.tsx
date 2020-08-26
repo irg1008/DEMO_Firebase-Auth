@@ -2,8 +2,8 @@ import React from "react";
 
 // Styled-Components.
 import {
-  ContainerStyled,
-  BorderedContainerStyled,
+  FlexContainer,
+  BorderedContainer,
   media,
   colors,
   radius,
@@ -62,8 +62,7 @@ const FormOptions: React.FC<IFormOptionsProps> = ({
 export default FormOptions;
 
 // Form options container.
-const FormOptionsContainer = styled(ContainerStyled)`
-  width: 90%;
+const FormOptionsContainer = styled(FlexContainer)`
   height: auto;
   /* Margin, Padding, Border */
   margin-bottom: 2em;
@@ -74,7 +73,7 @@ const FormOptionsContainer = styled(ContainerStyled)`
 `;
 
 // Separator container.
-const OptionsSeparator = styled(ContainerStyled)`
+const OptionsSeparator = styled(FlexContainer)`
   width: 100%;
   height: auto;
   /* Margin, Padding, Border */
@@ -106,7 +105,7 @@ const SeparatorText = styled.p`
 `;
 
 // Other options of form container.
-const OptionsContainer = styled(ContainerStyled)`
+const OptionsContainer = styled(FlexContainer)`
   width: 100%;
   height: 8em;
   /* Flexbox */
@@ -122,7 +121,7 @@ const OptionsContainer = styled(ContainerStyled)`
 `;
 
 // Other option.
-const Option = styled(BorderedContainerStyled)`
+const Option = styled(BorderedContainer)`
   width: 100%;
   height: 3.5em;
   min-height: 0;

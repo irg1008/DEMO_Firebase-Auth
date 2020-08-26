@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 // Styled-Components.
 import styled from "styled-components";
-import { ContainerStyled, colors } from "../../../style/main_style";
+import { FlexContainer, colors } from "../../../style/main_style";
 
 // Form link props.
 type IFormLinkProps = {
@@ -54,7 +54,7 @@ const FormLink: React.FC<IFormLinkProps> = ({
 export default FormLink;
 
 // Link container.
-const LinkContainer = styled(ContainerStyled)`
+const LinkContainer = styled(FlexContainer)`
   width: 100%;
   height: 2em;
   /* Flexbox */

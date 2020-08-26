@@ -2,7 +2,7 @@ import React from "react";
 
 // Styled-Components.
 import styled from "styled-components";
-import { ContainerStyled, media } from "../../style/main_style";
+import { FlexContainer, media } from "../../style/main_style";
 
 // Floating context.
 import { useFloatingMsg } from "./";
@@ -52,7 +52,7 @@ const FloatingMsgList: React.FC = () => {
 export default FloatingMsgList;
 
 // List container.
-const MsgListContainer = styled(ContainerStyled)`
+const MsgListContainer = styled(FlexContainer)`
   height: auto;
   max-height: 100vh;
   /* Position */

@@ -4,7 +4,7 @@ import React from "react";
 import {
   PrimaryButton,
   colors,
-  ContainerStyled,
+  FlexContainer,
 } from "../../../style/main_style";
 import styled from "styled-components";
 
@@ -13,57 +13,38 @@ import styled from "styled-components";
 import Loader from "react-spinners/BarLoader";
 
 // Props of form button.
-type IButtonProps = {
-  /**
-   * Text inside the button.
-   *
-   * @type {string}
-   */
-  text: string;
-
-  /**
-   * Button is disabled.
-   *
-   * @type {boolean}
-   */
-  disabled?: boolean;
-
-  /**
-   * Button is loading form.
-   *
-   * @type {boolean}
-   */
-  loading?: boolean;
-};
+import { ButtonProps } from "../Form.types";
 
 /**
  * Form button.
- * Only submits when enabled or is not loading.
+ * Only submits when enabled and not loading.
  *
- * @param {IButtonProps} {
+ * @param {ButtonProps} {
  *   disabled,
  *   loading,
  *   text,
  * }
+ * @returns
  */
-const FormButton: React.FC<IButtonProps> = ({
+const FormButton: React.FC<ButtonProps> = ({
   disabled,
   loading,
   text,
-}: IButtonProps) => {
+}: ButtonProps) => {
   // Loading component to replace text.
-  const Loading = (
-    <LoadingContainer>
+  const LoadingBar = (
+    <FlexContainer>
       <Loader width={200} height={5} color={colors.darkGrey} />
-    </LoadingContainer>
+    </FlexContainer>
   );
 
   return (
     <Button
-      type={!disabled && !loading ? "submit" : "button"}
-      formProps={{ disabled, loading }}
+      type={loading ? "button" : "submit"}
+      {...{ disabled }}
+      styledLoading={loading}
     >
-      {loading ? Loading : text}
+      {loading ? LoadingBar : text}
     </Button>
   );
 };
@@ -71,27 +52,9 @@ const FormButton: React.FC<IButtonProps> = ({
 export default FormButton;
 
 // Form button.
-// NOTE: Passing an object to the styled component because otherwise complains of boolean | undefined object.
-const Button = styled(PrimaryButton)<{
-  formProps: { disabled?: boolean; loading?: boolean };
-}>`
+const Button = styled(PrimaryButton)<{ styledLoading: boolean }>`
   /* Cursor */
-  cursor: ${({ formProps }) =>
-    formProps.disabled || formProps.loading ? "default" : "pointer"};
-  /* Font */
-  color: ${({ formProps }) => !formProps.disabled && colors.mainWhite};
-  text-transform: ${({ formProps }) => !formProps.loading && "capitalize"};
-  /* BG */
-  background-color: ${({ formProps }) => formProps.disabled && colors.mainGrey};
+  cursor: ${({ styledLoading }) => styledLoading && "default"};
   /* Opacity */
-  opacity: ${({ formProps }) => formProps.loading && "0.5"};
-  /* Hover */
-  &:hover {
-    /* BG */
-    background-color: ${({ formProps }) =>
-      formProps.disabled && !formProps.loading && colors.mainGrey};
-  }
+  opacity: ${({ styledLoading }) => styledLoading && "0.5"};
 `;
-
-// Loading container.
-const LoadingContainer = styled(ContainerStyled)``;

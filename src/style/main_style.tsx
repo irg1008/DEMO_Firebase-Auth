@@ -122,7 +122,7 @@ export const noSelect = [
 ];
 
 // Main contanier style.
-export const ContainerStyled = styled.div`
+export const FlexContainer = styled.div`
   /* Flexbox */
   display: flex;
   justify-content: center;
@@ -131,7 +131,7 @@ export const ContainerStyled = styled.div`
 `;
 
 // Bordered Container.
-export const BorderedContainerStyled = styled(ContainerStyled)`
+export const BorderedContainer = styled(FlexContainer)`
   width: auto;
   height: auto;
   min-height: 10em;
@@ -151,7 +151,7 @@ export const BorderedContainerStyled = styled(ContainerStyled)`
 `;
 
 // Main container style with main background.
-export const MainBGContainerStyled = styled(ContainerStyled)`
+export const MainBGContainer = styled(FlexContainer)`
   /* BG */
   background-image: linear-gradient(
       90deg,
@@ -224,6 +224,10 @@ export const PrimaryButton = styled.button`
   /* Font */
   font-family: inherit;
   font-size: 11pt;
+  text-transform: capitalize;
+  color: ${colors.mainWhite};
+  /* Cursor */
+  cursor: pointer;
   /* BG */
   background-color: ${colors.blue};
   /* Transition */
@@ -234,5 +238,13 @@ export const PrimaryButton = styled.button`
     background-color: ${colors.darkerBlue};
     /* Transition */
     transition: ${mainTransition};
+  }
+  /* Disabled */
+  &:disabled {
+    color: ${colors.mainBlack};
+    /* BG */
+    background-color: ${colors.mainGrey};
+    /* Cursor */
+    cursor: default;
   }
 `;

@@ -2,7 +2,7 @@ import React from "react";
 
 // Styled-Components.
 import styled from "styled-components";
-import { media, ContainerStyled, colors } from "../../../../style/main_style";
+import { media, FlexContainer, colors } from "../../../../style/main_style";
 
 // Email icon.
 import EmailIcon from "@material-ui/icons/EmailRounded";
@@ -60,7 +60,7 @@ const SignWithoutPassword: React.FC<ISignWithoutPasswordProps> = ({
 export default SignWithoutPassword;
 
 // Sign passwordless.
-const SignPasswordlessContainer = styled(ContainerStyled)`
+const SignPasswordlessContainer = styled(FlexContainer)`
   width: 100%;
   height: 100%;
   /* Font */
@@ -72,7 +72,7 @@ const SignPasswordlessContainer = styled(ContainerStyled)`
 `;
 
 // Sign passwordless text.
-const TextContainer = styled(ContainerStyled)`
+const TextContainer = styled(FlexContainer)`
   width: 8em;
   /* Margin, Padding, Border */
   margin-left: 0.5em;

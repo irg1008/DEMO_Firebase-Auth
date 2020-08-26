@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 // Styled-Components.
 import {
-  ContainerStyled,
+  FlexContainer,
   colors,
   radius,
   mainTransition,
@@ -82,7 +82,7 @@ const ShowPassword: React.FC<IShowPasswordProps> = ({
    *
    * @returns {JSX.Element}
    */
-  const visibilityIcon = () => {
+  const visibilityIcon = (): JSX.Element => {
     const fontSize = "small";
 
     return hiddenPass ? (
@@ -107,7 +107,7 @@ const ShowPassword: React.FC<IShowPasswordProps> = ({
 export default ShowPassword;
 
 // Visibility wrapper.
-const ShowContainer = styled(ContainerStyled)`
+const ShowContainer = styled(FlexContainer)`
   width: auto;
   height: 2em;
   /* Flexbox */
@@ -119,7 +119,7 @@ const ShowContainer = styled(ContainerStyled)`
 `;
 
 // Visibility title container.
-const TextContainer = styled(ContainerStyled)<{ isHovering: boolean }>`
+const TextContainer = styled(FlexContainer)<{ isHovering: boolean }>`
   height: 100%;
   /* Overflow */
   overflow: hidden;
@@ -144,7 +144,7 @@ const TextToAnimate = styled.div<{ isHovering: boolean }>`
 `;
 
 // Visibility Container.
-const IconContainer = styled(ContainerStyled)`
+const IconContainer = styled(FlexContainer)`
   height: 100%;
   width: auto;
   /* Margin, Padding, Border */

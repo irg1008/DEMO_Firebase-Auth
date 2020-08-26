@@ -7,7 +7,7 @@ import {
   colors,
   shadows,
   media,
-  ContainerStyled,
+  FlexContainer,
   mainTransition,
 } from "../../style/main_style";
 
@@ -260,7 +260,7 @@ const Navbar = styled.nav<{ show: boolean }>`
 `;
 
 // Main navbar space.
-const NavMain = styled(ContainerStyled)`
+const NavMain = styled(FlexContainer)`
   min-height: 5em;
   /* Flexbox */
   flex-direction: row;

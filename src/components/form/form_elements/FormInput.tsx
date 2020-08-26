@@ -2,7 +2,7 @@ import React, { ChangeEvent } from "react";
 
 // Styled-Components.
 import {
-  ContainerStyled,
+  FlexContainer,
   radius,
   colors,
   shadows,
@@ -180,7 +180,7 @@ export type { IInputState, IInputError };
 export { INITIAL_INPUT_STATE, setInput };
 
 // Form Input.
-const InputContainer = styled(ContainerStyled)`
+const InputContainer = styled(FlexContainer)`
   width: 100%;
   height: auto;
   /* Margin, Padding, Border */

@@ -2,7 +2,7 @@ import React from "react";
 
 // Styled-components.
 import styled from "styled-components";
-import { ContainerStyled } from "../../../style/main_style";
+import { FlexContainer } from "../../../style/main_style";
 
 // Arrow icon.
 import ArrowIcon from "@material-ui/icons/ArrowBackIos";
@@ -37,7 +37,7 @@ const OtherOptions: React.FC<OtherOptionsProps> = ({
 export default OtherOptions;
 
 // Other options container.
-const OtherOptionsContainer = styled(ContainerStyled)`
+const OtherOptionsContainer = styled(FlexContainer)`
   /* Flexbox */
   flex-direction: row;
   /* Font */

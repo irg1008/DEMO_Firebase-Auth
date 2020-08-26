@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 // Styled-Components.
 import styled from "styled-components";
-import { ContainerStyled, animations, colors } from "../../style/main_style";
+import { FlexContainer, animations, colors } from "../../style/main_style";
 
 // Loading component.
 import { LoadingSpinner } from "../../context/loading/loading_elements";
@@ -52,7 +52,7 @@ const Loading: React.FC = () => {
 export default Loading;
 
 // Full display container.
-const FullContainer = styled(ContainerStyled)<{ show: boolean }>`
+const FullContainer = styled(FlexContainer)<{ show: boolean }>`
   width: 100vw;
   height: 100vh;
   /* Flexbox */
@@ -76,7 +76,7 @@ const FullContainer = styled(ContainerStyled)<{ show: boolean }>`
 `;
 
 // Loading container.
-const LoadingContainer = styled(ContainerStyled)`
+const LoadingContainer = styled(FlexContainer)`
   width: 100%;
   height: 50%;
   /* Flexbox */

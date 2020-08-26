@@ -2,7 +2,7 @@ import React from "react";
 
 // Styled-Components.
 import styled from "styled-components";
-import { MainBGContainerStyled } from "../../style/main_style";
+import { MainBGContainer } from "../../style/main_style";
 
 // Title.
 import titles from "../titles";
@@ -42,7 +42,7 @@ const FullPageMessage: React.FC<FullMessageProps> = ({
 export default FullPageMessage;
 
 // Full message container.
-const MessageContainer = styled(MainBGContainerStyled)`
+const MessageContainer = styled(MainBGContainer)`
   width: 100vw;
   height: 100vh;
   /* Margin, Padding, Border */

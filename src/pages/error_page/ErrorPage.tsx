@@ -9,7 +9,7 @@ import { Error } from "./components";
 
 // Styled-Components.
 import styled from "styled-components";
-import { MainBGContainerStyled, HoverableButton } from "../../style/main_style";
+import { MainBGContainer, HoverableButton } from "../../style/main_style";
 
 // ROUTES.
 import { ROUTES } from "../../routes";
@@ -45,7 +45,7 @@ const ErrorPage: React.FC = () => {
 export default ErrorPage;
 
 // Error page container.
-const ErrorPageContainer = styled(MainBGContainerStyled)`
+const ErrorPageContainer = styled(MainBGContainer)`
   min-width: 100vw;
   width: auto;
   min-height: 100vh;
